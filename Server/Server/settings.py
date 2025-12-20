@@ -17,12 +17,13 @@ SECRET_KEY = 'django-insecure-1e@5sy$q^!xm1$vwi4h_2j@k^r)qj71qzedgs%g2rt0if*t=qh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -35,6 +36,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -62,6 +64,35 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Server.wsgi.application'
+
+
+
+CORS_ALLOW_CREDENTIALS = True   # ← OBLIGATOIRE
+CORS_ALLOW_ALL_ORIGINS = False  # ← PAS DE TRUE ici sinon erreur
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://tekacom.gn",   # Frontend de dev
+    # "https://viali-gn.com"      # Frontend prod si nécessaire
+
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://tekacom.gn",
+    # "https://viali-gn.com"
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'content-type',
+    'authorization',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+ROOT_URLCONF = 'Server.urls'
 
 
 # Database

@@ -27,3 +27,62 @@ class Partner(models.Model):
 
     def __str__(self):
         return self.name_en or self.name_fr
+
+
+
+
+#pour les statistiques
+
+from django.db import models
+from django.conf import settings
+from django.utils import timezone
+from django.contrib.postgres.fields import JSONField  # or models.JSONField for Django>=3.1
+
+class Activity(models.Model):
+    ACTION_CHOICES = [
+        ("visit", "Visit"),
+        ("click", "Click"),
+        ("contact_submit", "Contact submit"),
+        ("mail_sent", "Mail sent"),
+        ("video_play", "Video play"),
+        ("image_download", "Image download"),
+        ("form_error", "Form error"),
+        ("auth_login", "Auth login"),
+        ("admin_action", "Admin action"),
+        # add others...
+    ]
+
+    action_type = models.CharField(max_length=50, choices=ACTION_CHOICES)
+    page = models.CharField(max_length=255, blank=True, null=True)  # path or logical page
+    label = models.CharField(max_length=255, blank=True, null=True)  # optional label (button name, product id)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    ip_address = models.CharField(max_length=50, blank=True, null=True)
+    user_agent = models.TextField(blank=True, null=True)
+    referrer = models.CharField(max_length=512, blank=True, null=True)
+    meta = models.JSONField(blank=True, null=True)  # extra info e.g. { "product_id": 12 }
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["action_type"]),
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["page"]),
+        ]
+
+    def __str__(self):
+        return f"{self.action_type} @ {self.page} ({self.created_at.isoformat()})"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
