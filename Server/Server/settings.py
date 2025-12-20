@@ -81,19 +81,36 @@ WSGI_APPLICATION = 'Server.wsgi.application'
 #         'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
 #     }
 # else:
+# DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.mysql',
+#             'NAME': 'tekacomdb',
+#             'USER': 'root',
+#             'PASSWORD': 'root',
+#             'HOST': 'localhost',
+#             'PORT': '3306',
+#             'ATOMIC_REQUESTS': True, 
+#             'OPTIONS': {
+#                 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+#             }
+#         }
+# }
+
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'tekacomdb',
-            'USER': 'root',
-            'PASSWORD': 'root',
-            'HOST': 'localhost',
-            'PORT': '3306',
-            'OPTIONS': {
-                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-            }
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tekacomdb',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'ATOMIC_REQUESTS': True,
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+    }
 }
+
 
 
 
@@ -148,3 +165,6 @@ cloudinary.config(
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+
