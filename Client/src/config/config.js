@@ -2,7 +2,7 @@
 const BASE_URL =
   window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://127.0.0.1:8000"
-    : "https://api.viali-gn.com"; // ton URL backend Render
+    : "https://tekacom.onrender.com"; // ton URL backend Render
 
 const CONFIG = {
   BASE_URL,

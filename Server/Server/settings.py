@@ -73,7 +73,8 @@ CORS_ALLOW_ALL_ORIGINS = False  # ← PAS DE TRUE ici sinon erreur
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://tekacom.gn",   # Frontend de dev
+    "https://tekacom.gn", 
+    "https://tekacom.onrender.com"  # Frontend de dev
     # "https://viali-gn.com"      # Frontend prod si nécessaire
 
 ]
@@ -82,6 +83,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://tekacom.gn",
+    "https://tekacom.onrender.com"
     # "https://viali-gn.com"
 ]
 
