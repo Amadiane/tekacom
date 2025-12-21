@@ -12,8 +12,7 @@ const Footerlastpart = () => {
         
         {/* Texte Copyright bien centré et responsive */}
         <p className="text-xs sm:text-sm text-center leading-relaxed">
-          © 2025 Copyright Jorfof - Tous droits réservés. 
-          Jorfof n'est pas responsable des contenus provenant de sites Internet externes.
+          © 2026 Copyright TEKACOM - Tous droits réservés. 
         </p>
       </div>
     </div>
