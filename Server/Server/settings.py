@@ -74,7 +74,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://tekacom.gn", 
-    "https://tekacom.onrender.com"  # Frontend de dev
+    "https://tekacom.onrender.com",
+    "https://tekacom.vercel.app" # Frontend de dev
     # "https://viali-gn.com"      # Frontend prod si nécessaire
 
 ]
@@ -83,7 +84,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://tekacom.gn",
-    "https://tekacom.onrender.com"
+    "https://tekacom.onrender.com",
+    "https://tekacom.vercel.app"
     # "https://viali-gn.com"
 ]
 
