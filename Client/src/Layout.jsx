@@ -184,7 +184,7 @@ const App = () => {
     "/documentPost", "/mediaPartenairePost", "/programPost",
     "/dashboardAdmin", "/teamMessage", "/missionPost", "/activitiesPost",
     "/homePost",
-    "/partnerPost", "/professionalAreaPost", "/thonRecipesPost", "/sardineRecipesPost",
+    "/partnerPost", "/professionalAreaPost", "/thonRecipesPost", "/portfolioPost",
     "/servicePost", "/thonProductPost",
   ];
 

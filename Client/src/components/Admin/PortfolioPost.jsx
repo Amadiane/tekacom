@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import CONFIG from "../../config/config.js";
 import {
-  Fish,
+  Briefcase,
   Loader2,
   Trash2,
   PlusCircle,
@@ -13,10 +13,24 @@ import {
   ChevronLeft,
   ChevronRight,
   Image as ImageIcon,
-  Check
+  Check,
+  Calendar
 } from "lucide-react";
 
-const SardineRecipesPost = () => {
+/**
+ * 🎨 GESTION PORTFOLIO - TEKACOM
+ * 
+ * Structure:
+ * - title: Titre du projet (FR uniquement)
+ * - description: Description (FR uniquement)
+ * - cover_photo: Photo de couverture (obligatoire)
+ * - image_1 à image_8: Images additionnelles (optionnelles)
+ * - is_active: Statut actif/inactif
+ * 
+ * Charte graphique: Fond blanc + Gradient orange
+ */
+
+const PortfolioPost = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
@@ -26,12 +40,32 @@ const SardineRecipesPost = () => {
   const [showList, setShowList] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [preview, setPreview] = useState(null);
+  
+  // Previews pour toutes les images
+  const [coverPreview, setCoverPreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState({
+    image_1: null,
+    image_2: null,
+    image_3: null,
+    image_4: null,
+    image_5: null,
+    image_6: null,
+    image_7: null,
+    image_8: null,
+  });
 
   const [formData, setFormData] = useState({
-    title_fr: "",
-    title_en: "",
-    image: null,
+    title: "",
+    description: "",
+    cover_photo: null,
+    image_1: null,
+    image_2: null,
+    image_3: null,
+    image_4: null,
+    image_5: null,
+    image_6: null,
+    image_7: null,
+    image_8: null,
     is_active: true,
   });
 
@@ -39,30 +73,20 @@ const SardineRecipesPost = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const token = typeof window !== "undefined" && (localStorage.getItem("token") || localStorage.getItem("access"));
-
-  // AUTH HEADERS
-  const getAuthHeaders = (isJson = true) => {
-    const headers = {};
-    if (isJson) headers["Content-Type"] = "application/json";
-    if (token) headers["Authorization"] = `Bearer ${token}`;
-    return headers;
-  };
-
+  // -----------------------------
   // FETCH ITEMS
+  // -----------------------------
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const res = await fetch(CONFIG.API_SARDINE_LIST, { headers: getAuthHeaders(true) });
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`API error: ${res.status} ${txt}`);
-      }
+      const res = await fetch(CONFIG.API_PORTFOLIO_LIST);
+      if (!res.ok) throw new Error("Erreur de chargement");
       const data = await res.json();
       setItems(data);
+      setError(null);
     } catch (err) {
       console.error(err);
-      setError("Erreur lors du chargement des recettes");
+      setError("Erreur lors du chargement du portfolio");
     } finally {
       setLoading(false);
       setFetchLoading(false);
@@ -73,30 +97,44 @@ const SardineRecipesPost = () => {
     fetchItems();
   }, []);
 
+  // -----------------------------
   // CLOUDINARY UPLOAD
+  // -----------------------------
   const uploadToCloudinary = async (file) => {
     if (!file) return null;
+
     const data = new FormData();
     data.append("file", file);
     data.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
 
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_NAME}/image/upload`, { method: "POST", body: data });
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_NAME}/image/upload`,
+        { method: "POST", body: data }
+      );
       const json = await res.json();
       return json.secure_url || null;
     } catch (err) {
-      console.error("Cloudinary error", err);
+      console.error("Erreur upload Cloudinary:", err);
       return null;
     }
   };
 
+  // -----------------------------
   // HANDLE CHANGE
+  // -----------------------------
   const handleChange = (e) => {
     const { name, value, type, files, checked } = e.target;
-    if (type === "file") {
-      if (files && files[0]) {
-        setFormData({ ...formData, image: files[0] });
-        setPreview(URL.createObjectURL(files[0]));
+    
+    if (type === "file" && files && files[0]) {
+      setFormData({ ...formData, [name]: files[0] });
+      
+      // Preview différent selon le champ
+      const previewUrl = URL.createObjectURL(files[0]);
+      if (name === "cover_photo") {
+        setCoverPreview(previewUrl);
+      } else {
+        setImagePreviews({ ...imagePreviews, [name]: previewUrl });
       }
     } else if (type === "checkbox") {
       setFormData({ ...formData, [name]: checked });
@@ -105,14 +143,41 @@ const SardineRecipesPost = () => {
     }
   };
 
+  // -----------------------------
   // RESET FORM
+  // -----------------------------
   const resetForm = () => {
-    setFormData({ title_fr: "", title_en: "", image: null, is_active: true });
-    setPreview(null);
+    setFormData({
+      title: "",
+      description: "",
+      cover_photo: null,
+      image_1: null,
+      image_2: null,
+      image_3: null,
+      image_4: null,
+      image_5: null,
+      image_6: null,
+      image_7: null,
+      image_8: null,
+      is_active: true,
+    });
+    setCoverPreview(null);
+    setImagePreviews({
+      image_1: null,
+      image_2: null,
+      image_3: null,
+      image_4: null,
+      image_5: null,
+      image_6: null,
+      image_7: null,
+      image_8: null,
+    });
     setEditingId(null);
   };
 
+  // -----------------------------
   // SUBMIT FORM
+  // -----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -120,41 +185,59 @@ const SardineRecipesPost = () => {
     setSuccessMessage(null);
 
     try {
-      let imageUrl = null;
-      
-      // Si on a une nouvelle image uploadée (File object)
-      if (formData.image && formData.image instanceof File) {
-        imageUrl = await uploadToCloudinary(formData.image);
-      } 
-      // Si on a une URL d'image existante (string)
-      else if (typeof formData.image === "string" && formData.image) {
-        imageUrl = formData.image;
+      // Upload cover photo (obligatoire)
+      let coverUrl = null;
+      if (formData.cover_photo instanceof File) {
+        coverUrl = await uploadToCloudinary(formData.cover_photo);
+      } else if (typeof formData.cover_photo === "string") {
+        coverUrl = formData.cover_photo;
+      }
+
+      if (!coverUrl) {
+        throw new Error("La photo de couverture est obligatoire");
+      }
+
+      // Upload images additionnelles (optionnelles)
+      const imageUrls = {};
+      for (let i = 1; i <= 8; i++) {
+        const fieldName = `image_${i}`;
+        const image = formData[fieldName];
+        
+        if (image instanceof File) {
+          imageUrls[fieldName] = await uploadToCloudinary(image);
+        } else if (typeof image === "string" && image) {
+          imageUrls[fieldName] = image;
+        } else {
+          imageUrls[fieldName] = null;
+        }
       }
 
       const payload = {
-        title_fr: formData.title_fr,
-        title_en: formData.title_en,
-        is_active: !!formData.is_active,
+        title: formData.title,
+        description: formData.description,
+        cover_photo: coverUrl,
+        ...imageUrls,
+        is_active: formData.is_active,
       };
-      if (imageUrl) payload.image = imageUrl;
 
-      const url = editingId ? CONFIG.API_SARDINE_UPDATE(editingId) : CONFIG.API_SARDINE_CREATE;
       const method = editingId ? "PATCH" : "POST";
+      const url = editingId
+        ? CONFIG.API_PORTFOLIO_UPDATE(editingId)
+        : CONFIG.API_PORTFOLIO_CREATE;
 
-      const res = await fetch(url, { method, headers: getAuthHeaders(true), body: JSON.stringify(payload) });
-      
-      if (!res.ok) {
-        let errText = `${res.status}`;
-        try {
-          const j = await res.json();
-          errText = j.detail || JSON.stringify(j);
-        } catch {
-          errText = await res.text();
-        }
-        throw new Error(errText);
-      }
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-      setSuccessMessage(editingId ? "Recette mise à jour avec succès !" : "Recette ajoutée avec succès !");
+      if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
+
+      setSuccessMessage(
+        editingId 
+          ? "Portfolio mis à jour avec succès !" 
+          : "Portfolio créé avec succès !"
+      );
       resetForm();
       await fetchItems();
       setShowForm(false);
@@ -162,56 +245,64 @@ const SardineRecipesPost = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error(err);
-      setError("Erreur lors de la sauvegarde: " + (err.message || ""));
+      setError(err.message || "Erreur lors de la sauvegarde");
     } finally {
       setLoading(false);
     }
   };
 
+  // -----------------------------
   // DELETE ITEM
+  // -----------------------------
   const handleDelete = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cette recette ?")) return;
+    if (!window.confirm("Voulez-vous vraiment supprimer ce projet ?")) return;
 
     try {
-      const res = await fetch(CONFIG.API_SARDINE_DELETE(id), { method: "DELETE", headers: getAuthHeaders(true) });
-      
-      if (res.status === 204 || res.ok) {
-        setSuccessMessage("Recette supprimée avec succès !");
-        await fetchItems();
-        setSelectedItem(null);
-        return;
-      }
-
-      let errText = `${res.status}`;
-      try {
-        const j = await res.json();
-        errText = j.detail || JSON.stringify(j);
-      } catch {
-        errText = await res.text();
-      }
-      throw new Error(errText);
+      const res = await fetch(CONFIG.API_PORTFOLIO_DELETE(id), { 
+        method: "DELETE" 
+      });
+      if (!res.ok) throw new Error("Erreur de suppression");
+      setSuccessMessage("Projet supprimé avec succès !");
+      await fetchItems();
+      setSelectedItem(null);
     } catch (err) {
       console.error(err);
-      setError("Erreur lors de la suppression: " + (err.message || ""));
+      setError("Erreur lors de la suppression");
     }
   };
 
+  // -----------------------------
   // EDIT ITEM
+  // -----------------------------
   const handleEdit = (item) => {
     setEditingId(item.id);
-    setFormData({
-      title_fr: item.title_fr || "",
-      title_en: item.title_en || "",
-      image: item.image_url || item.image || null,
-      is_active: item.is_active ?? true
-    });
-    setPreview(item.image_url || item.image || null);
+    
+    const updatedFormData = {
+      title: item.title || "",
+      description: item.description || "",
+      cover_photo: item.cover_photo || null,
+      is_active: item.is_active ?? true,
+    };
+
+    // Charger les 8 images additionnelles
+    const updatedPreviews = {};
+    for (let i = 1; i <= 8; i++) {
+      const fieldName = `image_${i}`;
+      updatedFormData[fieldName] = item[fieldName] || null;
+      updatedPreviews[fieldName] = item[fieldName] || null;
+    }
+
+    setFormData(updatedFormData);
+    setCoverPreview(item.cover_photo);
+    setImagePreviews(updatedPreviews);
     setShowForm(true);
     setShowList(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // -----------------------------
   // PAGINATION LOGIC
+  // -----------------------------
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
@@ -222,13 +313,15 @@ const SardineRecipesPost = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // -----------------------------
   // LOADING STATE
+  // -----------------------------
   if (fetchLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-[#F47920] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Chargement des recettes...</p>
+          <p className="text-gray-600 font-medium">Chargement du portfolio...</p>
         </div>
       </div>
     );
@@ -237,6 +330,7 @@ const SardineRecipesPost = () => {
   return (
     <div className="min-h-screen bg-white p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
+        
         {/* HEADER MODERNE */}
         <div className="mb-8">
           <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 md:p-8">
@@ -245,16 +339,16 @@ const SardineRecipesPost = () => {
                 <div className="relative group">
                   <div className="absolute inset-0 bg-gradient-to-r from-[#FDB71A] via-[#F47920] to-[#E84E1B] opacity-0 group-hover:opacity-20 blur-xl transition-opacity rounded-2xl"></div>
                   <div className="relative w-14 h-14 bg-gradient-to-br from-[#FDB71A] via-[#F47920] to-[#E84E1B] rounded-2xl flex items-center justify-center shadow-lg">
-                    <Fish className="text-white w-7 h-7" />
+                    <Briefcase className="text-white w-7 h-7" />
                   </div>
                 </div>
 
                 <div>
                   <h1 className="text-3xl md:text-4xl font-black text-gray-900">
-                    Recettes de Sardine
+                    Gestion du Portfolio
                   </h1>
                   <p className="text-gray-500 font-medium mt-1">
-                    Idées Recettes & Préparations
+                    Projets & Réalisations
                   </p>
                 </div>
               </div>
@@ -265,9 +359,7 @@ const SardineRecipesPost = () => {
                   disabled={loading}
                   className="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-semibold hover:border-gray-300 hover:shadow-md transition-all duration-200 disabled:opacity-50"
                 >
-                  <RefreshCw
-                    className={`w-5 h-5 ${loading ? "animate-spin" : ""}`}
-                  />
+                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
                   Actualiser
                 </button>
 
@@ -291,7 +383,7 @@ const SardineRecipesPost = () => {
                   ) : (
                     <>
                       <PlusCircle className="w-5 h-5" />
-                      Nouvelle Recette
+                      Nouveau Projet
                     </>
                   )}
                 </button>
@@ -304,10 +396,7 @@ const SardineRecipesPost = () => {
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 flex items-center gap-3">
             <div className="flex-1 text-red-700 font-medium">{error}</div>
-            <button
-              onClick={() => setError(null)}
-              className="text-red-500 hover:text-red-700"
-            >
+            <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700">
               <X size={18} />
             </button>
           </div>
@@ -315,13 +404,8 @@ const SardineRecipesPost = () => {
 
         {successMessage && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-            <div className="flex-1 text-green-700 font-medium">
-              {successMessage}
-            </div>
-            <button
-              onClick={() => setSuccessMessage(null)}
-              className="text-green-500 hover:text-green-700"
-            >
+            <div className="flex-1 text-green-700 font-medium">{successMessage}</div>
+            <button onClick={() => setSuccessMessage(null)} className="text-green-500 hover:text-green-700">
               <X size={18} />
             </button>
           </div>
@@ -331,107 +415,150 @@ const SardineRecipesPost = () => {
         {showForm && (
           <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 md:p-8 mb-8">
             <form onSubmit={handleSubmit}>
+              
               {/* En-tête du formulaire */}
               <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
                 <div className="w-1 h-8 bg-gradient-to-b from-[#FDB71A] to-[#E84E1B] rounded-full"></div>
                 <h3 className="text-2xl font-bold text-gray-900">
-                  {editingId ? "Modifier la recette" : "Nouvelle recette"}
+                  {editingId ? "Modifier le projet" : "Nouveau projet"}
                 </h3>
               </div>
 
-              {/* Grille des champs - Titres */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700 text-sm">
-                    Titre (FR) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="title_fr"
-                    value={formData.title_fr}
-                    onChange={handleChange}
-                    placeholder="Ex: Sardines grillées à l'huile d'olive"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#FDB71A] focus:ring-2 focus:ring-[#FDB71A]/20 transition-all bg-white font-medium"
-                    required
-                  />
-                </div>
+              {/* Titre */}
+              <div className="mb-6 space-y-2">
+                <label className="font-semibold text-gray-700 text-sm">
+                  Titre du projet <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Ex: Identité visuelle - Restaurant Le Gourmet"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium"
+                  required
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700 text-sm">
-                    Title (EN)
-                  </label>
-                  <input
-                    type="text"
-                    name="title_en"
-                    value={formData.title_en}
-                    onChange={handleChange}
-                    placeholder="Ex: Grilled Sardines with Olive Oil"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium"
-                  />
+              {/* Description */}
+              <div className="mb-6 space-y-2">
+                <label className="font-semibold text-gray-700 text-sm">
+                  Description
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="4"
+                  placeholder="Décrivez le projet, le client, les objectifs..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium resize-none"
+                ></textarea>
+              </div>
+
+              {/* Photo de couverture (obligatoire) */}
+              <div className="mb-6 space-y-3">
+                <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-[#E84E1B]" />
+                  Photo de couverture <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="file"
+                  name="cover_photo"
+                  accept="image/*"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-dashed border-orange-300 rounded-xl bg-orange-50 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gradient-to-r file:from-[#FDB71A] file:to-[#F47920] file:text-white hover:file:scale-105 file:transition-all file:cursor-pointer focus:border-[#F47920]"
+                  required={!editingId}
+                />
+                {coverPreview && (
+                  <div className="flex justify-center">
+                    <div className="relative bg-white border-2 border-orange-200 rounded-2xl p-4 shadow-lg w-full max-w-md h-64">
+                      <img
+                        src={coverPreview}
+                        alt="Couverture"
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                      <div className="absolute top-2 left-2">
+                        <span className="bg-orange-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                          Couverture
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Images additionnelles (1 à 8) */}
+              <div className="mb-6">
+                <label className="font-semibold text-gray-700 text-sm flex items-center gap-2 mb-4">
+                  <ImageIcon className="w-5 h-5 text-blue-500" />
+                  Images additionnelles (jusqu'à 8 images)
+                </label>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+                    const fieldName = `image_${num}`;
+                    return (
+                      <div key={num} className="space-y-2">
+                        <label className="text-xs font-medium text-gray-600">
+                          Image {num}
+                        </label>
+                        <input
+                          type="file"
+                          name={fieldName}
+                          accept="image/*"
+                          onChange={handleChange}
+                          className="w-full text-xs px-2 py-2 border border-gray-300 rounded-lg bg-white file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 file:cursor-pointer"
+                        />
+                        {imagePreviews[fieldName] && (
+                          <div className="relative w-full h-32 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                            <img
+                              src={imagePreviews[fieldName]}
+                              alt={`Image ${num}`}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute top-1 right-1">
+                              <span className="bg-blue-500 text-white px-1.5 py-0.5 rounded text-xs font-semibold">
+                                {num}
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Image et Statut */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                {/* Upload image */}
-                <div className="space-y-3">
-                  <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
-                    <ImageIcon className="w-5 h-5 text-[#E84E1B]" />
-                    Image de la recette
+              {/* Statut */}
+              <div className="mb-6 space-y-2">
+                <label className="font-semibold text-gray-700 text-sm">
+                  Statut de publication
+                </label>
+                <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl border border-gray-300">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    name="is_active"
+                    checked={formData.is_active}
+                    onChange={handleChange}
+                    className="w-5 h-5 rounded accent-[#FDB71A] cursor-pointer"
+                  />
+                  <label 
+                    htmlFor="is_active" 
+                    className="font-semibold text-gray-700 cursor-pointer flex items-center gap-2"
+                  >
+                    {formData.is_active ? (
+                      <>
+                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Projet actif
+                      </>
+                    ) : (
+                      <>
+                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        Projet inactif
+                      </>
+                    )}
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      name="image"
-                      accept="image/*"
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gradient-to-r file:from-[#FDB71A] file:to-[#F47920] file:text-white hover:file:scale-105 file:transition-all file:cursor-pointer focus:border-[#F47920]"
-                    />
-                  </div>
-                  {preview && (
-                    <div className="flex justify-center mt-4">
-                      <div className="relative bg-white border border-gray-200 rounded-2xl p-4 shadow-lg w-48 h-48">
-                        <img
-                          src={preview}
-                          alt="Aperçu"
-                          className="w-full h-full object-cover rounded-xl"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Statut actif */}
-                <div className="space-y-2">
-                  <label className="font-semibold text-gray-700 text-sm">
-                    Statut de publication
-                  </label>
-                  <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl border border-gray-300">
-                    <input
-                      type="checkbox"
-                      id="is_active"
-                      name="is_active"
-                      checked={formData.is_active}
-                      onChange={handleChange}
-                      className="w-5 h-5 rounded accent-[#FDB71A] cursor-pointer"
-                    />
-                    <label
-                      htmlFor="is_active"
-                      className="font-semibold text-gray-700 cursor-pointer flex items-center gap-2"
-                    >
-                      {formData.is_active ? (
-                        <>
-                          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                          Recette active
-                        </>
-                      ) : (
-                        <>
-                          <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                          Recette inactive
-                        </>
-                      )}
-                    </label>
-                  </div>
                 </div>
               </div>
 
@@ -450,7 +577,7 @@ const SardineRecipesPost = () => {
                   ) : (
                     <>
                       <Save className="w-5 h-5" />
-                      {editingId ? "Mettre à jour" : "Créer la recette"}
+                      {editingId ? "Mettre à jour" : "Créer le projet"}
                     </>
                   )}
                 </button>
@@ -474,16 +601,17 @@ const SardineRecipesPost = () => {
           </div>
         )}
 
-        {/* LISTE DES RECETTES */}
+        {/* LISTE DES PROJETS */}
         {showList && (
           <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
+            
             {/* En-tête */}
             <div className="p-6 md:p-8 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-1 h-8 bg-gradient-to-b from-[#FDB71A] to-[#E84E1B] rounded-full"></div>
                   <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                    Liste des recettes
+                    Liste des projets
                     <span className="bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white px-3 py-1 rounded-full font-semibold text-sm">
                       {items.length}
                     </span>
@@ -502,110 +630,126 @@ const SardineRecipesPost = () => {
               ) : items.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Fish className="w-8 h-8 text-gray-400" />
+                    <Briefcase className="w-8 h-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-500 font-medium">
-                    Aucune recette pour le moment
-                  </p>
-                  <p className="text-gray-400 text-sm mt-1">
-                    Créez votre première recette
-                  </p>
+                  <p className="text-gray-500 font-medium">Aucun projet pour le moment</p>
+                  <p className="text-gray-400 text-sm mt-1">Créez votre premier projet</p>
                 </div>
               ) : (
                 <>
                   {/* Grille */}
                   <div className="grid gap-6 mb-6">
-                    {currentItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="group relative bg-white/60 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-orange-400/30 transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[#FDB71A]/50"
-                      >
-                        <div className="flex flex-col md:flex-row gap-4 p-4">
-                          {/* Image */}
-                          <div className="relative w-full md:w-48 h-48 flex-shrink-0 overflow-hidden rounded-xl">
-                            <div className="w-full h-full bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
-                              {(item.image_url || item.image) ? (
+                    {currentItems.map((item) => {
+                      // Compter les images additionnelles
+                      const additionalImages = [1, 2, 3, 4, 5, 6, 7, 8].filter(
+                        (num) => item[`image_${num}`]
+                      ).length;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="group relative bg-white/60 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-orange-400/30 transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[#FDB71A]/50"
+                        >
+                          <div className="flex flex-col md:flex-row gap-4 p-4">
+                            
+                            {/* Image de couverture */}
+                            <div className="relative w-full md:w-48 h-48 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 flex items-center justify-center">
+                              {item.cover_photo ? (
                                 <img
-                                  src={item.image_url || item.image}
-                                  alt={item.title_fr}
+                                  src={item.cover_photo}
+                                  alt={item.title}
                                   className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                                   onError={(e) => {
                                     e.target.style.display = 'none';
-                                    e.target.parentElement.innerHTML = '<div class="flex items-center justify-center w-full h-full"><svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>';
+                                    e.target.nextElementSibling.classList.remove('hidden');
                                   }}
                                 />
-                              ) : (
-                                <Fish className="w-16 h-16 text-gray-300" />
-                              )}
-                            </div>
-                            {/* Badge actif/inactif */}
-                            <div className="absolute top-2 right-2">
-                              {item.is_active ? (
-                                <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
-                                  <Check className="w-3 h-3" />
-                                  Active
-                                </span>
-                              ) : (
-                                <span className="bg-gray-400 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
-                                  Inactive
-                                </span>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Contenu */}
-                          <div className="flex-1 flex flex-col justify-between min-w-0">
-                            <div>
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="text-xl font-black text-gray-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#E84E1B] group-hover:via-[#F47920] group-hover:to-[#FDB71A] transition-all">
-                                  {item.title_fr}
-                                </h4>
-                                {!item.is_active && (
-                                  <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-semibold">
-                                    Masquée
+                              ) : null}
+                              <Briefcase className={`${item.cover_photo ? 'hidden' : ''} w-16 h-16 text-gray-400`} />
+                              
+                              <div className="absolute top-2 right-2">
+                                {item.is_active ? (
+                                  <span className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+                                    <Check className="w-3 h-3" />
+                                    Actif
+                                  </span>
+                                ) : (
+                                  <span className="bg-gray-400 text-white px-2 py-1 rounded-full text-xs font-semibold shadow-lg">
+                                    Inactif
                                   </span>
                                 )}
                               </div>
-                              {item.title_en && (
-                                <p className="text-gray-600 text-sm font-medium mb-2">
-                                  {item.title_en}
-                                </p>
+                              
+                              {additionalImages > 0 && (
+                                <div className="absolute bottom-2 left-2">
+                                  <span className="bg-blue-500 text-white px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-lg">
+                                    <ImageIcon className="w-3 h-3" />
+                                    +{additionalImages}
+                                  </span>
+                                </div>
                               )}
                             </div>
 
-                            {/* Actions */}
-                            <div className="flex flex-wrap gap-3 mt-4">
-                              <button
-                                onClick={() => setSelectedItem(item)}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-                              >
-                                <Eye size={16} />
-                                Voir
-                              </button>
+                            {/* Contenu */}
+                            <div className="flex-1 flex flex-col justify-between min-w-0">
+                              <div>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <h4 className="text-xl font-black text-gray-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#E84E1B] group-hover:via-[#F47920] group-hover:to-[#FDB71A] transition-all">
+                                    {item.title}
+                                  </h4>
+                                  {!item.is_active && (
+                                    <span className="bg-gray-100 text-gray-600 px-2 py-0.5 rounded text-xs font-semibold">
+                                      Masqué
+                                    </span>
+                                  )}
+                                </div>
+                                
+                                <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed mb-2">
+                                  {item.description || "Aucune description"}
+                                </p>
+                                
+                                {item.created_at && (
+                                  <p className="text-xs text-gray-400 flex items-center gap-1">
+                                    <Calendar className="w-3 h-3" />
+                                    {new Date(item.created_at).toLocaleDateString('fr-FR')}
+                                  </p>
+                                )}
+                              </div>
 
-                              <button
-                                onClick={() => {
-                                  handleEdit(item);
-                                  window.scrollTo({ top: 0, behavior: "smooth" });
-                                }}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-                              >
-                                <Edit2 size={16} />
-                                Modifier
-                              </button>
+                              {/* Actions */}
+                              <div className="flex flex-wrap gap-3 mt-4">
+                                <button
+                                  onClick={() => setSelectedItem(item)}
+                                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+                                >
+                                  <Eye size={16} />
+                                  Voir
+                                </button>
 
-                              <button
-                                onClick={() => handleDelete(item.id)}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-                              >
-                                <Trash2 size={16} />
-                                Supprimer
-                              </button>
+                                <button
+                                  onClick={() => {
+                                    handleEdit(item);
+                                    window.scrollTo({ top: 0, behavior: "smooth" });
+                                  }}
+                                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+                                >
+                                  <Edit2 size={16} />
+                                  Modifier
+                                </button>
+
+                                <button
+                                  onClick={() => handleDelete(item.id)}
+                                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
+                                >
+                                  <Trash2 size={16} />
+                                  Supprimer
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
                   {/* Pagination */}
@@ -654,12 +798,12 @@ const SardineRecipesPost = () => {
 
       {/* MODAL DÉTAIL */}
       {selectedItem && (
-        <div
+        <div 
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50"
           onClick={() => setSelectedItem(null)}
         >
-          <div
-            className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+          <div 
+            className="bg-white w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* En-tête modal */}
@@ -672,48 +816,72 @@ const SardineRecipesPost = () => {
               </button>
 
               <h2 className="text-2xl font-bold text-white pr-12">
-                {selectedItem.title_fr}
+                {selectedItem.title}
               </h2>
-              {selectedItem.title_en && (
-                <p className="text-white/80 text-sm mt-1">
-                  {selectedItem.title_en}
-                </p>
-              )}
             </div>
 
             {/* Contenu modal */}
             <div className="p-6 overflow-y-auto flex-1">
-              {(selectedItem.image_url || selectedItem.image) && (
-                <img
-                  src={selectedItem.image_url || selectedItem.image}
-                  className="w-full h-80 object-cover rounded-xl mb-6"
-                  alt={selectedItem.title_fr}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
+              
+              {/* Photo de couverture */}
+              {selectedItem.cover_photo && (
+                <div className="mb-6">
+                  <img
+                    src={selectedItem.cover_photo}
+                    className="w-full h-96 object-cover rounded-xl"
+                    alt={selectedItem.title}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
               )}
 
-              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-4 rounded-xl border-l-4 border-[#FDB71A]">
-                <h3 className="font-bold text-gray-700 mb-2 flex items-center gap-2">
-                  <Fish className="w-5 h-5 text-[#F47920]" />
-                  Informations de la recette
-                </h3>
-                <p className="text-gray-700">
-                  <span className="font-semibold">Titre FR:</span> {selectedItem.title_fr}
-                </p>
-                {selectedItem.title_en && (
-                  <p className="text-gray-700 mt-1">
-                    <span className="font-semibold">Title EN:</span> {selectedItem.title_en}
+              {/* Description */}
+              {selectedItem.description && (
+                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-6">
+                  <h3 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">
+                    Description
+                  </h3>
+                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {selectedItem.description}
                   </p>
-                )}
-                <p className="text-gray-700 mt-2">
-                  <span className="font-semibold">Statut:</span>{" "}
-                  <span className={selectedItem.is_active ? "text-green-600" : "text-red-600"}>
-                    {selectedItem.is_active ? "Active" : "Inactive"}
-                  </span>
-                </p>
-              </div>
+                </div>
+              )}
+
+              {/* Images additionnelles */}
+              {[1, 2, 3, 4, 5, 6, 7, 8].some((num) => selectedItem[`image_${num}`]) && (
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-4 text-sm uppercase tracking-wide flex items-center gap-2">
+                    <ImageIcon className="w-5 h-5 text-blue-500" />
+                    Images du projet
+                  </h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => {
+                      const imageUrl = selectedItem[`image_${num}`];
+                      if (!imageUrl) return null;
+                      
+                      return (
+                        <div key={num} className="relative aspect-square rounded-xl overflow-hidden border border-gray-200 group">
+                          <img
+                            src={imageUrl}
+                            alt={`Image ${num}`}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                          <div className="absolute top-2 right-2">
+                            <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                              {num}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Actions modal */}
@@ -753,4 +921,4 @@ const SardineRecipesPost = () => {
   );
 };
 
-export default SardineRecipesPost;
+export default PortfolioPost;

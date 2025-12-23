@@ -91,7 +91,7 @@ const NavAdmin = () => {
       items: [
         { path: "/professionalAreaPost", label: "Espace Pro" },
         { path: "/thonRecipesPost", label: "Recettes Thon" },
-        { path: "/sardineRecipesPost", label: "Recettes Sardine" },
+        { path: "/portfolioPost", label: "Portfolio" },
         { path: "/servicePost", label: "Services" },
         { path: "/thonProductPost", label: "Produits Thon" },
        
