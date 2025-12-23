@@ -93,3 +93,37 @@ class TrackStatsView(APIView):
             "timeseries": timeseries,
         }
         return Response(data)
+
+
+
+
+from rest_framework import viewsets
+from .models import Partner, EquipeMember
+from .serializers import PartnerSerializer, EquipeMemberSerializer
+
+class EquipeMemberViewSet(viewsets.ModelViewSet):
+    queryset = EquipeMember.objects.all()
+    serializer_class = EquipeMemberSerializer
+
+
+
+
+
+from rest_framework import viewsets, permissions
+from .models import Contact
+from .serializers import ContactSerializer
+
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all().order_by("-created_at")
+    serializer_class = ContactSerializer
+    permission_classes = [permissions.AllowAny]  # Ou IsAuthenticated si tu veux sécuriser l'accès
+
+
+# views.py
+from rest_framework.viewsets import ModelViewSet
+from .models import ValeurMission
+from .serializers import ValeurMissionSerializer
+
+class ValeurMissionViewSet(ModelViewSet):
+    queryset = ValeurMission.objects.all().order_by("-created_at")
+    serializer_class = ValeurMissionSerializer

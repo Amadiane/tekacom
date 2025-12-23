@@ -7,6 +7,16 @@ import {
 } from "lucide-react";
 import CONFIG from "../../config/config.js";
 
+/**
+ * 🎨 PAGE NOTRE ÉQUIPE - TEKACOM
+ * 
+ * Charte graphique:
+ * - Violet: #a34ee5 (primaire)
+ * - Violet foncé: #7828a8 (secondaire)
+ * - Or: #fec603 (accent)
+ * - Fond: dark-200 (#1a1a1a)
+ */
+
 const NotreEquipe = () => {
   const { t, i18n } = useTranslation();
   const [membres, setMembres] = useState([]);
@@ -59,16 +69,15 @@ const NotreEquipe = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section - Ultra Simple */}
-      <section className="border-b border-gray-100">
+    <div className="min-h-screen bg-dark-200">
+      {/* Hero Section */}
+      <section className="border-b border-[#a34ee5]/10">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-32 pb-8 md:pt-40 md:pb-12">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-gray-900 mb-4 tracking-tight">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-4 tracking-tight">
             {t("team.title", "Notre Équipe")}
           </h1>
-          <p className="text-xl md:text-2xl text-gray-500 font-light">
-            {/* Les talents qui font notre entreprise */}
-            {t("team.title2", "Notre Équipe")}
+          <p className="text-xl md:text-2xl text-gray-400 font-light">
+            {t("team.title2", "Les talents qui font Tekacom")}
           </p>
         </div>
       </section>
@@ -78,22 +87,22 @@ const NotreEquipe = () => {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col justify-center items-center py-20">
-            <Loader2 className="w-12 h-12 text-[#F47920] animate-spin mb-4" />
-            <p className="text-gray-600 font-medium">{t("team.loading", "Chargement...")}</p>
+            <Loader2 className="w-12 h-12 text-[#a34ee5] animate-spin mb-4" />
+            <p className="text-gray-300 font-medium">{t("team.loading", "Chargement...")}</p>
           </div>
         )}
 
         {/* Error State */}
         {error && !loading && (
           <div className="max-w-md mx-auto text-center py-16">
-            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="w-10 h-10 text-red-500" />
+            <div className="w-20 h-20 bg-[#a34ee5]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-10 h-10 text-[#a34ee5]" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Erreur de chargement</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Erreur de chargement</h2>
+            <p className="text-gray-400 mb-6">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-gradient-to-r from-[#FDB71A] via-[#F47920] to-[#E84E1B] text-white font-bold rounded-2xl hover:scale-105 transition-transform duration-300"
+              className="px-6 py-3 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-bold rounded-2xl hover:scale-105 hover:shadow-[0_0_30px_rgba(163,78,229,0.5)] transition-all duration-300"
             >
               Réessayer
             </button>
@@ -103,13 +112,13 @@ const NotreEquipe = () => {
         {/* Empty State */}
         {!loading && !error && membres.length === 0 && (
           <div className="text-center py-32">
-            <div className="w-24 h-24 bg-gray-50 rounded-3xl flex items-center justify-center mx-auto mb-6">
-              <Users className="w-12 h-12 text-gray-400" />
+            <div className="w-24 h-24 bg-dark-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+              <Users className="w-12 h-12 text-[#a34ee5]" />
             </div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-3">
+            <h3 className="text-3xl font-bold text-white mb-3">
               {t("team.no_members", "Aucun membre trouvé")}
             </h3>
-            <p className="text-gray-500 text-lg">L'équipe sera bientôt disponible</p>
+            <p className="text-gray-400 text-lg">L'équipe sera bientôt disponible</p>
           </div>
         )}
 
@@ -124,21 +133,21 @@ const NotreEquipe = () => {
                     key={membre.id}
                     className="group w-full md:w-[calc(33.333%-1.5rem)]"
                   >
-                    <div className="relative mb-2 overflow-hidden rounded-3xl bg-gray-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-orange-400/30 transition-all duration-300 border-2 border-transparent hover:border-[#FDB71A]/50">
+                    <div className="relative mb-2 overflow-hidden rounded-3xl bg-dark-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-[#a34ee5]/30 transition-all duration-300 border-2 border-transparent hover:border-[#a34ee5]/50">
                       <img
                         src={
                           membre.photo_url ||
-                          "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo"
+                          "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo"
                         }
                         alt={membre.full_name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                         onError={(e) =>
                           (e.target.src =
-                            "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo")
+                            "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo")
                         }
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
 
                     <div className="text-center">
@@ -147,17 +156,17 @@ const NotreEquipe = () => {
                           href={membre.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-lg md:text-xl font-black text-gray-900 hover:text-[#F47920] transition-colors duration-300 mb-0.5"
+                          className="block text-lg md:text-xl font-black text-white hover:text-[#a34ee5] transition-colors duration-300 mb-0.5"
                         >
                           {membre.full_name}
                         </a>
                       ) : (
-                        <h3 className="text-lg md:text-xl font-black text-gray-900 mb-0.5">
+                        <h3 className="text-lg md:text-xl font-black text-white mb-0.5">
                           {membre.full_name}
                         </h3>
                       )}
                       
-                      <p className="text-sm md:text-base text-gray-600 font-semibold">
+                      <p className="text-sm md:text-base text-[#fec603] font-semibold">
                         {membre.position_fr || membre[`position_${i18n.language}`] || "Membre"}
                       </p>
                     </div>
@@ -174,21 +183,21 @@ const NotreEquipe = () => {
                     key={membre.id}
                     className="group"
                   >
-                    <div className="relative mb-2 overflow-hidden rounded-3xl bg-gray-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-orange-400/30 transition-all duration-300 border-2 border-transparent hover:border-[#FDB71A]/50">
+                    <div className="relative mb-2 overflow-hidden rounded-3xl bg-dark-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-[#a34ee5]/30 transition-all duration-300 border-2 border-transparent hover:border-[#a34ee5]/50">
                       <img
                         src={
                           membre.photo_url ||
-                          "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo"
+                          "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo"
                         }
                         alt={membre.full_name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                         onError={(e) =>
                           (e.target.src =
-                            "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo")
+                            "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo")
                         }
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
 
                     <div className="text-center">
@@ -197,17 +206,17 @@ const NotreEquipe = () => {
                           href={membre.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-lg md:text-xl font-black text-gray-900 hover:text-[#F47920] transition-colors duration-300 mb-0.5"
+                          className="block text-lg md:text-xl font-black text-white hover:text-[#a34ee5] transition-colors duration-300 mb-0.5"
                         >
                           {membre.full_name}
                         </a>
                       ) : (
-                        <h3 className="text-lg md:text-xl font-black text-gray-900 mb-0.5">
+                        <h3 className="text-lg md:text-xl font-black text-white mb-0.5">
                           {membre.full_name}
                         </h3>
                       )}
                       
-                      <p className="text-sm md:text-base text-gray-600 font-semibold">
+                      <p className="text-sm md:text-base text-[#fec603] font-semibold">
                         {membre.position_fr || membre[`position_${i18n.language}`] || "Membre"}
                       </p>
                     </div>
@@ -224,21 +233,21 @@ const NotreEquipe = () => {
                     key={membre.id}
                     className="group"
                   >
-                    <div className="relative mb-2 overflow-hidden rounded-3xl bg-gray-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-orange-400/30 transition-all duration-300 border-2 border-transparent hover:border-[#FDB71A]/50">
+                    <div className="relative mb-2 overflow-hidden rounded-3xl bg-dark-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-[#a34ee5]/30 transition-all duration-300 border-2 border-transparent hover:border-[#a34ee5]/50">
                       <img
                         src={
                           membre.photo_url ||
-                          "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo"
+                          "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo"
                         }
                         alt={membre.full_name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                         onError={(e) =>
                           (e.target.src =
-                            "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo")
+                            "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo")
                         }
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
 
                     <div className="text-center">
@@ -247,17 +256,17 @@ const NotreEquipe = () => {
                           href={membre.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-lg md:text-xl font-black text-gray-900 hover:text-[#F47920] transition-colors duration-300 mb-0.5"
+                          className="block text-lg md:text-xl font-black text-white hover:text-[#a34ee5] transition-colors duration-300 mb-0.5"
                         >
                           {membre.full_name}
                         </a>
                       ) : (
-                        <h3 className="text-lg md:text-xl font-black text-gray-900 mb-0.5">
+                        <h3 className="text-lg md:text-xl font-black text-white mb-0.5">
                           {membre.full_name}
                         </h3>
                       )}
                       
-                      <p className="text-sm md:text-base text-gray-600 font-semibold">
+                      <p className="text-sm md:text-base text-[#fec603] font-semibold">
                         {membre.position_fr || membre[`position_${i18n.language}`] || "Membre"}
                       </p>
                     </div>
@@ -274,21 +283,21 @@ const NotreEquipe = () => {
                     key={membre.id}
                     className="group"
                   >
-                    <div className="relative mb-4 overflow-hidden rounded-3xl bg-gray-100 aspect-[3/4] shadow-lg">
+                    <div className="relative mb-4 overflow-hidden rounded-3xl bg-dark-100 aspect-[3/4] shadow-lg hover:shadow-2xl hover:shadow-[#a34ee5]/30 transition-all duration-300 border-2 border-transparent hover:border-[#a34ee5]/50">
                       <img
                         src={
                           membre.photo_url ||
-                          "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo"
+                          "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo"
                         }
                         alt={membre.full_name}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         loading="lazy"
                         onError={(e) =>
                           (e.target.src =
-                            "https://placehold.co/600x800/F5F5F5/CCCCCC?text=Photo")
+                            "https://placehold.co/600x800/1a1a1a/a34ee5?text=Photo")
                         }
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
 
                     <div className="text-center">
@@ -297,17 +306,17 @@ const NotreEquipe = () => {
                           href={membre.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-lg md:text-xl font-black text-gray-900 hover:text-[#F47920] transition-colors duration-300 mb-1"
+                          className="block text-lg md:text-xl font-black text-white hover:text-[#a34ee5] transition-colors duration-300 mb-1"
                         >
                           {membre.full_name}
                         </a>
                       ) : (
-                        <h3 className="text-lg md:text-xl font-black text-gray-900 mb-1">
+                        <h3 className="text-lg md:text-xl font-black text-white mb-1">
                           {membre.full_name}
                         </h3>
                       )}
                       
-                      <p className="text-sm md:text-base text-gray-600 font-semibold">
+                      <p className="text-sm md:text-base text-[#fec603] font-semibold">
                         {membre.position_fr || membre[`position_${i18n.language}`] || "Membre"}
                       </p>
                     </div>

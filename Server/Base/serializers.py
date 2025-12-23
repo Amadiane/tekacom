@@ -53,3 +53,56 @@ class ActivitySerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = ["id", "created_at"]
+
+
+
+from rest_framework import serializers
+from .models import Partner, EquipeMember
+
+
+class EquipeMemberSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+    display_position = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = EquipeMember
+        fields = "__all__"
+
+    def get_photo_url(self, obj):
+        if obj.photo:
+            return obj.photo.url
+        return None
+
+
+
+
+
+from rest_framework import serializers
+from .models import Contact
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = [
+            "id",
+            "name",
+            "email",
+            "subject",
+            "message",
+            "category",
+            "created_at",
+        ]
+        read_only_fields = ["id", "created_at"]
+
+
+from rest_framework import serializers
+from .models import ValeurMission
+
+# serializers.py
+from rest_framework import serializers
+from .models import ValeurMission
+
+class ValeurMissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ValeurMission
+        fields = "__all__"

@@ -74,6 +74,70 @@ class Activity(models.Model):
         return f"{self.action_type} @ {self.page} ({self.created_at.isoformat()})"
 
 
+class EquipeMember(models.Model):
+    full_name = models.CharField(max_length=255)
+    position_fr = models.CharField(max_length=255, verbose_name="Poste (FR)")
+    position_en = models.CharField(max_length=255, verbose_name="Position (EN)", blank=True, null=True)
+    bio_fr = models.TextField(verbose_name="Biographie (FR)", blank=True, null=True)
+    bio_en = models.TextField(verbose_name="Biography (EN)", blank=True, null=True)
+    photo = CloudinaryField('Photo', folder='team', blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Membre d'équipe"
+        verbose_name_plural = "Membres d'équipe"
+        ordering = ['full_name']
+
+    @property
+    def display_position(self):
+        lang = translation.get_language() or 'en'
+        if lang.startswith('fr'):
+            return self.position_fr or self.position_en or ""
+        return self.position_en or self.position_fr or ""
+
+    def __str__(self):
+        return self.full_name
+
+
+
+
+
+from django.db import models
+
+class Contact(models.Model):
+    CATEGORY_CHOICES = [
+        ('commentaire', 'Commentaires et suggestions'),
+        ('question', 'Questions générales'),
+        ('support', 'Support technique'),
+        ('partenariat', 'Partenariat'),
+    ]
+
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
+
+from django.db import models
+
+# models.py
+class ValeurMission(models.Model):
+    titre = models.CharField(max_length=255)
+    valeur = models.TextField()
+    mission = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.titre
 
 
 

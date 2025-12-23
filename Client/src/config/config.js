@@ -96,6 +96,14 @@ API_COMMUNITY_REPLY: (id) => `${BASE_URL}/api/community/${id}/reply/`,
   API_NEWSLETTER_REPLY: (id) => `${BASE_URL}/api/newsletter/${id}/reply/`,
 
 
+  // 🧭 VALEURS & MISSIONS (API UNIQUE)
+API_VALEUR_MISSION_LIST: `${BASE_URL}/api/valeur-mission/`,
+API_VALEUR_MISSION_CREATE: `${BASE_URL}/api/valeur-mission/`,
+API_VALEUR_MISSION_UPDATE: (id) => `${BASE_URL}/api/valeur-mission/${id}/`,
+API_VALEUR_MISSION_DELETE: (id) => `${BASE_URL}/api/valeur-mission/${id}/`,
+
+
+
   // HOME CRUD
   API_HOME_GET: `${BASE_URL}/api/home/`,
   API_HOME_CREATE: `${BASE_URL}/api/home/`,

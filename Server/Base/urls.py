@@ -1,9 +1,12 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import PartnerViewSet, TrackEventView, TrackStatsView
+from .views import PartnerViewSet, TrackEventView, TrackStatsView, EquipeMemberViewSet, ContactViewSet, ValeurMissionViewSet
 
 router = DefaultRouter()
 router.register(r"partners", PartnerViewSet, basename="partner")
+router.register(r'equipe-members', EquipeMemberViewSet, basename='equipe_member')
+router.register(r'contacts', ContactViewSet, basename='contact')
+router.register(r'valeur-mission', ValeurMissionViewSet, basename='valeur-mission')
 
 urlpatterns = [
     path("", include(router.urls)),

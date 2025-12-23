@@ -130,28 +130,14 @@ const Navlinks = () => {
       icon: Users,
       items: [
         { title: "Qui sommes-nous", path: "/about", icon: Users },
-        { title: "Notre équipe", path: "/team", icon: Users },
-        { title: "Notre mission", path: "/mission", icon: Award },
+        { title: "Notre équipe", path: "/notreEquipe", icon: Users },
+        { title: "Notre mission", path: "/nosMissions", icon: Award },
       ]
     },
-    {
-      title: "Services",
-      isDropdown: true,
-      icon: Palette,
-      isMegaMenu: true,
-      items: [
-        { title: "Communication visuelle", path: "/services/communication-visuelle", icon: Palette },
-        { title: "Production audiovisuelle", path: "/services/production-audiovisuelle", icon: Video },
-        { title: "Impression numérique", path: "/services/impression-numerique", icon: Printer },
-        { title: "Conception de sites web", path: "/services/conception-sites-web", icon: Globe },
-        { title: "Community management", path: "/services/community-management", icon: Users },
-        { title: "Formation", path: "/services/formation", icon: GraduationCap },
-        { title: "Consulting", path: "/services/consulting", icon: Lightbulb },
-        { title: "Organisation d'événements", path: "/services/organisation-evenements", icon: Calendar },
-      ]
-    },
+    { title: "Services", path: "/services", icon: Palette }, // ✅ Plus de dropdown, juste un lien direct
     { title: "Portfolio", path: "/portfolio", icon: FileText },
-    { title: "Contact", path: "/contact", icon: Calendar },
+    { title: "Partenaires", path: "/partner", icon: FileText },
+    { title: "Contact", path: "/contacternous", icon: Calendar },
   ];
 
   return (
@@ -159,7 +145,7 @@ const Navlinks = () => {
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-2' : 'py-4'}`}>
         <div className="max-w-[1600px] mx-auto px-6 lg:px-12">
           <div className={`
-            relative rounded-2xl transition-all duration-500
+            relative transition-all duration-500
             ${scrolled 
               ? 'bg-dark-100/99 backdrop-blur-3xl shadow-[0_0_120px_rgba(163,78,229,0.3)] py-3' 
               : 'bg-dark-100/98 backdrop-blur-3xl shadow-[0_0_80px_rgba(163,78,229,0.2)] py-4'
@@ -172,18 +158,10 @@ const Navlinks = () => {
                   <img 
                     src={logo} 
                     alt="Tekacom" 
-                    className={`relative rounded-xl object-contain transition-all duration-500 group-hover:scale-110 ${scrolled ? 'h-14 w-14' : 'h-16 w-16'}`}
+                    className={`relative object-contain transition-all duration-500 group-hover:scale-105 ${scrolled ? 'h-16' : 'h-20'}`}
+                    style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#a34ee5] to-[#fec603] opacity-0 group-hover:opacity-30 blur-xl rounded-xl transition-all duration-500"></div>
-                </div>
-                <div className={`transition-all duration-300 ${scrolled ? 'hidden lg:block' : 'hidden sm:block'}`}>
-                  <h1 className="text-xl font-black text-white tracking-tight group-hover:text-[#a34ee5] transition-colors" style={{fontFamily: '"Inter", "Geist", -apple-system, BlinkMacSystemFont, sans-serif'}}>
-                    TEKA<span className="text-[#fec603]">COM</span>
-                  </h1>
-                  <p className="text-[10px] text-gray-500 font-semibold uppercase tracking-widest flex items-center gap-1" style={{fontFamily: '"Inter", "Geist", -apple-system, BlinkMacSystemFont, sans-serif'}}>
-                    <Sparkles size={8} className="text-[#fec603]" />
-                    Inspirer • Créer • Impacter
-                  </p>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#a34ee5] to-[#fec603] opacity-0 group-hover:opacity-30 blur-xl transition-all duration-500"></div>
                 </div>
               </NavLink>
 
