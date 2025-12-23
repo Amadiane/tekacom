@@ -70,12 +70,12 @@ import PartnerPost from './components/Admin/PartnerPost.jsx';
 import NewsPost from './components/Admin/NewsPost.jsx';
 import ProfessionalAreaPost from './components/Admin/ProfessionalAreaPost.jsx';
 import ProfessionalArea from './components/HeaderSection/ProfessionalArea.jsx';
-import SardineRecipesPost from './components/Admin/SardineRecipesPost.jsx';
+import SardineRecipesPost from './components/Admin/PortfolioPost.jsx';
 import ThonRecipesPost from './components/Admin/ThonRecipesPost.jsx';
 import SardineRecipes from './components/HeaderSection/SardineRecipes.jsx';
 import ThonRecipes from './components/HeaderSection/ThonRecipes.jsx';
-import SardineProductPost from './components/Admin/SardineProductPost.jsx';
-import SardineProduct from './components/HeaderSection/SardineProduct.jsx';
+import ServicePost from './components/Admin/ServicePost.jsx';
+import Services from './components/HeaderSection/Services.jsx';
 import ThonProduct from './components/HeaderSection/ThonProduct.jsx';
 import ThonProductPost from './components/Admin/ThonProductPost.jsx';
 
@@ -115,7 +115,7 @@ const router = createBrowserRouter(
       <Route path="professionalArea" element={<ProfessionalArea />} />
       <Route path="sardineRecipes" element={<SardineRecipes />} />
       <Route path="thonRecipes" element={<ThonRecipes />} />
-      <Route path="sardineProduct" element={<SardineProduct />} />
+      <Route path="services" element={<Services />} />
       <Route path="thonProduct" element={<ThonProduct />} />
 
       {/* Routes Admin protégées */}
@@ -143,8 +143,9 @@ const router = createBrowserRouter(
         <Route path="professionalAreaPost" element={<ProfessionalAreaPost />} />
         <Route path="thonRecipesPost" element={<ThonRecipesPost />} />
         <Route path="sardineRecipesPost" element={<SardineRecipesPost />} />
-        <Route path="sardineProductPost" element={<SardineProductPost />} />
+        <Route path="servicePost" element={<ServicePost />} />
         <Route path="thonProductPost" element={<ThonProductPost />} />
+        
 
       </Route>
     </Route>

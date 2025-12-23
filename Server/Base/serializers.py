@@ -106,3 +106,26 @@ class ValeurMissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ValeurMission
         fields = "__all__"
+
+
+
+# Base/serializers.py
+from rest_framework import serializers
+from .models import Service
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = "__all__"
+
+
+
+# Base/serializers.py
+
+from rest_framework import serializers
+from .models import Portfolio
+
+class PortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
+        fields = "__all__"

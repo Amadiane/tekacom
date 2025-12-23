@@ -127,3 +127,27 @@ from .serializers import ValeurMissionSerializer
 class ValeurMissionViewSet(ModelViewSet):
     queryset = ValeurMission.objects.all().order_by("-created_at")
     serializer_class = ValeurMissionSerializer
+
+
+
+
+# Base/views.py
+from rest_framework.viewsets import ModelViewSet
+from .models import Service
+from .serializers import ServiceSerializer
+
+class ServiceViewSet(ModelViewSet):
+    queryset = Service.objects.all().order_by("-created_at")
+    serializer_class = ServiceSerializer
+
+
+
+# Base/views.py
+
+from rest_framework import viewsets
+from .models import Portfolio
+from .serializers import PortfolioSerializer
+
+class PortfolioViewSet(viewsets.ModelViewSet):
+    queryset = Portfolio.objects.all()
+    serializer_class = PortfolioSerializer

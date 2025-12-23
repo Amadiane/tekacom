@@ -49,6 +49,7 @@ const NavAdmin = () => {
       "/listeContacts": <Mail className="w-5 h-5" />,
       "/listePostulantsCommunity": <UserPlus className="w-5 h-5" />,
       "/listeAbonnement": <Users className="w-5 h-5" />,
+      "/servicePost": <Users className="w-5 h-5" />,
       "default": <FileText className="w-5 h-5" />
     };
     return icons[path] || icons["default"];
@@ -91,8 +92,9 @@ const NavAdmin = () => {
         { path: "/professionalAreaPost", label: "Espace Pro" },
         { path: "/thonRecipesPost", label: "Recettes Thon" },
         { path: "/sardineRecipesPost", label: "Recettes Sardine" },
-        { path: "/sardineProductPost", label: "Produits Sardine" },
+        { path: "/servicePost", label: "Services" },
         { path: "/thonProductPost", label: "Produits Thon" },
+       
       ]
     },
     {

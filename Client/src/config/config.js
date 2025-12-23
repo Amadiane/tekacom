@@ -103,6 +103,20 @@ API_VALEUR_MISSION_UPDATE: (id) => `${BASE_URL}/api/valeur-mission/${id}/`,
 API_VALEUR_MISSION_DELETE: (id) => `${BASE_URL}/api/valeur-mission/${id}/`,
 
 
+// 🛠️ SERVICES
+API_SERVICE_LIST: `${BASE_URL}/api/services/`,
+API_SERVICE_CREATE: `${BASE_URL}/api/services/`,
+API_SERVICE_UPDATE: (id) => `${BASE_URL}/api/services/${id}/`,
+API_SERVICE_DELETE: (id) => `${BASE_URL}/api/services/${id}/`,
+
+ // 🎨 PORTFOLIO  ✅ NOUVEAU
+  // =======================
+  API_PORTFOLIO_LIST: `${BASE_URL}/api/portfolio/`,
+  API_PORTFOLIO_CREATE: `${BASE_URL}/api/portfolio/`,
+  API_PORTFOLIO_UPDATE: (id) => `${BASE_URL}/api/portfolio/${id}/`,
+  API_PORTFOLIO_DELETE: (id) => `${BASE_URL}/api/portfolio/${id}/`,
+
+
 
   // HOME CRUD
   API_HOME_GET: `${BASE_URL}/api/home/`,
