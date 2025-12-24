@@ -1,44 +1,29 @@
-import React, { useEffect, useState } from "react";
-import Logo from "./Logo";
+import { useEffect, useState } from "react";
 import Navlinks from "./Navlinks";
-// import Loginbtn from "./Loginbtn";
 
-const Header = ({ logoColor = "#a34ee5" }) => {
+const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-      
-      // Effet glassmorphism au scroll
-      setIsScrolled(scrollTop > 50);
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <header 
-      className={`body-font fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        isScrolled 
-          ? 'bg-dark-100/80 backdrop-blur-xl shadow-lg' 
-          : 'bg-dark-200/40 backdrop-blur-sm'
-      }`}
+    <header
+      className={`
+        fixed top-0 left-0 w-full z-[100]
+        transition-all duration-300
+        ${isScrolled
+          ? "bg-[#0a0e27]/95 backdrop-blur-xl shadow-lg"
+          : "bg-[#0a0e27]/70 backdrop-blur-md"}
+      `}
     >
-      <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
-        {/* Logo avec prop logoColor pour personnalisation */}
-        {/* <Logo color={logoColor} /> */}
-        
-        {/* Navigation */}
-        <Navlinks />
-        
-        {/* Language Switcher (si vous l'utilisez) */}
-        {/* <LanguageSwitcher /> */}
-        
-        {/* Login Button (si vous l'utilisez) */}
-        {/* <Loginbtn /> */}
-      </div>
+      <Navlinks />
     </header>
   );
 };
