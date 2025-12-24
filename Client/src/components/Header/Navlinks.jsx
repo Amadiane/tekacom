@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import { Search, Menu, X, Users, Award, FileText, Calendar, Palette, ChevronDown, ArrowRight } from "lucide-react";
-// import logo from "../../assets/logo.png";
 import Logo from "./Logo";
+
 /**
- * 🎨 NAVLINKS ULTRA MODERNE - TEKACOM
- * Dropdown 500ms délai + Design ultra moderne
+ * 🎨 NAVLINKS - HARMONISÉ AVEC PARTNER
+ * Couleurs : #a34ee5 (violet), #41124f (violet profond), #fec603 (or), #7828a8 (violet foncé)
+ * Background : #0a0a0a (noir profond comme Partner)
  */
 
 const Navlinks = () => {
@@ -73,34 +74,19 @@ const Navlinks = () => {
 
   return (
     <>
-      {/* HEADER ULTRA MODERNE */}
+      {/* HEADER - Harmonisé avec Partner (#0a0a0a background) */}
       <div className={`max-w-[1600px] mx-auto px-6 lg:px-12 transition-all duration-500 ${
         scrolled ? 'py-2' : 'py-3'
       }`}>
         <div className={`relative flex items-center justify-between transition-all duration-500 px-6 rounded-2xl ${
           scrolled 
-            ? 'h-14 bg-gradient-to-r from-[#0d0d1a]/90 via-[#1a1a2e]/90 to-[#0d0d1a]/90 border border-[#a34ee5]/30 shadow-[0_0_30px_rgba(163,78,229,0.15)]' 
-            : 'h-16 bg-gradient-to-r from-[#0d0d1a]/80 via-[#1a1a2e]/80 to-[#0d0d1a]/80 border border-[#a34ee5]/20 shadow-[0_0_20px_rgba(163,78,229,0.1)]'
+            ? 'h-14 bg-[#0a0a0a]/95 border border-[#a34ee5]/30 shadow-[0_0_30px_rgba(163,78,229,0.2)]' 
+            : 'h-16 bg-[#0a0a0a]/90 border border-[#a34ee5]/20 shadow-[0_0_20px_rgba(163,78,229,0.15)]'
         }`}>
           
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-[#a34ee5]/5 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+          {/* Effet de brillance violet profond (#41124f) */}
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-[#41124f]/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
           
-          {/* LOGO
-          <NavLink to="/" className="relative flex items-center gap-3 group z-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#a34ee5]/20 to-[#fec603]/20 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 scale-150"></div>
-            <img 
-  src={logo} 
-  alt="Tekacom"
-  className={`
-    relative object-contain transition-all duration-500
-    origin-left
-    ${scrolled ? 'h-10 scale-125' : 'h-12 lg:h-14 scale-125'}
-    group-hover:scale-[1.35]
-    drop-shadow-[0_0_15px_rgba(163,78,229,0.6)]
-  `}
-/>
-
-          </NavLink> */}
           {/* LOGO */}
           <Logo scrolled={scrolled} />
 
@@ -119,7 +105,7 @@ const Navlinks = () => {
                       className={`relative group/btn flex items-center gap-1.5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-500 overflow-hidden ${
                         activeDropdown === index
                           ? "text-white bg-gradient-to-r from-[#a34ee5] to-[#7828a8] shadow-[0_0_25px_rgba(163,78,229,0.5)] border border-[#fec603]/50" 
-                          : "text-gray-300 hover:text-white bg-[#1a1a2e]/40 hover:bg-[#1a1a2e]/80 border border-transparent hover:border-[#a34ee5]/40 hover:shadow-[0_0_20px_rgba(163,78,229,0.2)]"
+                          : "text-gray-300 hover:text-white bg-[#41124f]/30 hover:bg-[#41124f]/60 border border-transparent hover:border-[#a34ee5]/40 hover:shadow-[0_0_20px_rgba(163,78,229,0.2)]"
                       }`}
                     >
                       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover/btn:translate-x-[200%] transition-transform duration-1000"></div>
@@ -134,12 +120,12 @@ const Navlinks = () => {
                       />
                     </button>
 
-                    {/* DROPDOWN */}
+                    {/* DROPDOWN - Background #0a0a0a comme Partner */}
                     {activeDropdown === index && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64">
-                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#0d0d1a] rotate-45 border-l border-t border-[#a34ee5]/20"></div>
+                        <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-[#0a0a0a] rotate-45 border-l border-t border-[#a34ee5]/20"></div>
                         
-                        <div className="relative bg-[#0d0d1a] rounded-2xl border border-[#a34ee5]/20 shadow-2xl shadow-[#a34ee5]/20 overflow-hidden backdrop-blur-xl">
+                        <div className="relative bg-[#0a0a0a]/95 rounded-2xl border border-[#a34ee5]/20 shadow-2xl shadow-[#a34ee5]/20 overflow-hidden backdrop-blur-xl">
                           <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#a34ee5]"></div>
                           
                           <div className="p-2">
@@ -155,7 +141,7 @@ const Navlinks = () => {
                                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover/item:translate-x-[100%] transition-transform duration-700"></div>
                                   <div className="absolute inset-0 opacity-0 group-hover/item:opacity-100 bg-gradient-to-r from-[#a34ee5]/10 via-[#fec603]/10 to-transparent blur-xl transition-opacity duration-500"></div>
                                   
-                                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-[#a34ee5]/10 to-[#a34ee5]/5 group-hover/item:from-[#a34ee5]/30 group-hover/item:to-[#fec603]/20 flex items-center justify-center transition-all duration-300 group-hover/item:scale-110 group-hover/item:rotate-3 shadow-lg shadow-[#a34ee5]/0 group-hover/item:shadow-[#a34ee5]/50">
+                                  <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-[#a34ee5]/10 to-[#41124f]/20 group-hover/item:from-[#a34ee5]/30 group-hover/item:to-[#fec603]/20 flex items-center justify-center transition-all duration-300 group-hover/item:scale-110 group-hover/item:rotate-3 shadow-lg shadow-[#a34ee5]/0 group-hover/item:shadow-[#a34ee5]/50">
                                     <SubIcon size={16} className="text-[#a34ee5] group-hover/item:text-[#fec603] transition-all duration-300 group-hover/item:scale-110" />
                                   </div>
                                   
@@ -172,7 +158,7 @@ const Navlinks = () => {
                             })}
                           </div>
 
-                          <div className="px-4 py-2.5 bg-gradient-to-r from-[#a34ee5]/5 to-[#fec603]/5 border-t border-[#a34ee5]/10 relative overflow-hidden">
+                          <div className="px-4 py-2.5 bg-gradient-to-r from-[#41124f]/20 to-[#fec603]/5 border-t border-[#a34ee5]/10 relative overflow-hidden">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#fec603]/10 to-transparent animate-pulse"></div>
                             <p className="text-xs text-gray-500 text-center font-medium relative">
                               Découvrez <span className="text-[#fec603] font-bold">TEKACOM</span>
@@ -193,7 +179,7 @@ const Navlinks = () => {
                     `relative group px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-500 overflow-hidden border ${
                       isActive 
                         ? "text-white bg-gradient-to-r from-[#a34ee5] to-[#7828a8] shadow-[0_0_25px_rgba(163,78,229,0.5)] border-[#fec603]/50" 
-                        : "text-gray-300 hover:text-white bg-[#1a1a2e]/40 hover:bg-[#1a1a2e]/80 border-transparent hover:border-[#a34ee5]/40 hover:shadow-[0_0_20px_rgba(163,78,229,0.2)]"
+                        : "text-gray-300 hover:text-white bg-[#41124f]/30 hover:bg-[#41124f]/60 border-transparent hover:border-[#a34ee5]/40 hover:shadow-[0_0_20px_rgba(163,78,229,0.2)]"
                     }`
                   }
                 >
@@ -208,7 +194,7 @@ const Navlinks = () => {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setSearchOpen(true)} 
-              className="relative p-3 rounded-xl bg-[#1a1a2e]/60 hover:bg-[#1a1a2e] transition-all duration-500 group hidden lg:block border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 hover:shadow-[0_0_20px_rgba(163,78,229,0.3)] overflow-hidden"
+              className="relative p-3 rounded-xl bg-[#41124f]/50 hover:bg-[#41124f] transition-all duration-500 group hidden lg:block border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 hover:shadow-[0_0_20px_rgba(163,78,229,0.3)] overflow-hidden"
             >
               <div className="absolute inset-0 rounded-xl bg-[#a34ee5]/20 opacity-0 group-hover:opacity-100 group-hover:scale-150 blur-xl transition-all duration-700"></div>
               <Search size={16} className="relative text-[#a34ee5] group-hover:text-[#fec603] transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" />
@@ -216,7 +202,7 @@ const Navlinks = () => {
 
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)} 
-              className="relative lg:hidden p-3 rounded-xl bg-[#1a1a2e]/60 hover:bg-[#1a1a2e] transition-all duration-500 border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 hover:shadow-[0_0_20px_rgba(163,78,229,0.3)] overflow-hidden group"
+              className="relative lg:hidden p-3 rounded-xl bg-[#41124f]/50 hover:bg-[#41124f] transition-all duration-500 border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 hover:shadow-[0_0_20px_rgba(163,78,229,0.3)] overflow-hidden group"
             >
               <div className="absolute inset-0 rounded-xl bg-[#a34ee5]/20 opacity-0 group-hover:opacity-100 group-hover:scale-150 blur-xl transition-all duration-700"></div>
               {mobileMenuOpen ? (
@@ -230,7 +216,7 @@ const Navlinks = () => {
 
         {/* MENU MOBILE */}
         {mobileMenuOpen && (
-          <div className="relative lg:hidden pb-6 pt-4 space-y-2 mt-3 px-4 rounded-2xl bg-gradient-to-br from-[#0d0d1a]/95 via-[#1a1a2e]/95 to-[#0d0d1a]/95 backdrop-blur-2xl border border-[#a34ee5]/30 shadow-[0_0_40px_rgba(163,78,229,0.2)]">
+          <div className="relative lg:hidden pb-6 pt-4 space-y-2 mt-3 px-4 rounded-2xl bg-[#0a0a0a]/95 backdrop-blur-2xl border border-[#a34ee5]/30 shadow-[0_0_40px_rgba(163,78,229,0.2)]">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#fec603] to-transparent"></div>
             
             {navItems.map((item, index) => {
@@ -278,7 +264,7 @@ const Navlinks = () => {
           onClick={() => setSearchOpen(false)}
         >
           <div 
-            className="relative w-full max-w-2xl bg-gradient-to-br from-[#0d0d1a]/90 via-[#1a1a2e]/90 to-[#0d0d1a]/90 backdrop-blur-2xl rounded-3xl p-8 border border-[#a34ee5]/40 shadow-[0_0_60px_rgba(163,78,229,0.4)] overflow-hidden"
+            className="relative w-full max-w-2xl bg-[#0a0a0a]/95 backdrop-blur-2xl rounded-3xl p-8 border border-[#a34ee5]/40 shadow-[0_0_60px_rgba(163,78,229,0.4)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#a34ee5]"></div>
@@ -306,7 +292,7 @@ const Navlinks = () => {
                 type="text"
                 placeholder="Ex: design, vidéo, site web..."
                 autoFocus
-                className="relative w-full px-6 py-4 bg-[#1a1a2e]/80 border-2 border-[#a34ee5]/30 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-[#a34ee5] focus:shadow-[0_0_30px_rgba(163,78,229,0.3)] transition-all duration-500 font-medium"
+                className="relative w-full px-6 py-4 bg-[#41124f]/40 border-2 border-[#a34ee5]/30 rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-[#a34ee5] focus:shadow-[0_0_30px_rgba(163,78,229,0.3)] transition-all duration-500 font-medium"
               />
               <div className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-xl bg-gradient-to-br from-[#a34ee5] to-[#7828a8] flex items-center justify-center shadow-lg shadow-[#a34ee5]/50">
                 <Search size={18} className="text-white" />
