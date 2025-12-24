@@ -15,7 +15,8 @@ import {
   Check,
   Calendar,
   Award,
-  Compass
+  Compass,
+  Image as ImageIcon
 } from "lucide-react";
 
 /**
@@ -36,10 +37,15 @@ const MissionPost = () => {
   const [useMockData, setUseMockData] = useState(false);
   const [formData, setFormData] = useState({
     titre: "",
+    description: "",
     valeur: "",
     mission: "",
+    photo: null,
     is_active: true,
   });
+
+  // Preview pour la photo
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   // PAGINATION
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,16 +56,20 @@ const MissionPost = () => {
     {
       id: 1,
       titre: "Excellence & Innovation",
+      description: "Notre engagement envers l'excellence et l'innovation continue",
       valeur: "Nous visons l'excellence dans tout ce que nous faisons et innovons constamment pour rester à la pointe.",
       mission: "Fournir des solutions créatives de haute qualité qui dépassent les attentes de nos clients.",
+      photo: null,
       is_active: true,
       created_at: new Date().toISOString()
     },
     {
       id: 2,
       titre: "Collaboration & Impact",
+      description: "Travailler ensemble pour un impact durable",
       valeur: "Nous croyons au pouvoir de la collaboration et cherchons à créer un impact positif durable.",
       mission: "Accompagner nos clients dans leur transformation digitale avec des solutions sur mesure.",
+      photo: null,
       is_active: true,
       created_at: new Date().toISOString()
     }
@@ -97,10 +107,36 @@ const MissionPost = () => {
     fetchItems();
   }, []);
 
+  // -----------------------------
+  // CLOUDINARY UPLOAD
+  // -----------------------------
+  const uploadToCloudinary = async (file) => {
+    if (!file) return null;
+
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_NAME}/image/upload`,
+        { method: "POST", body: data }
+      );
+      const json = await res.json();
+      return json.secure_url || null;
+    } catch (err) {
+      console.error("Erreur upload Cloudinary:", err);
+      return null;
+    }
+  };
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (type === "checkbox") {
       setFormData({ ...formData, [name]: checked });
+    } else if (type === "file" && files && files[0]) {
+      setFormData({ ...formData, [name]: files[0] });
+      setPhotoPreview(URL.createObjectURL(files[0]));
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -109,83 +145,101 @@ const MissionPost = () => {
   const resetForm = () => {
     setFormData({
       titre: "",
+      description: "",
       valeur: "",
       mission: "",
+      photo: null,
       is_active: true,
     });
+    setPhotoPreview(null);
     setEditingId(null);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccessMessage(null);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setError(null);
+  setSuccessMessage(null);
 
-    try {
-      const payload = {
-        titre: formData.titre,
-        valeur: formData.valeur,
-        mission: formData.mission,
-        is_active: formData.is_active,
-      };
+  try {
+    let photoToSend = null;
 
-      const method = editingId ? "PATCH" : "POST";
-      const url = editingId
-        ? CONFIG.API_VALEUR_MISSION_UPDATE(editingId)
-        : CONFIG.API_VALEUR_MISSION_CREATE;
-
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
-
-      setSuccessMessage(
-        editingId 
-          ? "Valeur/Mission mise à jour avec succès !" 
-          : "Valeur/Mission ajoutée avec succès !"
-      );
-      resetForm();
-      await fetchItems();
-      setShowForm(false);
-      setShowList(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (err) {
-      console.error(err);
-      setError("Erreur lors de la sauvegarde");
-    } finally {
-      setLoading(false);
+    // 1️⃣ Gestion de la photo
+    if (formData.photo && typeof formData.photo !== "string") {
+      // Nouvelle image → upload Cloudinary
+      const uploadedUrl = await uploadToCloudinary(formData.photo);
+      if (uploadedUrl) {
+        photoToSend = uploadedUrl;
+      } else {
+        throw new Error("Erreur lors de l'upload de l'image");
+      }
+    } else if (formData.photo && typeof formData.photo === "string") {
+      // URL existante → on garde l'URL
+      photoToSend = formData.photo;
     }
-  };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cet élément ?")) return;
+    // 2️⃣ Préparer FormData pour Django
+    const formDataToSend = new FormData();
+    formDataToSend.append("titre", formData.titre.trim());
+    formDataToSend.append("valeur", formData.valeur.trim());
+    formDataToSend.append("mission", formData.mission.trim());
+    formDataToSend.append("is_active", formData.is_active);
 
-    try {
-      const res = await fetch(CONFIG.API_VALEUR_MISSION_DELETE(id), { 
-        method: "DELETE" 
-      });
-      if (!res.ok) throw new Error("Erreur de suppression");
-      setSuccessMessage("Élément supprimé avec succès !");
-      await fetchItems();
-      setSelectedItem(null);
-    } catch (err) {
-      console.error(err);
-      setError("Erreur lors de la suppression");
+    if (formData.description?.trim()) {
+      formDataToSend.append("description", formData.description.trim());
     }
-  };
+
+    if (photoToSend) {
+      formDataToSend.append("photo_url", photoToSend);
+    }
+
+    // 3️⃣ Déterminer le endpoint et la méthode
+    const method = editingId ? "PATCH" : "POST";
+    const url = editingId
+      ? CONFIG.API_VALEUR_MISSION_UPDATE(editingId)
+      : CONFIG.API_VALEUR_MISSION_CREATE;
+
+    // 4️⃣ Envoi au backend
+    const response = await fetch(url, {
+      method,
+      body: formDataToSend,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || errorData.error || `Erreur ${response.status}`);
+    }
+
+    // 5️⃣ Gestion du succès
+    const responseData = await response.json();
+    setSuccessMessage(editingId ? "Valeur/Mission mise à jour !" : "Valeur/Mission ajoutée !");
+    resetForm();
+    await fetchItems();
+    setShowForm(false);
+    setShowList(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    console.error("❌ handleSubmit:", err);
+    setError(err.message || "Erreur lors de la sauvegarde");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+
 
   const handleEdit = (item) => {
     setEditingId(item.id);
     setFormData({
       titre: item.titre,
+      description: item.description || "",
       valeur: item.valeur,
       mission: item.mission,
+      photo: item.photo || null,
       is_active: item.is_active,
     });
+    setPhotoPreview(item.photo || null);
     setShowForm(true);
     setShowList(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -327,6 +381,21 @@ const MissionPost = () => {
                 />
               </div>
 
+              {/* Description */}
+              <div className="mb-6 space-y-2">
+                <label className="font-semibold text-gray-700 text-sm">
+                  Description (optionnelle)
+                </label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="2"
+                  placeholder="Courte description ou résumé..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium resize-none"
+                ></textarea>
+              </div>
+
               {/* Valeur */}
               <div className="mb-6 space-y-2">
                 <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
@@ -359,6 +428,39 @@ const MissionPost = () => {
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium resize-none"
                   required
                 ></textarea>
+              </div>
+
+              {/* Photo (optionnelle) */}
+              <div className="mb-6 space-y-3">
+                <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
+                  <Award className="w-4 h-4 text-blue-500" />
+                  Photo illustrative (optionnelle)
+                </label>
+                <input
+                  type="file"
+                  name="photo"
+                  accept="image/*"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gradient-to-r file:from-[#FDB71A] file:to-[#F47920] file:text-white hover:file:scale-105 file:transition-all file:cursor-pointer focus:border-[#F47920]"
+                />
+                {photoPreview && (
+                  <div className="flex justify-center">
+                    <div className="relative bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-lg w-full max-w-md h-48">
+                      <img
+                        src={photoPreview}
+                        alt="Aperçu"
+                        className="w-full h-full object-cover rounded-xl"
+                      />
+                      {editingId && typeof formData.photo === "string" && (
+                        <div className="absolute top-2 left-2">
+                          <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                            Photo actuelle
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Statut */}
@@ -471,9 +573,16 @@ const MissionPost = () => {
                       >
                         <div className="flex flex-col gap-4">
                           <div className="flex items-start justify-between gap-4">
-                            <h4 className="text-xl font-black text-gray-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#E84E1B] group-hover:via-[#F47920] group-hover:to-[#FDB71A] transition-all flex-1">
-                              {item.titre}
-                            </h4>
+                            <div className="flex-1">
+                              <h4 className="text-xl font-black text-gray-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#E84E1B] group-hover:via-[#F47920] group-hover:to-[#FDB71A] transition-all">
+                                {item.titre}
+                              </h4>
+                              {item.description && (
+                                <p className="text-sm text-gray-600 mt-1 italic">
+                                  {item.description}
+                                </p>
+                              )}
+                            </div>
                             
                             <div className="flex items-center gap-2">
                               {item.is_active ? (
@@ -488,6 +597,20 @@ const MissionPost = () => {
                               )}
                             </div>
                           </div>
+
+                          {/* Photo si disponible */}
+                          {item.photo && (
+                            <div className="w-full h-48 rounded-xl overflow-hidden border-2 border-gray-200">
+                              <img
+                                src={item.photo}
+                                alt={item.titre}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          )}
 
                           <div className="grid md:grid-cols-2 gap-4">
                             <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
@@ -619,6 +742,33 @@ const MissionPost = () => {
             </div>
 
             <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              {/* Description si disponible */}
+              {selectedItem.description && (
+                <div className="bg-blue-50 p-6 rounded-xl border border-blue-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ImageIcon className="w-5 h-5 text-blue-500" />
+                    <h3 className="font-bold text-blue-700 text-lg">Description</h3>
+                  </div>
+                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {selectedItem.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Photo si disponible */}
+              {selectedItem.photo && (
+                <div className="w-full h-64 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
+                  <img
+                    src={selectedItem.photo}
+                    alt={selectedItem.titre}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+
               <div className="bg-orange-50 p-6 rounded-xl border border-orange-200">
                 <div className="flex items-center gap-2 mb-3">
                   <Award className="w-5 h-5 text-[#FDB71A]" />

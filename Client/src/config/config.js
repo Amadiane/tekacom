@@ -95,8 +95,7 @@ API_COMMUNITY_REPLY: (id) => `${BASE_URL}/api/community/${id}/reply/`,
   API_NEWSLETTER_DELETE: (id) => `${BASE_URL}/api/newsletter/${id}/`,
   API_NEWSLETTER_REPLY: (id) => `${BASE_URL}/api/newsletter/${id}/reply/`,
 
-
-  // 🧭 VALEURS & MISSIONS (API UNIQUE)
+// Valeurs & Missions combinés
 API_VALEUR_MISSION_LIST: `${BASE_URL}/api/valeur-mission/`,
 API_VALEUR_MISSION_CREATE: `${BASE_URL}/api/valeur-mission/`,
 API_VALEUR_MISSION_UPDATE: (id) => `${BASE_URL}/api/valeur-mission/${id}/`,

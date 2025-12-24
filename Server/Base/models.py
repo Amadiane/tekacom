@@ -126,18 +126,28 @@ class Contact(models.Model):
     def __str__(self):
         return f"{self.name} - {self.subject}"
 
-from django.db import models
-
-# models.py
 class ValeurMission(models.Model):
     titre = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
     valeur = models.TextField()
     mission = models.TextField()
     is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    photo = CloudinaryField('Photo', folder='valeurs_missions', blank=True, null=True)
+    photo_url = models.URLField("URL Photo", blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.titre
+    @property
+    def display_photo(self):
+        """
+        Retourne l'URL de la photo à afficher dans le frontend :
+        priorité : photo uploadée > photo_url
+        """
+        if self.photo:
+            return self.photo.url
+        elif self.photo_url:
+            return self.photo_url
+        return None
 
 
 

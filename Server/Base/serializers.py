@@ -98,15 +98,21 @@ class ContactSerializer(serializers.ModelSerializer):
 from rest_framework import serializers
 from .models import ValeurMission
 
-# serializers.py
 from rest_framework import serializers
 from .models import ValeurMission
 
 class ValeurMissionSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
     class Meta:
         model = ValeurMission
-        fields = "__all__"
+        fields = ['id', 'titre', 'description', 'valeur', 'mission', 'is_active', 'photo', 'created_at']
 
+    def get_photo(self, obj):
+        # Priorité : photo uploadée Cloudinary > URL
+        if hasattr(obj, 'photo') and obj.photo:
+            return obj.photo.url if hasattr(obj.photo, 'url') else obj.photo
+        return getattr(obj, 'photo_url', None)
 
 
 # Base/serializers.py
