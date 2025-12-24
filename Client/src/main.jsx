@@ -16,7 +16,7 @@ import {
 import App from './Layout.jsx';
 
 // Pages principales
-import Home from './components/Home/Home.jsx';
+import Home from './components/HeaderSection/Home.jsx';
 import Categories from './components/Categories/Categories.jsx';
 import Createpost from './components/Createpost/Createpost.jsx';
 import Login from './components/Login/Login.jsx';

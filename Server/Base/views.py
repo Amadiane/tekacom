@@ -241,3 +241,58 @@ from .serializers import PortfolioSerializer
 class PortfolioViewSet(viewsets.ModelViewSet):
     queryset = Portfolio.objects.all()
     serializer_class = PortfolioSerializer
+
+
+
+
+
+
+
+
+
+
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from .models import Home
+from .serializers import HomeSerializer
+
+class HomeViewSet(viewsets.ModelViewSet):
+    queryset = Home.objects.all()
+    serializer_class = HomeSerializer
+
+    # Optionnel : retourner toujours la dernière page d'accueil
+    @action(detail=False, methods=['get'])
+    def latest(self, request):
+        home = Home.objects.last()
+        if home:
+            serializer = self.get_serializer(home)
+            return Response(serializer.data)
+        return Response({"detail": "Aucune page d'accueil trouvée."}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+
+
+
+
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Home
+from .serializers import HomeFullSerializer
+
+class HomeFullView(APIView):
+    """
+    Vue pour récupérer toutes les données nécessaires à la page d'accueil
+    """
+    def get(self, request, *args, **kwargs):
+        # Récupère la première instance Home (la page d'accueil)
+        home_instance = Home.objects.first()
+
+        # Sérialisation complète
+        serializer = HomeFullSerializer(
+            {"home": home_instance}, 
+            context={"request": request}
+        )
+        return Response(serializer.data)

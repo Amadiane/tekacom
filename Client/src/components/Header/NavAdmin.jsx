@@ -89,11 +89,11 @@ const NavAdmin = () => {
       icon: <Fish className="w-4 h-4" />,
       color: "from-orange-500 to-orange-600",
       items: [
-        { path: "/professionalAreaPost", label: "Espace Pro" },
-        { path: "/thonRecipesPost", label: "Recettes Thon" },
+        // { path: "/professionalAreaPost", label: "Espace Pro" },
+        // { path: "/thonRecipesPost", label: "Recettes Thon" },
         { path: "/portfolioPost", label: "Portfolio" },
         { path: "/servicePost", label: "Services" },
-        { path: "/thonProductPost", label: "Produits Thon" },
+        // { path: "/thonProductPost", label: "Produits Thon" },
        
       ]
     },

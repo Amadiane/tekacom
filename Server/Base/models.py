@@ -207,4 +207,20 @@ class Portfolio(models.Model):
 
 
 
+from django.db import models
+from cloudinary.models import CloudinaryField
 
+class Home(models.Model):
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Titre (FR)")
+    description = models.TextField(verbose_name="Description (FR)")
+    image = CloudinaryField('Image', folder='home', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Page d'accueil"
+        verbose_name_plural = "Pages d'accueil"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title or "Accueil"
