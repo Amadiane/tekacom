@@ -57,13 +57,13 @@ const Navlinks = () => {
     { title: "Accueil", path: "/", icon: Award },
     { 
       title: "À propos", 
-      path: "/about", 
+      path: "/nosMissions", 
       icon: Users,
       hasDropdown: true,
       subItems: [
-        { title: "Qui sommes-nous", path: "/about", icon: Users },
+        { title: "Qui sommes-nous", path: "/nosMissions", icon: Users },
         { title: "Notre équipe", path: "/notreEquipe", icon: Users },
-        { title: "Notre mission", path: "/nosMissions", icon: Award },
+        // { title: "Notre mission", path: "/nosMissions", icon: Award },
       ]
     },
     { title: "Services", path: "/services", icon: Palette },
