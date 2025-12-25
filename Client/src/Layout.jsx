@@ -11,6 +11,63 @@ const App = () => {
   const location = useLocation();
   const token = localStorage.getItem("access");
 
+  // 🎨 Custom Scrollbar Styles - Harmonisé avec la charte TEKACOM
+  const scrollbarStyles = `
+    /* ===== Scrollbar Firefox ===== */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #a34ee5 #0a0a0a;
+    }
+
+    /* ===== Scrollbar Chrome, Edge, Safari ===== */
+    ::-webkit-scrollbar {
+      width: 12px;
+      height: 12px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #a34ee5 0%, #7828a8 100%);
+      border-radius: 10px;
+      border: 2px solid #0a0a0a;
+      transition: all 0.3s ease;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #fec603 0%, #a34ee5 100%);
+      border-color: #41124f;
+      box-shadow: 0 0 10px rgba(163, 78, 229, 0.5);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: linear-gradient(180deg, #a34ee5 0%, #fec603 100%);
+    }
+
+    /* Scrollbar horizontal */
+    ::-webkit-scrollbar-corner {
+      background: #0a0a0a;
+    }
+
+    /* ===== Scrollbar Admin Dashboard ===== */
+    .admin-layout ::-webkit-scrollbar-track {
+      background: #f9fafb;
+    }
+
+    .admin-layout ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #a34ee5 0%, #7828a8 100%);
+      border: 2px solid #f9fafb;
+    }
+
+    .admin-layout ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #fec603 0%, #a34ee5 100%);
+      box-shadow: 0 0 10px rgba(163, 78, 229, 0.3);
+    }
+  `;
+
   // 🔹 Tracker automatique des visites
   React.useEffect(() => {
     trackAction({
@@ -83,9 +140,12 @@ const App = () => {
 
   return (
     <I18nextProvider i18n={i18n}>
+      {/* Custom Scrollbar Styles */}
+      <style>{scrollbarStyles}</style>
+      
       {isAdminPage ? (
         // 🎨 ADMIN LAYOUT - Clean white background for admin dashboard
-        <div className="flex h-screen w-screen overflow-hidden bg-gray-50 relative">
+        <div className="admin-layout flex h-screen w-screen overflow-hidden bg-gray-50 relative">
           <NavAdmin />
           <main className="flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300 bg-white ml-80">
             <div className="min-h-screen w-full px-4 md:px-6 lg:px-8">
