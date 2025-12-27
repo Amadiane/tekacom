@@ -16,6 +16,7 @@ import CONFIG from "../../config/config.js";
  * 🎨 PAGE NOTRE ÉQUIPE ULTRA MODERNE - TEKACOM
  * Agence de graphisme créative
  * Harmonisé avec Header/Footer (#a34ee5, #41124f, #fec603, #7828a8, #0a0a0a)
+ * TRI: Du plus ancien au plus récent (gauche → droite)
  */
 
 const LoadingSpinner = () => (
@@ -69,7 +70,17 @@ const NotreEquipe = () => {
           photo_url: normalizeUrl(m.photo_url || m.photo),
         }));
         
-        setMembres(normalized);
+        // ✨ TRI DU PLUS ANCIEN AU PLUS RÉCENT (gauche → droite)
+        const sorted = normalized.sort((a, b) => {
+          // Tri par date de création si disponible
+          if (a.created_at && b.created_at) {
+            return new Date(a.created_at) - new Date(b.created_at);
+          }
+          // Sinon tri par ID (plus petit ID = plus ancien)
+          return a.id - b.id;
+        });
+        
+        setMembres(sorted);
       } catch (err) {
         console.error("Erreur API Équipe:", err);
         setError(err.message || "Une erreur est survenue lors du chargement de l'équipe");
@@ -215,138 +226,150 @@ const NotreEquipe = () => {
             </div>
           )}
 
-          {/* Team Grid Ultra Moderne */}
+          {/* Team Grid Ultra Moderne - TRI DU PLUS ANCIEN AU PLUS RÉCENT */}
           {!loading && !error && membres.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-              {membres.map((membre, index) => {
-                const isHovered = hoveredMember === membre.id;
-                
-                return (
-                  <article
-                    key={membre.id}
-                    onMouseEnter={() => setHoveredMember(membre.id)}
-                    onMouseLeave={() => setHoveredMember(null)}
-                    className="group relative"
-                    style={{
-                      animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
-                    }}
-                  >
-                    {/* Card Container */}
-                    <div className={`relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border transition-all duration-500 ${
-                      isHovered 
-                        ? 'border-[#a34ee5]/80 shadow-2xl shadow-[#a34ee5]/30 scale-105 -translate-y-2' 
-                        : 'border-[#a34ee5]/20 hover:border-[#a34ee5]/50'
-                    }`}>
-                      
-                      {/* Glow effect */}
-                      <div className={`absolute -inset-1 bg-gradient-to-r from-[#a34ee5] to-[#fec603] rounded-3xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`}></div>
-                      
-                      {/* Photo Container */}
-                      <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20">
+            <>
+              {/* Indicateur de tri */}
+              <div className="mb-8 text-center">
+                <p className="text-sm text-gray-500">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#41124f]/20 border border-[#a34ee5]/20 rounded-full">
+                    <Users className="w-4 h-4 text-[#a34ee5]" />
+                    <span>Affichage chronologique : du plus ancien membre au plus récent</span>
+                  </span>
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+                {membres.map((membre, index) => {
+                  const isHovered = hoveredMember === membre.id;
+                  
+                  return (
+                    <article
+                      key={membre.id}
+                      onMouseEnter={() => setHoveredMember(membre.id)}
+                      onMouseLeave={() => setHoveredMember(null)}
+                      className="group relative"
+                      style={{
+                        animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`
+                      }}
+                    >
+                      {/* Card Container */}
+                      <div className={`relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border transition-all duration-500 ${
+                        isHovered 
+                          ? 'border-[#a34ee5]/80 shadow-2xl shadow-[#a34ee5]/30 scale-105 -translate-y-2' 
+                          : 'border-[#a34ee5]/20 hover:border-[#a34ee5]/50'
+                      }`}>
                         
-                        {/* Scan effect animé */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#a34ee5]/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
+                        {/* Glow effect */}
+                        <div className={`absolute -inset-1 bg-gradient-to-r from-[#a34ee5] to-[#fec603] rounded-3xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500`}></div>
                         
-                        {/* Photo */}
-                        <img
-                          src={membre.photo_url || "https://placehold.co/600x800/0a0a0a/a34ee5?text=Photo"}
-                          alt={membre.full_name}
-                          className={`relative w-full h-full object-cover transition-all duration-500 ${
-                            isHovered ? 'scale-110 brightness-110' : 'scale-100'
-                          }`}
-                          loading="lazy"
-                          onError={(e) => {
-                            e.target.src = "https://placehold.co/600x800/0a0a0a/a34ee5?text=Photo";
-                          }}
-                        />
-                        
-                        {/* Overlay gradient au hover */}
-                        <div className={`absolute inset-0 bg-gradient-to-t from-[#a34ee5]/90 via-[#a34ee5]/50 to-transparent transition-opacity duration-500 ${
+                        {/* Photo Container */}
+                        <div className="relative aspect-[3/4] overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20">
+                          
+                          {/* Scan effect animé */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#a34ee5]/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
+                          
+                          {/* Photo */}
+                          <img
+                            src={membre.photo_url || "https://placehold.co/600x800/0a0a0a/a34ee5?text=Photo"}
+                            alt={membre.full_name}
+                            className={`relative w-full h-full object-cover transition-all duration-500 ${
+                              isHovered ? 'scale-110 brightness-110' : 'scale-100'
+                            }`}
+                            loading="lazy"
+                            onError={(e) => {
+                              e.target.src = "https://placehold.co/600x800/0a0a0a/a34ee5?text=Photo";
+                            }}
+                          />
+                          
+                          {/* Overlay gradient au hover */}
+                          <div className={`absolute inset-0 bg-gradient-to-t from-[#a34ee5]/90 via-[#a34ee5]/50 to-transparent transition-opacity duration-500 ${
+                            isHovered ? 'opacity-100' : 'opacity-0'
+                          }`}></div>
+                          
+                          {/* LinkedIn badge coin supérieur */}
+                          {membre.linkedin && (
+                            <a
+                              href={membre.linkedin}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`absolute top-4 right-4 w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md border-2 border-white/30 flex items-center justify-center transition-all duration-500 hover:scale-110 hover:bg-white/20 ${
+                                isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                              }`}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Linkedin className="w-6 h-6 text-white" />
+                            </a>
+                          )}
+                          
+                          {/* Sparkle indicator */}
+                          {isHovered && (
+                            <div className="absolute top-4 left-4">
+                              <Sparkles className="w-5 h-5 text-[#fec603] animate-pulse" />
+                            </div>
+                          )}
+
+                          {/* Info overlay au hover */}
+                          {isHovered && (
+                            <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500">
+                              {/* Contact rapide */}
+                              {membre.email && (
+                                <a
+                                  href={`mailto:${membre.email}`}
+                                  className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white text-sm font-semibold hover:bg-white/30 transition-all"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Mail className="w-4 h-4" />
+                                  <span>Contacter</span>
+                                </a>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Info Card */}
+                        <div className={`p-5 transition-all duration-500 ${
+                          isHovered 
+                            ? 'bg-gradient-to-r from-[#a34ee5]/20 to-[#fec603]/20' 
+                            : 'bg-[#0a0a0a]/40'
+                        }`}>
+                          <h3 className={`text-lg font-black mb-1 transition-all duration-300 ${
+                            isHovered 
+                              ? 'text-transparent bg-gradient-to-r from-[#a34ee5] to-[#fec603] bg-clip-text' 
+                              : 'text-white'
+                          }`}>
+                            {membre.full_name}
+                          </h3>
+                          
+                          <p className="text-sm font-semibold text-[#fec603] mb-3">
+                            {membre.position_fr || "Membre de l'équipe"}
+                          </p>
+
+                          {/* Skills tags si disponibles */}
+                          {membre.skills && (
+                            <div className="flex flex-wrap gap-2">
+                              {membre.skills.slice(0, 2).map((skill, idx) => (
+                                <span 
+                                  key={idx}
+                                  className="px-2 py-1 bg-[#a34ee5]/10 border border-[#a34ee5]/30 rounded-lg text-xs text-gray-400"
+                                >
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Barre gradient en bas */}
+                        <div className={`h-1 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] transition-all duration-500 ${
                           isHovered ? 'opacity-100' : 'opacity-0'
                         }`}></div>
-                        
-                        {/* LinkedIn badge coin supérieur */}
-                        {membre.linkedin && (
-                          <a
-                            href={membre.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`absolute top-4 right-4 w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md border-2 border-white/30 flex items-center justify-center transition-all duration-500 hover:scale-110 hover:bg-white/20 ${
-                              isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-                            }`}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Linkedin className="w-6 h-6 text-white" />
-                          </a>
-                        )}
-                        
-                        {/* Sparkle indicator */}
-                        {isHovered && (
-                          <div className="absolute top-4 left-4">
-                            <Sparkles className="w-5 h-5 text-[#fec603] animate-pulse" />
-                          </div>
-                        )}
-
-                        {/* Info overlay au hover */}
-                        {isHovered && (
-                          <div className="absolute bottom-0 left-0 right-0 p-6 transform transition-all duration-500">
-                            {/* Contact rapide */}
-                            {membre.email && (
-                              <a
-                                href={`mailto:${membre.email}`}
-                                className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-xl text-white text-sm font-semibold hover:bg-white/30 transition-all"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Mail className="w-4 h-4" />
-                                <span>Contacter</span>
-                              </a>
-                            )}
-                          </div>
-                        )}
                       </div>
-
-                      {/* Info Card */}
-                      <div className={`p-5 transition-all duration-500 ${
-                        isHovered 
-                          ? 'bg-gradient-to-r from-[#a34ee5]/20 to-[#fec603]/20' 
-                          : 'bg-[#0a0a0a]/40'
-                      }`}>
-                        <h3 className={`text-lg font-black mb-1 transition-all duration-300 ${
-                          isHovered 
-                            ? 'text-transparent bg-gradient-to-r from-[#a34ee5] to-[#fec603] bg-clip-text' 
-                            : 'text-white'
-                        }`}>
-                          {membre.full_name}
-                        </h3>
-                        
-                        <p className="text-sm font-semibold text-[#fec603] mb-3">
-                          {membre.position_fr || "Membre de l'équipe"}
-                        </p>
-
-                        {/* Skills tags si disponibles */}
-                        {membre.skills && (
-                          <div className="flex flex-wrap gap-2">
-                            {membre.skills.slice(0, 2).map((skill, idx) => (
-                              <span 
-                                key={idx}
-                                className="px-2 py-1 bg-[#a34ee5]/10 border border-[#a34ee5]/30 rounded-lg text-xs text-gray-400"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Barre gradient en bas */}
-                      <div className={`h-1 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] transition-all duration-500 ${
-                        isHovered ? 'opacity-100' : 'opacity-0'
-                      }`}></div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       </section>

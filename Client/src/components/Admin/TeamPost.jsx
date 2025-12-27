@@ -218,11 +218,20 @@ const TeamPost = () => {
     await fetchMembres();
   };
 
-  const filteredMembres = membres.filter(membre => {
-    if (filterStatus === 'active') return membre.is_active;
-    if (filterStatus === 'inactive') return !membre.is_active;
-    return true;
-  });
+  // Filtrer et trier du plus ancien au plus récent
+  const filteredMembres = membres
+    .filter(membre => {
+      if (filterStatus === 'active') return membre.is_active;
+      if (filterStatus === 'inactive') return !membre.is_active;
+      return true;
+    })
+    .sort((a, b) => {
+      // Tri par ID (plus petit = plus ancien) ou par date de création
+      if (a.created_at && b.created_at) {
+        return new Date(a.created_at) - new Date(b.created_at);
+      }
+      return a.id - b.id; // Fallback sur l'ID
+    });
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
