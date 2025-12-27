@@ -230,14 +230,14 @@ const NotreEquipe = () => {
           {!loading && !error && membres.length > 0 && (
             <>
               {/* Indicateur de tri */}
-              <div className="mb-8 text-center">
+              {/* <div className="mb-8 text-center">
                 <p className="text-sm text-gray-500">
                   <span className="inline-flex items-center gap-2 px-4 py-2 bg-[#41124f]/20 border border-[#a34ee5]/20 rounded-full">
                     <Users className="w-4 h-4 text-[#a34ee5]" />
                     <span>Affichage chronologique : du plus ancien membre au plus récent</span>
                   </span>
                 </p>
-              </div>
+              </div> */}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
                 {membres.map((membre, index) => {
