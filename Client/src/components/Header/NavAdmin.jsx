@@ -12,6 +12,7 @@ import CONFIG from "../../config/config.js";
  * 🎨 NAVADMIN V2 - TOP BAR ULTRA MODERNE
  * Layout: Horizontal top bar + Floating quick menu
  * Charte: violet #a34ee5, or #fec603, violet foncé #7828a8, noir #0a0a0a
+ * FIX: Mobile menu avec bouton de fermeture visible
  */
 
 const NavAdmin = () => {
@@ -122,7 +123,6 @@ const NavAdmin = () => {
       color: "#fec603",
       items: [
         { path: "/listeContacts", label: "Messages", count: counts.contacts },
-        // { path: "/listePostulantsCommunity", label: "Communauté", count: counts.community },
         { path: "/listeAbonnement", label: "Abonnements", count: counts.newsletter }
       ]
     }
@@ -139,16 +139,16 @@ const NavAdmin = () => {
   return (
     <>
       {/* TOP BAR */}
-      <nav className="fixed top-0 left-0 right-0 h-20 bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-[#a34ee5]/20 z-[200]">
-        <div className="h-full max-w-[1920px] mx-auto px-6 flex items-center justify-between gap-6">
+      <nav className="fixed top-0 left-0 right-0 h-20 bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-[#a34ee5]/20 z-[200]">
+        <div className="h-full max-w-[1920px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-3 sm:gap-6">
           
           {/* Left: Logo + Brand */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3 sm:gap-6">
             {/* Logo */}
             <Link to="/dashboardAdmin" className="relative group">
               <div className="absolute inset-0 bg-gradient-to-r from-[#a34ee5] to-[#fec603] opacity-0 group-hover:opacity-30 blur-xl transition-opacity duration-500 rounded-xl"></div>
-              <div className="relative w-12 h-12 bg-gradient-to-br from-[#a34ee5] via-[#fec603] to-[#7828a8] rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white text-2xl font-black">T</span>
+              <div className="relative w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#a34ee5] via-[#fec603] to-[#7828a8] rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white text-xl sm:text-2xl font-black">T</span>
               </div>
             </Link>
 
@@ -205,10 +205,10 @@ const NavAdmin = () => {
             </div>
           </div>
 
-          {/* Right: Search + Actions */}
-          <div className="flex items-center gap-3">
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2 sm:gap-3">
             
-            {/* Search */}
+            {/* Search - Hidden on mobile */}
             <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#41124f]/30 border border-[#a34ee5]/20 rounded-xl">
               <Search className="w-4 h-4 text-gray-500" />
               <input
@@ -219,24 +219,24 @@ const NavAdmin = () => {
             </div>
 
             {/* Notifications */}
-            <button className="relative p-3 bg-[#41124f]/30 hover:bg-[#41124f]/50 border border-[#a34ee5]/20 hover:border-[#a34ee5]/40 rounded-xl transition-all">
-              <Bell className="w-5 h-5 text-gray-300" />
+            <button className="relative p-2.5 sm:p-3 bg-[#41124f]/30 hover:bg-[#41124f]/50 border border-[#a34ee5]/20 hover:border-[#a34ee5]/40 rounded-xl transition-all">
+              <Bell className="w-4 h-4 sm:w-5 sm:h-5 text-gray-300" />
               {(counts.contacts + counts.community + counts.newsletter) > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#fec603] rounded-full text-[#0a0a0a] text-xs font-bold flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 bg-[#fec603] rounded-full text-[#0a0a0a] text-[10px] sm:text-xs font-bold flex items-center justify-center">
                   {counts.contacts + counts.community + counts.newsletter}
                 </span>
               )}
             </button>
 
-            {/* Quick Menu Button */}
+            {/* Quick Menu Button - Hidden on mobile */}
             <button
               onClick={() => setShowQuickMenu(!showQuickMenu)}
-              className="p-3 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] rounded-xl transition-all shadow-lg"
+              className="hidden sm:flex p-3 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] rounded-xl transition-all shadow-lg"
             >
               <Grid3x3 className="w-5 h-5 text-white" />
             </button>
 
-            {/* Admin Profile */}
+            {/* Admin Profile - Hidden on small screens */}
             <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-[#41124f]/30 border border-[#a34ee5]/20 rounded-xl">
               <div className="w-8 h-8 bg-gradient-to-br from-[#a34ee5] to-[#fec603] rounded-lg flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
@@ -247,10 +247,10 @@ const NavAdmin = () => {
               </div>
             </div>
 
-            {/* Logout */}
+            {/* Logout - Hidden on mobile */}
             <button
               onClick={handleLogout}
-              className="p-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 hover:border-red-500/60 rounded-xl transition-all"
+              className="hidden sm:flex p-3 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 hover:border-red-500/60 rounded-xl transition-all"
               title="Déconnexion"
             >
               <LogOut className="w-5 h-5 text-red-400" />
@@ -259,7 +259,7 @@ const NavAdmin = () => {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="lg:hidden p-3 bg-[#41124f]/30 border border-[#a34ee5]/20 rounded-xl"
+              className="lg:hidden p-2.5 sm:p-3 bg-[#41124f]/30 border border-[#a34ee5]/20 rounded-xl"
             >
               {showMobileMenu ? (
                 <X className="w-5 h-5 text-white" />
@@ -271,7 +271,7 @@ const NavAdmin = () => {
         </div>
       </nav>
 
-      {/* FLOATING QUICK MENU */}
+      {/* FLOATING QUICK MENU (Desktop only) */}
       {showQuickMenu && (
         <>
           <div 
@@ -380,22 +380,91 @@ const NavAdmin = () => {
         </>
       )}
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU - AMÉLIORÉ */}
       {showMobileMenu && (
         <>
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[250] lg:hidden"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[250] lg:hidden"
             onClick={() => setShowMobileMenu(false)}
           ></div>
           
-          <div className="fixed top-20 left-0 right-0 bottom-0 bg-[#0a0a0a]/95 backdrop-blur-xl border-t border-[#a34ee5]/20 z-[300] overflow-y-auto lg:hidden">
-            <div className="p-6 space-y-6">
+          <div className="fixed inset-0 top-20 bg-[#0a0a0a]/98 backdrop-blur-xl z-[300] overflow-y-auto lg:hidden">
+            {/* Header Mobile avec bouton fermeture */}
+            <div className="sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-xl border-b border-[#a34ee5]/20 p-4 flex items-center justify-between z-10">
+              <h2 className="text-white font-black text-lg flex items-center gap-2">
+                <Menu className="w-5 h-5 text-[#fec603]" />
+                Menu Navigation
+              </h2>
+              <button
+                onClick={() => setShowMobileMenu(false)}
+                className="p-2.5 bg-[#41124f]/40 hover:bg-[#41124f]/60 border border-[#a34ee5]/30 rounded-xl transition-all"
+              >
+                <X className="w-6 h-6 text-white" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-4 space-y-6 pb-32">
+              {/* User Info Mobile */}
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-[#a34ee5]/20 to-[#fec603]/20 border border-[#a34ee5]/30 rounded-2xl">
+                <div className="w-12 h-12 bg-gradient-to-br from-[#a34ee5] to-[#fec603] rounded-xl flex items-center justify-center shadow-lg">
+                  <User className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <div className="text-white font-bold">Admin</div>
+                  <div className="text-gray-400 text-sm">admin@tekacom.gn</div>
+                </div>
+              </div>
+
+              {/* Notifications Mobile */}
+              {(counts.contacts + counts.newsletter) > 0 && (
+                <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Bell className="w-5 h-5 text-blue-400" />
+                    <span className="text-white font-bold">Notifications</span>
+                    <span className="ml-auto px-3 py-1 bg-[#fec603] text-[#0a0a0a] rounded-full text-sm font-black">
+                      {counts.contacts + counts.newsletter}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {counts.contacts > 0 && (
+                      <Link
+                        to="/listeContacts"
+                        onClick={() => setShowMobileMenu(false)}
+                        className="flex items-center justify-between px-3 py-2 bg-white/10 rounded-xl"
+                      >
+                        <span className="text-gray-300 text-sm">Messages</span>
+                        <span className="px-2 py-1 bg-[#fec603]/20 text-[#fec603] rounded-full text-xs font-bold">
+                          {counts.contacts}
+                        </span>
+                      </Link>
+                    )}
+                    {counts.newsletter > 0 && (
+                      <Link
+                        to="/listeAbonnement"
+                        onClick={() => setShowMobileMenu(false)}
+                        className="flex items-center justify-between px-3 py-2 bg-white/10 rounded-xl"
+                      >
+                        <span className="text-gray-300 text-sm">Abonnements</span>
+                        <span className="px-2 py-1 bg-[#fec603]/20 text-[#fec603] rounded-full text-xs font-bold">
+                          {counts.newsletter}
+                        </span>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Navigation Categories */}
               {navCategories.map((category, idx) => (
                 <div key={idx}>
-                  <div className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3">
-                    {category.title}
+                  <div className="flex items-center gap-2 px-3 py-2 mb-3">
+                    <div className="w-1 h-6 rounded-full" style={{ backgroundColor: category.color }}></div>
+                    <div className="text-sm font-black uppercase tracking-wider" style={{ color: category.color }}>
+                      {category.title}
+                    </div>
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {category.items.map((item, itemIdx) => {
                       const isActive = location.pathname === item.path;
                       return (
@@ -403,18 +472,20 @@ const NavAdmin = () => {
                           key={itemIdx}
                           to={item.path}
                           onClick={() => setShowMobileMenu(false)}
-                          className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
+                          className={`flex items-center justify-between px-4 py-3.5 rounded-xl transition-all ${
                             isActive
-                              ? 'bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white'
-                              : 'text-gray-300 hover:bg-[#41124f]/40 hover:text-white'
+                              ? 'bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white shadow-lg'
+                              : 'bg-[#41124f]/20 text-gray-300 hover:bg-[#41124f]/40 hover:text-white'
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            {getIcon(item.path)}
-                            <span className="font-medium">{item.label}</span>
+                            <div className={`${isActive ? 'text-white' : ''}`} style={{ color: !isActive ? category.color : undefined }}>
+                              {getIcon(item.path)}
+                            </div>
+                            <span className="font-bold">{item.label}</span>
                           </div>
                           {item.count > 0 && (
-                            <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                            <span className={`px-3 py-1.5 rounded-full text-xs font-black ${
                               isActive
                                 ? 'bg-white/20 text-white'
                                 : 'bg-[#fec603]/20 text-[#fec603]'
@@ -428,7 +499,27 @@ const NavAdmin = () => {
                   </div>
                 </div>
               ))}
+
+              {/* Logout Mobile */}
+              <button
+                onClick={() => {
+                  setShowMobileMenu(false);
+                  handleLogout();
+                }}
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-red-500/20 hover:bg-red-500/30 border-2 border-red-500/40 hover:border-red-500/60 rounded-2xl transition-all text-red-400 hover:text-red-300 font-bold"
+              >
+                <LogOut className="w-5 h-5" />
+                Déconnexion
+              </button>
             </div>
+
+            {/* Floating close button - Toujours visible */}
+            <button
+              onClick={() => setShowMobileMenu(false)}
+              className="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] rounded-full shadow-2xl flex items-center justify-center z-20 border-2 border-white/20"
+            >
+              <X className="w-7 h-7 text-white" />
+            </button>
           </div>
         </>
       )}
