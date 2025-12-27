@@ -7,11 +7,17 @@ import i18n from "./i18n";
 import React from "react";
 import { trackAction } from "./utils/tracker";
 
+/**
+ * 🎨 APP - TEKACOM FIXED
+ * Harmonisé avec charte: violet #a34ee5, or #fec603, violet foncé #7828a8, noir #0a0a0a
+ * Fixed: NavAdmin ne masque plus le contenu + Contenu centré
+ */
+
 const App = () => {
   const location = useLocation();
   const token = localStorage.getItem("access");
 
-  // 🎨 Custom Scrollbar Styles - Harmonisé avec la charte TEKACOM
+  // 🎨 Custom Scrollbar Styles - TEKACOM Brand
   const scrollbarStyles = `
     /* ===== Scrollbar Firefox ===== */
     * {
@@ -54,17 +60,19 @@ const App = () => {
 
     /* ===== Scrollbar Admin Dashboard ===== */
     .admin-layout ::-webkit-scrollbar-track {
-      background: #f9fafb;
+      background: #41124f20;
+      border-radius: 10px;
     }
 
     .admin-layout ::-webkit-scrollbar-thumb {
-      background: linear-gradient(180deg, #a34ee5 0%, #7828a8 100%);
-      border: 2px solid #f9fafb;
+      background: linear-gradient(180deg, #a34ee5 0%, #fec603 50%, #7828a8 100%);
+      border: 2px solid #0a0a0a;
+      border-radius: 10px;
     }
 
     .admin-layout ::-webkit-scrollbar-thumb:hover {
       background: linear-gradient(180deg, #fec603 0%, #a34ee5 100%);
-      box-shadow: 0 0 10px rgba(163, 78, 229, 0.3);
+      box-shadow: 0 0 10px rgba(163, 78, 229, 0.5);
     }
   `;
 
@@ -94,13 +102,12 @@ const App = () => {
     return () => document.removeEventListener("click", handleClick);
   }, [location.pathname]);
 
-  // 🔹 Tracker global des formulaires pour contact / mail
+  // 🔹 Tracker global des formulaires
   React.useEffect(() => {
     const handleSubmit = (e) => {
       const form = e.target;
       if (!(form instanceof HTMLFormElement)) return;
 
-      // Détecter le type de formulaire via data-action ou id
       const actionType = form.dataset.action || form.id;
       if (actionType === "contactForm") {
         trackAction({
@@ -128,9 +135,10 @@ const App = () => {
     "/fondationPost", "/motPresidentPost", "/videoPost", "/photoPost",
     "/documentPost", "/mediaPartenairePost", "/programPost",
     "/dashboardAdmin", "/teamMessage", "/missionPost", "/activitiesPost",
-    "/homePost",
-    "/partnerPost", "/professionalAreaPost", "/thonRecipesPost", "/sardineRecipesPost",
-    "/sardineProductPost", "/thonProductPost",
+    "/homePost", "/partnerPost", "/professionalAreaPost", 
+    "/thonRecipesPost", "/sardineRecipesPost",
+    "/sardineProductPost", "/thonProductPost", 
+    "/servicePost", "/portfolioPost",
   ];
 
   const isAdminPage = adminPaths.includes(location.pathname);
@@ -144,40 +152,59 @@ const App = () => {
       <style>{scrollbarStyles}</style>
       
       {isAdminPage ? (
-        // 🎨 ADMIN LAYOUT - Clean white background for admin dashboard
-        <div className="admin-layout flex h-screen w-screen overflow-hidden bg-gray-50 relative">
+        // 🎨 ADMIN LAYOUT - Dark theme harmonized with TEKACOM
+        // FIXED: Contenu centré + padding-top pour NavAdmin
+        <div className="admin-layout flex h-screen w-screen overflow-hidden bg-[#0a0a0a] relative">
+          {/* Admin background effects */}
+          <div className="fixed inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#a34ee5]/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#fec603]/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#7828a8]/5 rounded-full blur-3xl"></div>
+            {/* Dot grid */}
+            <div className="absolute inset-0 opacity-[0.015]" 
+                 style={{
+                   backgroundImage: 'radial-gradient(circle, #a34ee5 1px, transparent 1px)',
+                   backgroundSize: '40px 40px'
+                 }}
+            ></div>
+          </div>
+          
           <NavAdmin />
-          <main className="flex-1 overflow-y-auto overflow-x-hidden transition-all duration-300 bg-white ml-80">
-            <div className="min-h-screen w-full px-4 md:px-6 lg:px-8">
+          
+          {/* MAIN CONTENT - CENTRÉ avec max-width et margin auto */}
+          <main className="flex-1 overflow-y-auto overflow-x-hidden transition-all duration-500 ease-out bg-transparent relative">
+            {/* Container centré avec padding-top pour éviter le masquage */}
+            <div className="min-h-screen w-full max-w-[1800px] mx-auto px-4 md:px-6 lg:px-12 py-6 mt-20">
               <Outlet />
             </div>
           </main>
         </div>
       ) : (
-        // 🎨 PUBLIC LAYOUT - Dark theme with brand colors
+        // 🎨 PUBLIC LAYOUT - Dark theme with TEKACOM brand colors
         <div className="flex flex-col min-h-screen w-full bg-[#0a0a0a] text-gray-100 overflow-x-hidden relative">
           {/* Gradient background effect */}
           <div className="fixed inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-[#a34ee5]/20 via-[#7828a8]/10 to-transparent rounded-full blur-3xl opacity-30"></div>
-            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#41124f]/30 via-[#7828a8]/10 to-transparent rounded-full blur-3xl opacity-40"></div>
+            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-[#a34ee5]/20 via-[#7828a8]/10 to-transparent rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDuration: '8s' }}></div>
+            <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#41124f]/30 via-[#7828a8]/10 to-transparent rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDuration: '10s' }}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#fec603]/5 rounded-full blur-3xl opacity-20"></div>
           </div>
 
-          {/* Noise texture overlay for depth */}
-          <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-overlay" 
+          {/* Dot grid texture overlay for depth */}
+          <div className="fixed inset-0 pointer-events-none opacity-[0.015]" 
                style={{
-                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                 backgroundImage: 'radial-gradient(circle, #a34ee5 1px, transparent 1px)',
+                 backgroundSize: '40px 40px'
                }}
           ></div>
 
-          {/* Header - Fixed at top with isolation to prevent stacking context issues */}
+          {/* Header - Fixed at top */}
           {!isLoginPage && (
             <div className="fixed top-0 left-0 right-0 z-[100] isolate">
               <Header logoColor="#a34ee5" />
             </div>
           )}
 
-          {/* Main content with glassmorphism container */}
-          {/* pt-32 ensures content scrolls below the fixed header (128px) */}
+          {/* Main content */}
           <main className="flex-1 w-full relative pt-32" style={{ zIndex: 1 }}>
             <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-12">
               <Outlet />
@@ -191,8 +218,9 @@ const App = () => {
             </div>
           )}
 
-          {/* Accent line at bottom */}
+          {/* Accent line at bottom - TEKACOM gradient */}
           <div className="fixed bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#a34ee5] to-transparent opacity-50 pointer-events-none"></div>
+          <div className="fixed bottom-1 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#fec603] to-transparent opacity-30 pointer-events-none"></div>
         </div>
       )}
     </I18nextProvider>
