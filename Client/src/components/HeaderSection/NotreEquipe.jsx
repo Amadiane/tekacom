@@ -145,8 +145,8 @@ const NotreEquipe = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mt-12">
             {[
               { icon: Users, label: "Créatifs", value: membres.length || "0", color: "from-[#a34ee5] to-[#7828a8]" },
-              { icon: Award, label: "Expertise", value: "8+ ans", color: "from-[#fec603] to-[#a34ee5]" },
-              { icon: Zap, label: "Projets", value: "200+", color: "from-[#7828a8] to-[#a34ee5]" },
+              { icon: Award, label: "Expertise", value: "10+ ans", color: "from-[#fec603] to-[#a34ee5]" },
+              { icon: Zap, label: "Projets", value: "500+", color: "from-[#7828a8] to-[#a34ee5]" },
               { icon: Heart, label: "Passion", value: "100%", color: "from-[#a34ee5] to-[#fec603]" },
             ].map((stat, idx) => {
               const Icon = stat.icon;
