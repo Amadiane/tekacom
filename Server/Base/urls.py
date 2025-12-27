@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import PartnerViewSet, TrackEventView, TrackStatsView, EquipeMemberViewSet, ContactViewSet, ServiceViewSet, PortfolioViewSet, HomeViewSet, HomeFullView
+from .views import PartnerViewSet, TrackEventView, TrackStatsView, EquipeMemberViewSet, ContactViewSet, ServiceViewSet, PortfolioViewSet, HomeViewSet, HomeFullView, LoginView
 from .views import (
     ValeurMissionListCreateView,
     ValeurMissionRetrieveUpdateView,
@@ -18,6 +18,7 @@ router.register(r'home', HomeViewSet, basename='home')
 urlpatterns = [
     path("", include(router.urls)),
     path('api/home/', HomeFullView.as_view(), name='home-full'),
+    path("login/", LoginView.as_view(), name="login"),
     path("track/", TrackEventView.as_view(), name="api-track"),
     path("track/stats/", TrackStatsView.as_view(), name="api-track-stats"),
     path('valeur-mission/', ValeurMissionListCreateView.as_view(), name='valeur-mission-list-create'),

@@ -1,27 +1,15 @@
 import { useEffect, useState } from "react";
 import CONFIG from "../../config/config.js";
 import {
-  Target,
-  Loader2,
-  Trash2,
-  PlusCircle,
-  Edit2,
-  X,
-  Save,
-  RefreshCw,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  Check,
-  Calendar,
-  Award,
-  Compass,
-  Image as ImageIcon
+  Target, Loader2, Trash2, PlusCircle, Edit2, X, Save,
+  RefreshCw, Eye, ChevronLeft, ChevronRight, Check, Sparkles,
+  Archive, Clock, Award, Compass, Image as ImageIcon
 } from "lucide-react";
 
 /**
- * 🎨 GESTION VALEURS & MISSIONS - TEKACOM
- * Design: Fond blanc + Gradient orange (identique à PartnerPost)
+ * 🎨 MISSION V4 - GRID + FLOATING BAR
+ * Style: Same as ServicePost
+ * Charte: violet #a34ee5, or #fec603, violet foncé #7828a8, noir #0a0a0a
  */
 
 const MissionPost = () => {
@@ -34,7 +22,11 @@ const MissionPost = () => {
   const [showList, setShowList] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [filterStatus, setFilterStatus] = useState('all');
   const [useMockData, setUseMockData] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState(null);
+
   const [formData, setFormData] = useState({
     titre: "",
     description: "",
@@ -44,38 +36,34 @@ const MissionPost = () => {
     is_active: true,
   });
 
-  // Preview pour la photo
-  const [photoPreview, setPhotoPreview] = useState(null);
-
-  // PAGINATION
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 12;
 
-  // MOCK DATA pour test
+  const NAVADMIN_HEIGHT = 80;
+  const SCROLL_OFFSET = 20;
+
+  const scrollToForm = () => {
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: NAVADMIN_HEIGHT + SCROLL_OFFSET,
+        behavior: "smooth" 
+      });
+    }, 100);
+  };
+
   const mockData = [
     {
       id: 1,
       titre: "Excellence & Innovation",
-      description: "Notre engagement envers l'excellence et l'innovation continue",
-      valeur: "Nous visons l'excellence dans tout ce que nous faisons et innovons constamment pour rester à la pointe.",
-      mission: "Fournir des solutions créatives de haute qualité qui dépassent les attentes de nos clients.",
-      photo: null,
-      is_active: true,
-      created_at: new Date().toISOString()
-    },
-    {
-      id: 2,
-      titre: "Collaboration & Impact",
-      description: "Travailler ensemble pour un impact durable",
-      valeur: "Nous croyons au pouvoir de la collaboration et cherchons à créer un impact positif durable.",
-      mission: "Accompagner nos clients dans leur transformation digitale avec des solutions sur mesure.",
+      description: "Notre engagement envers l'excellence",
+      valeur: "Nous visons l'excellence dans tout ce que nous faisons et innovons constamment.",
+      mission: "Fournir des solutions créatives de haute qualité qui dépassent les attentes.",
       photo: null,
       is_active: true,
       created_at: new Date().toISOString()
     }
   ];
 
-  // FETCH VALEURS & MISSIONS
   const fetchItems = async () => {
     setLoading(true);
     try {
@@ -84,7 +72,7 @@ const MissionPost = () => {
         console.warn("API non disponible, utilisation des données mock");
         setItems(mockData);
         setUseMockData(true);
-        setError("⚠️ Mode démo : API non disponible. Données factices affichées.");
+        setError("⚠️ Mode démo : API non disponible.");
         return;
       }
       const data = await res.json();
@@ -93,10 +81,9 @@ const MissionPost = () => {
       setError(null);
     } catch (err) {
       console.error(err);
-      console.warn("Erreur réseau, utilisation des données mock");
       setItems(mockData);
       setUseMockData(true);
-      setError("⚠️ Mode démo : Impossible de contacter l'API. Données factices affichées.");
+      setError("⚠️ Mode démo : Impossible de contacter l'API.");
     } finally {
       setLoading(false);
       setFetchLoading(false);
@@ -107,12 +94,8 @@ const MissionPost = () => {
     fetchItems();
   }, []);
 
-  // -----------------------------
-  // CLOUDINARY UPLOAD
-  // -----------------------------
   const uploadToCloudinary = async (file) => {
     if (!file) return null;
-
     const data = new FormData();
     data.append("file", file);
     data.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
@@ -155,79 +138,60 @@ const MissionPost = () => {
     setEditingId(null);
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError(null);
-  setSuccessMessage(null);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
 
-  try {
-    let photoToSend = null;
-
-    // 1️⃣ Gestion de la photo
-    if (formData.photo && typeof formData.photo !== "string") {
-      // Nouvelle image → upload Cloudinary
-      const uploadedUrl = await uploadToCloudinary(formData.photo);
-      if (uploadedUrl) {
-        photoToSend = uploadedUrl;
-      } else {
-        throw new Error("Erreur lors de l'upload de l'image");
+    try {
+      let photoToSend = null;
+      if (formData.photo && typeof formData.photo !== "string") {
+        const uploadedUrl = await uploadToCloudinary(formData.photo);
+        if (uploadedUrl) {
+          photoToSend = uploadedUrl;
+        } else {
+          throw new Error("Erreur lors de l'upload de l'image");
+        }
+      } else if (formData.photo && typeof formData.photo === "string") {
+        photoToSend = formData.photo;
       }
-    } else if (formData.photo && typeof formData.photo === "string") {
-      // URL existante → on garde l'URL
-      photoToSend = formData.photo;
+
+      const formDataToSend = new FormData();
+      formDataToSend.append("titre", formData.titre.trim());
+      formDataToSend.append("valeur", formData.valeur.trim());
+      formDataToSend.append("mission", formData.mission.trim());
+      formDataToSend.append("is_active", formData.is_active);
+
+      if (formData.description?.trim()) {
+        formDataToSend.append("description", formData.description.trim());
+      }
+      if (photoToSend) {
+        formDataToSend.append("photo_url", photoToSend);
+      }
+
+      const method = editingId ? "PATCH" : "POST";
+      const url = editingId ? CONFIG.API_VALEUR_MISSION_UPDATE(editingId) : CONFIG.API_VALEUR_MISSION_CREATE;
+
+      const response = await fetch(url, { method, body: formDataToSend });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || errorData.error || `Erreur ${response.status}`);
+      }
+
+      setSuccessMessage("✨ Succès !");
+      resetForm();
+      await fetchItems();
+      setShowForm(false);
+      setShowList(true);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Erreur lors de la sauvegarde");
+    } finally {
+      setLoading(false);
     }
-
-    // 2️⃣ Préparer FormData pour Django
-    const formDataToSend = new FormData();
-    formDataToSend.append("titre", formData.titre.trim());
-    formDataToSend.append("valeur", formData.valeur.trim());
-    formDataToSend.append("mission", formData.mission.trim());
-    formDataToSend.append("is_active", formData.is_active);
-
-    if (formData.description?.trim()) {
-      formDataToSend.append("description", formData.description.trim());
-    }
-
-    if (photoToSend) {
-      formDataToSend.append("photo_url", photoToSend);
-    }
-
-    // 3️⃣ Déterminer le endpoint et la méthode
-    const method = editingId ? "PATCH" : "POST";
-    const url = editingId
-      ? CONFIG.API_VALEUR_MISSION_UPDATE(editingId)
-      : CONFIG.API_VALEUR_MISSION_CREATE;
-
-    // 4️⃣ Envoi au backend
-    const response = await fetch(url, {
-      method,
-      body: formDataToSend,
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || errorData.error || `Erreur ${response.status}`);
-    }
-
-    // 5️⃣ Gestion du succès
-    const responseData = await response.json();
-    setSuccessMessage(editingId ? "Valeur/Mission mise à jour !" : "Valeur/Mission ajoutée !");
-    resetForm();
-    await fetchItems();
-    setShowForm(false);
-    setShowList(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  } catch (err) {
-    console.error("❌ handleSubmit:", err);
-    setError(err.message || "Erreur lors de la sauvegarde");
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-
+  };
 
   const handleEdit = (item) => {
     setEditingId(item.id);
@@ -242,586 +206,413 @@ const handleSubmit = async (e) => {
     setPhotoPreview(item.photo || null);
     setShowForm(true);
     setShowList(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToForm();
   };
 
-  // PAGINATION
+  const handleDelete = async (id) => {
+    if (!window.confirm("Supprimer cet élément ?")) return;
+    try {
+      const res = await fetch(CONFIG.API_VALEUR_MISSION_DELETE(id), { method: "DELETE" });
+      if (!res.ok) throw new Error("Erreur de suppression");
+      setSuccessMessage("✨ Supprimé !");
+      await fetchItems();
+      setSelectedItem(null);
+      setSelectedCards([]);
+    } catch (err) {
+      console.error(err);
+      setError("Erreur lors de la suppression");
+    }
+  };
+
+  const toggleCardSelection = (id) => {
+    setSelectedCards(prev => 
+      prev.includes(id) ? prev.filter(cardId => cardId !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedCards.length === 0) return;
+    if (!window.confirm(`Supprimer ${selectedCards.length} élément(s) ?`)) return;
+
+    for (const id of selectedCards) {
+      try {
+        await fetch(CONFIG.API_VALEUR_MISSION_DELETE(id), { method: "DELETE" });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    
+    setSuccessMessage(`✨ ${selectedCards.length} élément(s) supprimé(s) !`);
+    setSelectedCards([]);
+    await fetchItems();
+  };
+
+  const filteredItems = items.filter(item => {
+    if (filterStatus === 'active') return item.is_active;
+    if (filterStatus === 'inactive') return !item.is_active;
+    return true;
+  });
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = items.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(items.length / itemsPerPage);
+  const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // LOADING STATE
   if (fetchLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#F47920] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Chargement...</p>
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-4 border-[#a34ee5]/30 border-t-[#fec603] rounded-full animate-spin"></div>
+          <span className="text-gray-400 font-medium">Chargement...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
-        <div className="mb-8">
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 md:p-8">
-            <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-4">
-                <div className="relative group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#FDB71A] via-[#F47920] to-[#E84E1B] opacity-0 group-hover:opacity-20 blur-xl transition-opacity rounded-2xl"></div>
-                  <div className="relative w-14 h-14 bg-gradient-to-br from-[#FDB71A] via-[#F47920] to-[#E84E1B] rounded-2xl flex items-center justify-center shadow-lg">
-                    <Compass className="text-white w-7 h-7" />
-                  </div>
-                </div>
+    <div className="min-h-screen bg-[#0a0a0a] relative pb-32">
+      
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#a34ee5]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#fec603]/5 rounded-full blur-3xl"></div>
+      </div>
 
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-black text-gray-900 flex items-center gap-3">
-                    Valeurs & Missions
-                    {useMockData && (
-                      <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold border border-yellow-300">
-                        MODE DÉMO
-                      </span>
-                    )}
-                  </h1>
-                  <p className="text-gray-500 font-medium mt-1">Inspirer • Créer • Impacter</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={fetchItems}
-                  disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-semibold hover:border-gray-300 hover:shadow-md transition-all duration-200 disabled:opacity-50"
-                >
-                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-                  Actualiser
-                </button>
-
-                <button
-                  onClick={() => {
-                    setShowForm(!showForm);
-                    if (!showForm) {
-                      resetForm();
-                      setShowList(false);
-                    } else {
-                      setShowList(true);
-                    }
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#FDB71A] via-[#F47920] to-[#E84E1B] text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
-                >
-                  {showForm ? (
-                    <>
-                      <X className="w-5 h-5" />
-                      Fermer
-                    </>
-                  ) : (
-                    <>
-                      <PlusCircle className="w-5 h-5" />
-                      Nouveau
-                    </>
-                  )}
-                </button>
-              </div>
+      <div className="relative max-w-[1800px] mx-auto px-6 py-8">
+        
+        {/* COMPACT HEADER */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#a34ee5] to-[#7828a8] rounded-2xl flex items-center justify-center shadow-lg">
+              <Compass className="w-6 h-6 text-white" />
             </div>
+            <div>
+              <h1 className="text-2xl font-black text-white">Valeurs & Missions</h1>
+              <p className="text-xs text-gray-500">{filteredItems.length} élément{filteredItems.length > 1 ? 's' : ''}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                onClick={() => setFilterStatus('all')}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  filterStatus === 'all' ? 'bg-[#a34ee5] text-white' : 'bg-[#41124f]/30 text-gray-400 hover:text-white'
+                }`}
+              >
+                Tous
+              </button>
+              <button
+                onClick={() => setFilterStatus('active')}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1 ${
+                  filterStatus === 'active' ? 'bg-green-500 text-white' : 'bg-[#41124f]/30 text-gray-400 hover:text-white'
+                }`}
+              >
+                <Check className="w-4 h-4" />
+                Actifs
+              </button>
+              <button
+                onClick={() => setFilterStatus('inactive')}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                  filterStatus === 'inactive' ? 'bg-gray-500 text-white' : 'bg-[#41124f]/30 text-gray-400 hover:text-white'
+                }`}
+              >
+                Inactifs
+              </button>
+            </div>
+
+            <button
+              onClick={fetchItems}
+              disabled={loading}
+              className="p-3 bg-[#41124f]/40 hover:bg-[#41124f]/60 border border-[#a34ee5]/30 rounded-xl transition-all disabled:opacity-50"
+            >
+              <RefreshCw className={`w-5 h-5 text-[#a34ee5] ${loading ? 'animate-spin' : ''}`} />
+            </button>
+
+            <button
+              onClick={() => {
+                setShowForm(true);
+                setShowList(false);
+                resetForm();
+                scrollToForm();
+              }}
+              className="px-6 py-3 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] text-white rounded-xl font-bold transition-all shadow-lg flex items-center gap-2"
+            >
+              <PlusCircle className="w-5 h-5" />
+              <span className="hidden md:inline">Nouveau</span>
+            </button>
           </div>
         </div>
 
-        {/* MESSAGES */}
+        {/* Messages */}
         {error && (
-          <div className={`${useMockData ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'} border rounded-xl p-4 mb-6 flex items-center gap-3`}>
-            <div className={`flex-1 ${useMockData ? 'text-yellow-700' : 'text-red-700'} font-medium`}>{error}</div>
-            <button onClick={() => setError(null)} className={`${useMockData ? 'text-yellow-500 hover:text-yellow-700' : 'text-red-500 hover:text-red-700'}`}>
-              <X size={18} />
-            </button>
+          <div className={`mb-6 p-4 ${useMockData ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-red-500/10 border-red-500/30'} border rounded-2xl flex items-center gap-3`}>
+            <div className={`flex-1 ${useMockData ? 'text-yellow-300' : 'text-red-300'} text-sm font-medium`}>{error}</div>
+            <button onClick={() => setError(null)} className={useMockData ? 'text-yellow-400' : 'text-red-400'}><X size={18} /></button>
           </div>
         )}
 
         {successMessage && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-            <div className="flex-1 text-green-700 font-medium">{successMessage}</div>
-            <button onClick={() => setSuccessMessage(null)} className="text-green-500 hover:text-green-700">
-              <X size={18} />
-            </button>
+          <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-2xl flex items-center gap-3">
+            <div className="flex-1 text-green-300 text-sm font-medium">{successMessage}</div>
+            <button onClick={() => setSuccessMessage(null)} className="text-green-400"><X size={18} /></button>
           </div>
         )}
 
-        {/* FORMULAIRE */}
+        {/* DRAWER FORM */}
         {showForm && (
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 md:p-8 mb-8">
-            <form onSubmit={handleSubmit}>
-              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-                <div className="w-1 h-8 bg-gradient-to-b from-[#FDB71A] to-[#E84E1B] rounded-full"></div>
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {editingId ? "Modifier" : "Nouveau"}
-                </h3>
-              </div>
-
-              {/* Titre */}
-              <div className="mb-6 space-y-2">
-                <label className="font-semibold text-gray-700 text-sm">
-                  Titre <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="titre"
-                  value={formData.titre}
-                  onChange={handleChange}
-                  placeholder="Ex: Excellence & Innovation"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium"
-                  required
-                />
-              </div>
-
-              {/* Description */}
-              <div className="mb-6 space-y-2">
-                <label className="font-semibold text-gray-700 text-sm">
-                  Description (optionnelle)
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows="2"
-                  placeholder="Courte description ou résumé..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium resize-none"
-                ></textarea>
-              </div>
-
-              {/* Valeur */}
-              <div className="mb-6 space-y-2">
-                <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
-                  <Award className="w-4 h-4 text-[#FDB71A]" />
-                  Valeur <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  name="valeur"
-                  value={formData.valeur}
-                  onChange={handleChange}
-                  rows="4"
-                  placeholder="Décrivez la valeur de l'entreprise..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#FDB71A] focus:ring-2 focus:ring-[#FDB71A]/20 transition-all bg-white font-medium resize-none"
-                  required
-                ></textarea>
-              </div>
-
-              {/* Mission */}
-              <div className="mb-6 space-y-2">
-                <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
-                  <Target className="w-4 h-4 text-[#F47920]" />
-                  Mission <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  name="mission"
-                  value={formData.mission}
-                  onChange={handleChange}
-                  rows="4"
-                  placeholder="Décrivez la mission associée..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:border-[#F47920] focus:ring-2 focus:ring-[#F47920]/20 transition-all bg-white font-medium resize-none"
-                  required
-                ></textarea>
-              </div>
-
-              {/* Photo (optionnelle) */}
-              <div className="mb-6 space-y-3">
-                <label className="font-semibold text-gray-700 text-sm flex items-center gap-2">
-                  <Award className="w-4 h-4 text-blue-500" />
-                  Photo illustrative (optionnelle)
-                </label>
-                <input
-                  type="file"
-                  name="photo"
-                  accept="image/*"
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-xl bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:font-semibold file:bg-gradient-to-r file:from-[#FDB71A] file:to-[#F47920] file:text-white hover:file:scale-105 file:transition-all file:cursor-pointer focus:border-[#F47920]"
-                />
-                {photoPreview && (
-                  <div className="flex justify-center">
-                    <div className="relative bg-white border-2 border-gray-200 rounded-2xl p-4 shadow-lg w-full max-w-md h-48">
-                      <img
-                        src={photoPreview}
-                        alt="Aperçu"
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-                      {editingId && typeof formData.photo === "string" && (
-                        <div className="absolute top-2 left-2">
-                          <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                            Photo actuelle
-                          </span>
-                        </div>
-                      )}
+          <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => { setShowForm(false); setShowList(true); resetForm(); }}></div>
+            <div className="fixed top-0 right-0 bottom-0 w-full md:w-[600px] bg-[#0a0a0a] border-l border-[#a34ee5]/20 z-50 overflow-y-auto animate-slide-in pt-20">
+              <form onSubmit={handleSubmit} className="p-8">
+                <div className="flex items-center justify-between mb-8 pb-6 border-b border-[#a34ee5]/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#a34ee5] to-[#fec603] rounded-xl flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-white" />
                     </div>
+                    <h3 className="text-xl font-black text-white">{editingId ? "Modifier" : "Créer"}</h3>
                   </div>
-                )}
-              </div>
+                  <button type="button" onClick={() => { setShowForm(false); setShowList(true); resetForm(); }} className="p-2 bg-[#41124f]/40 hover:bg-[#41124f]/60 rounded-xl transition-all">
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
 
-              {/* Statut */}
-              <div className="mb-6 space-y-3">
-                <label className="font-semibold text-gray-700 text-sm">Statut de publication</label>
-                <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl border border-gray-300">
-                  <input
-                    type="checkbox"
-                    id="is_active"
-                    name="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
-                    className="w-5 h-5 rounded accent-[#FDB71A] cursor-pointer"
-                  />
-                  <label htmlFor="is_active" className="font-semibold text-gray-700 cursor-pointer flex items-center gap-2">
-                    {formData.is_active ? (
-                      <>
-                        <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                        Actif
-                      </>
-                    ) : (
-                      <>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
-                        Inactif
-                      </>
-                    )}
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Titre *</label>
+                  <input type="text" name="titre" value={formData.titre} onChange={handleChange} placeholder="Excellence & Innovation" className="w-full px-4 py-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5]/60 transition-all" required />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Description</label>
+                  <textarea name="description" value={formData.description} onChange={handleChange} rows="2" placeholder="Courte description..." className="w-full px-4 py-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5]/60 transition-all resize-none"></textarea>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2"><Award className="w-4 h-4" />Valeur *</label>
+                  <textarea name="valeur" value={formData.valeur} onChange={handleChange} rows="4" placeholder="Décrivez la valeur..." className="w-full px-4 py-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5]/60 transition-all resize-none" required></textarea>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2"><Target className="w-4 h-4" />Mission *</label>
+                  <textarea name="mission" value={formData.mission} onChange={handleChange} rows="4" placeholder="Décrivez la mission..." className="w-full px-4 py-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5]/60 transition-all resize-none" required></textarea>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Photo</label>
+                  {photoPreview ? (
+                    <div className="relative group rounded-xl overflow-hidden">
+                      <img src={photoPreview} alt="Preview" className="w-full h-48 object-cover" />
+                      <button type="button" onClick={() => { setPhotoPreview(null); setFormData({ ...formData, photo: null }); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <X className="w-6 h-6 text-white" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="block h-48 border-2 border-dashed border-[#a34ee5]/30 rounded-xl hover:border-[#a34ee5]/60 cursor-pointer bg-[#41124f]/20 transition-all">
+                      <div className="h-full flex flex-col items-center justify-center gap-2">
+                        <ImageIcon className="w-10 h-10 text-[#a34ee5]" />
+                        <span className="text-sm text-gray-400">Cliquez pour ajouter</span>
+                      </div>
+                      <input type="file" name="photo" accept="image/*" onChange={handleChange} className="hidden" />
+                    </label>
+                  )}
+                </div>
+
+                <div className="mb-8">
+                  <label className="flex items-center gap-3 p-4 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl cursor-pointer hover:border-[#a34ee5]/50 transition-all">
+                    <input type="checkbox" name="is_active" checked={formData.is_active} onChange={handleChange} className="w-5 h-5 rounded accent-[#a34ee5]" />
+                    <span className="font-bold text-white">Actif</span>
+                    {formData.is_active && <div className="ml-auto w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>}
                   </label>
                 </div>
-              </div>
 
-              {/* Boutons */}
-              <div className="flex flex-wrap gap-3 pt-6 border-t border-gray-200">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-6 py-3 bg-gradient-to-r from-[#FDB71A] via-[#F47920] to-[#E84E1B] text-white rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 flex items-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="animate-spin w-5 h-5" />
-                      Enregistrement...
-                    </>
-                  ) : (
-                    <>
-                      <Save className="w-5 h-5" />
-                      {editingId ? "Mettre à jour" : "Créer"}
-                    </>
-                  )}
-                </button>
-
-                {editingId && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      resetForm();
-                      setShowForm(false);
-                      setShowList(true);
-                    }}
-                    className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:border-gray-400 hover:shadow-md transition-all duration-200 flex items-center gap-2"
-                  >
-                    <X className="w-5 h-5" />
-                    Annuler
+                <div className="flex gap-3">
+                  <button type="submit" disabled={loading} className="flex-1 px-6 py-4 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-2">
+                    {loading ? <><Loader2 className="w-5 h-5 animate-spin" /><span>Enregistrement...</span></> : <><Save className="w-5 h-5" /><span>{editingId ? "Mettre à jour" : "Créer"}</span></>}
                   </button>
-                )}
-              </div>
-            </form>
-          </div>
+                </div>
+              </form>
+            </div>
+          </>
         )}
 
-        {/* LISTE */}
+        {/* GRID */}
         {showList && (
-          <div className="bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden">
-            <div className="p-6 md:p-8 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-1 h-8 bg-gradient-to-b from-[#FDB71A] to-[#E84E1B] rounded-full"></div>
-                  <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                    Liste
-                    <span className="bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white px-3 py-1 rounded-full font-semibold text-sm">
-                      {items.length}
-                    </span>
-                  </h3>
-                </div>
+          <>
+            {loading ? (
+              <div className="flex justify-center py-32">
+                <div className="w-16 h-16 border-4 border-[#a34ee5]/30 border-t-[#fec603] rounded-full animate-spin"></div>
               </div>
-            </div>
-
-            <div className="p-6 md:p-8">
-              {loading ? (
-                <div className="text-center py-12">
-                  <Loader2 className="w-12 h-12 text-[#F47920] animate-spin mx-auto mb-4" />
-                  <p className="text-gray-600 font-medium">Chargement...</p>
+            ) : currentItems.length === 0 ? (
+              <div className="text-center py-32">
+                <div className="w-20 h-20 bg-[#41124f]/30 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <Compass className="w-10 h-10 text-[#a34ee5]" />
                 </div>
-              ) : items.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Compass className="w-8 h-8 text-gray-400" />
-                  </div>
-                  <p className="text-gray-500 font-medium">Aucun élément pour le moment</p>
-                  <p className="text-gray-400 text-sm mt-1">
-                    {useMockData ? "Configurez l'API pour ajouter des éléments" : "Créez votre première valeur/mission"}
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="grid gap-6 mb-6">
-                    {currentItems.map((item) => (
-                      <div
-                        key={item.id}
-                        className="group relative bg-white/60 backdrop-blur-md rounded-2xl shadow-lg hover:shadow-2xl hover:shadow-orange-400/30 transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[#FDB71A]/50 p-6"
-                      >
-                        <div className="flex flex-col gap-4">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1">
-                              <h4 className="text-xl font-black text-gray-800 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#E84E1B] group-hover:via-[#F47920] group-hover:to-[#FDB71A] transition-all">
-                                {item.titre}
-                              </h4>
-                              {item.description && (
-                                <p className="text-sm text-gray-600 mt-1 italic">
-                                  {item.description}
-                                </p>
-                              )}
+                <h3 className="text-2xl font-bold text-white mb-2">Aucun élément</h3>
+                <p className="text-gray-500">Créez votre première valeur/mission</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {currentItems.map((item) => {
+                    const isSelected = selectedCards.includes(item.id);
+                    return (
+                      <div key={item.id}>
+                        <div className={`group relative bg-[#41124f]/20 border-2 rounded-2xl overflow-hidden transition-all duration-300 ${isSelected ? 'border-[#fec603] shadow-xl shadow-[#fec603]/20' : 'border-[#a34ee5]/20 hover:border-[#a34ee5]/60'}`} onClick={() => toggleCardSelection(item.id)}>
+                          <div className="relative h-64 bg-[#0a0a0a] overflow-hidden flex items-center justify-center">
+                            {item.photo ? (
+                              <img src={item.photo} alt={item.titre} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onError={(e) => { e.target.style.display = 'none'; }} />
+                            ) : (
+                              <Compass className="w-24 h-24 text-gray-700" />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            <div className="absolute top-3 left-3">
+                              <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#fec603] border-[#fec603]' : 'bg-white/20 border-white/40 backdrop-blur-sm'}`}>
+                                {isSelected && <Check className="w-4 h-4 text-[#0a0a0a]" />}
+                              </div>
                             </div>
-                            
-                            <div className="flex items-center gap-2">
+                            <div className="absolute top-3 right-3">
                               {item.is_active ? (
-                                <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 border border-green-200">
+                                <span className="px-2 py-1 bg-green-500/90 backdrop-blur-sm text-white rounded-lg text-xs font-bold flex items-center gap-1">
                                   <Check className="w-3 h-3" />
-                                  Actif
                                 </span>
                               ) : (
-                                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold border border-gray-300">
-                                  Inactif
+                                <span className="px-2 py-1 bg-gray-500/90 backdrop-blur-sm text-white rounded-lg text-xs font-bold">
+                                  <Archive className="w-3 h-3" />
                                 </span>
                               )}
                             </div>
                           </div>
-
-                          {/* Photo si disponible */}
-                          {item.photo && (
-                            <div className="w-full h-48 rounded-xl overflow-hidden border-2 border-gray-200">
-                              <img
-                                src={item.photo}
-                                alt={item.titre}
-                                className="w-full h-full object-cover"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                }}
-                              />
-                            </div>
-                          )}
-
-                          <div className="grid md:grid-cols-2 gap-4">
-                            <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Award className="w-4 h-4 text-[#FDB71A]" />
-                                <h5 className="text-sm font-bold text-[#F47920]">Valeur</h5>
-                              </div>
-                              <p className="text-gray-700 text-sm line-clamp-3">
-                                {item.valeur}
+                          <div className="p-4">
+                            <h3 className="text-white font-bold mb-1 line-clamp-1">{item.titre}</h3>
+                            {item.description && <p className="text-gray-400 text-sm line-clamp-2 mb-3">{item.description}</p>}
+                            {item.created_at && (
+                              <p className="text-xs text-gray-600 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(item.created_at).toLocaleDateString('fr-FR')}
                               </p>
-                            </div>
-
-                            <div className="bg-red-50 p-4 rounded-xl border border-red-200">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Target className="w-4 h-4 text-[#E84E1B]" />
-                                <h5 className="text-sm font-bold text-[#E84E1B]">Mission</h5>
-                              </div>
-                              <p className="text-gray-700 text-sm line-clamp-3">
-                                {item.mission}
-                              </p>
-                            </div>
+                            )}
                           </div>
-
-                          {item.created_at && (
-                            <p className="text-xs text-gray-500 flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
-                              {new Date(item.created_at).toLocaleDateString('fr-FR')}
-                            </p>
-                          )}
-
-                          <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
-                            <button
-                              onClick={() => setSelectedItem(item)}
-                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-                            >
-                              <Eye size={16} />
-                              Voir
-                            </button>
-
-                            <button
-                              onClick={() => {
-                                handleEdit(item);
-                                window.scrollTo({ top: 0, behavior: "smooth" });
-                              }}
-                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-                            >
-                              <Edit2 size={16} />
-                              Modifier
-                            </button>
-
-                            <button
-                              onClick={() => handleDelete(item.id)}
-                              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-bold rounded-xl hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
-                            >
-                              <Trash2 size={16} />
-                              Supprimer
-                            </button>
+                          <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/90 to-transparent">
+                            <div className="flex gap-2">
+                              <button onClick={(e) => { e.stopPropagation(); setSelectedItem(item); }} className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white rounded-lg text-sm font-bold transition-all">
+                                <Eye size={14} className="mx-auto" />
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); handleEdit(item); }} className="flex-1 px-3 py-2 bg-[#a34ee5]/20 hover:bg-[#a34ee5]/30 backdrop-blur-sm border border-[#a34ee5]/40 text-white rounded-lg text-sm font-bold transition-all">
+                                <Edit2 size={14} className="mx-auto" />
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }} className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 backdrop-blur-sm border border-red-500/40 text-white rounded-lg transition-all">
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    ))}
+                    );
+                  })}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex justify-center gap-2 mt-12">
+                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="p-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-[#a34ee5] hover:bg-[#41124f]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    {[...Array(totalPages)].map((_, index) => {
+                      const pageNumber = index + 1;
+                      return (
+                        <button key={pageNumber} onClick={() => handlePageChange(pageNumber)} className={`px-4 py-3 rounded-xl font-bold transition-all ${currentPage === pageNumber ? "bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white" : "bg-[#41124f]/40 border border-[#a34ee5]/30 text-gray-400 hover:text-white"}`}>
+                          {pageNumber}
+                        </button>
+                      );
+                    })}
+                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="p-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-[#a34ee5] hover:bg-[#41124f]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
                   </div>
-
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 pt-6 border-t border-gray-200">
-                      <button
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </button>
-
-                      {[...Array(totalPages)].map((_, index) => {
-                        const pageNumber = index + 1;
-                        return (
-                          <button
-                            key={pageNumber}
-                            onClick={() => handlePageChange(pageNumber)}
-                            className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                              currentPage === pageNumber
-                                ? "bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white"
-                                : "border border-gray-300 text-gray-700 hover:bg-gray-50"
-                            }`}
-                          >
-                            {pageNumber}
-                          </button>
-                        );
-                      })}
-
-                      <button
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="p-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          </div>
+                )}
+              </>
+            )}
+          </>
         )}
       </div>
 
-      {/* MODAL DÉTAIL */}
-      {selectedItem && (
-        <div 
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 z-50"
-          onClick={() => setSelectedItem(null)}
-        >
-          <div 
-            className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col border-2 border-gray-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="bg-gradient-to-r from-[#FDB71A] via-[#F47920] to-[#E84E1B] p-6 relative">
-              <button
-                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all"
-                onClick={() => setSelectedItem(null)}
-              >
+      {/* FLOATING BAR */}
+      {selectedCards.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+          <div className="bg-[#0a0a0a] border-2 border-[#fec603] rounded-2xl shadow-2xl shadow-[#fec603]/20 p-4 backdrop-blur-xl">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-[#fec603]/20 border border-[#fec603]/40 rounded-xl">
+                <Check className="w-5 h-5 text-[#fec603]" />
+                <span className="font-bold text-white">{selectedCards.length} sélectionné{selectedCards.length > 1 ? 's' : ''}</span>
+              </div>
+              <button onClick={handleBulkDelete} className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-all flex items-center gap-2">
+                <Trash2 className="w-5 h-5" />
+                <span>Supprimer</span>
+              </button>
+              <button onClick={() => setSelectedCards([])} className="p-3 bg-[#41124f]/60 hover:bg-[#41124f] rounded-xl transition-all">
                 <X className="w-5 h-5 text-white" />
-              </button>
-
-              <h2 className="text-2xl font-bold text-white pr-12">
-                {selectedItem.titre}
-              </h2>
-            </div>
-
-            <div className="p-6 overflow-y-auto flex-1 space-y-6">
-              {/* Description si disponible */}
-              {selectedItem.description && (
-                <div className="bg-blue-50 p-6 rounded-xl border border-blue-200">
-                  <div className="flex items-center gap-2 mb-3">
-                    <ImageIcon className="w-5 h-5 text-blue-500" />
-                    <h3 className="font-bold text-blue-700 text-lg">Description</h3>
-                  </div>
-                  <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                    {selectedItem.description}
-                  </p>
-                </div>
-              )}
-
-              {/* Photo si disponible */}
-              {selectedItem.photo && (
-                <div className="w-full h-64 rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
-                  <img
-                    src={selectedItem.photo}
-                    alt={selectedItem.titre}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
-
-              <div className="bg-orange-50 p-6 rounded-xl border border-orange-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <Award className="w-5 h-5 text-[#FDB71A]" />
-                  <h3 className="font-bold text-[#F47920] text-lg">Valeur</h3>
-                </div>
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {selectedItem.valeur}
-                </p>
-              </div>
-
-              <div className="bg-red-50 p-6 rounded-xl border border-red-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <Target className="w-5 h-5 text-[#E84E1B]" />
-                  <h3 className="font-bold text-[#E84E1B] text-lg">Mission</h3>
-                </div>
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
-                  {selectedItem.mission}
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-gray-50 p-6 flex justify-end gap-3 border-t border-gray-200">
-              <button
-                className="px-4 py-2 bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white rounded-lg font-semibold hover:shadow-md transition-all flex items-center gap-2"
-                onClick={() => {
-                  handleEdit(selectedItem);
-                  setSelectedItem(null);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-              >
-                <Edit2 className="w-4 h-4" />
-                Modifier
-              </button>
-
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition-colors flex items-center gap-2"
-                onClick={() => handleDelete(selectedItem.id)}
-              >
-                <Trash2 className="w-4 h-4" />
-                Supprimer
-              </button>
-
-              <button
-                className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition-colors flex items-center gap-2"
-                onClick={() => setSelectedItem(null)}
-              >
-                <X className="w-4 h-4" />
-                Fermer
               </button>
             </div>
           </div>
         </div>
       )}
+
+      {/* MODAL */}
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center px-4 z-[9999]" onClick={() => setSelectedItem(null)}>
+          <div className="bg-[#0a0a0a] border border-[#a34ee5]/30 w-full max-w-4xl rounded-3xl overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b border-[#a34ee5]/20 flex items-center justify-between">
+              <h2 className="text-2xl font-black text-white">{selectedItem.titre}</h2>
+              <button onClick={() => setSelectedItem(null)} className="p-2 bg-[#41124f]/40 hover:bg-[#41124f]/60 rounded-xl transition-all">
+                <X className="w-6 h-6 text-white" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1 space-y-6">
+              {selectedItem.description && (
+                <div className="p-6 bg-[#41124f]/20 border border-[#a34ee5]/20 rounded-2xl">
+                  <p className="text-gray-300 leading-relaxed">{selectedItem.description}</p>
+                </div>
+              )}
+              {selectedItem.photo && (
+                <div className="rounded-2xl overflow-hidden">
+                  <img src={selectedItem.photo} alt={selectedItem.titre} className="w-full h-64 object-cover" onError={(e) => { e.target.style.display = 'none'; }} />
+                </div>
+              )}
+              <div className="p-6 bg-[#41124f]/20 border border-[#a34ee5]/20 rounded-2xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <Award className="w-5 h-5 text-[#fec603]" />
+                  <h3 className="font-bold text-[#fec603] text-lg">Valeur</h3>
+                </div>
+                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{selectedItem.valeur}</p>
+              </div>
+              <div className="p-6 bg-[#41124f]/20 border border-[#a34ee5]/20 rounded-2xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <Target className="w-5 h-5 text-[#a34ee5]" />
+                  <h3 className="font-bold text-[#a34ee5] text-lg">Mission</h3>
+                </div>
+                <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{selectedItem.mission}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes slide-in {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        @keyframes slide-up {
+          from { transform: translate(-50%, 100%); opacity: 0; }
+          to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .animate-slide-in { animation: slide-in 0.3s ease-out; }
+        .animate-slide-up { animation: slide-up 0.3s ease-out; }
+      `}</style>
     </div>
   );
 };

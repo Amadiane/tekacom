@@ -612,24 +612,16 @@ const PortfolioPost = () => {
               </div>
             ) : (
               <>
-                {/* Masonry Grid */}
-                <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+                {/* Grid with uniform card heights */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {currentItems.map((item, index) => {
                     const additionalImages = [1, 2, 3, 4, 5, 6, 7, 8].filter(
                       (num) => item[`image_${num}`]
                     ).length;
                     const isSelected = selectedCards.includes(item.id);
 
-                    // Variable height based on index
-                    const heights = ['h-64', 'h-80', 'h-72', 'h-96'];
-                    const randomHeight = heights[index % heights.length];
-
                     return (
-                      <div
-                        key={item.id}
-                        className="break-inside-avoid mb-6"
-                        style={{ animationDelay: `${index * 50}ms` }}
-                      >
+                      <div key={item.id}>
                         <div
                           className={`group relative bg-[#41124f]/20 border-2 rounded-2xl overflow-hidden transition-all duration-300 ${
                             isSelected 
@@ -639,7 +631,7 @@ const PortfolioPost = () => {
                           onClick={() => toggleCardSelection(item.id)}
                         >
                           {/* Image */}
-                          <div className={`relative ${randomHeight} bg-[#0a0a0a] overflow-hidden`}>
+                          <div className="relative h-64 bg-[#0a0a0a] overflow-hidden">
                             {item.cover_photo ? (
                               <img
                                 src={item.cover_photo}

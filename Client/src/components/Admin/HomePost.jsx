@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
 import CONFIG from "../../config/config.js";
 import {
-  Loader2,
-  Trash2,
-  PlusCircle,
-  Edit2,
-  X,
-  Save,
-  RefreshCw,
-  Eye,
-  ChevronLeft,
-  ChevronRight,
-  Image as ImageIcon,
-  Check,
-  Calendar
+  Loader2, Trash2, PlusCircle, Edit2, X, Save, RefreshCw, Eye,
+  ChevronLeft, ChevronRight, Image as ImageIcon, Check, Sparkles,
+  Archive, Clock, Home as HomeIcon
 } from "lucide-react";
+
+/**
+ * 🎨 HOME V4 - GRID + FLOATING BAR
+ * Style: Same as ServicePost
+ * Charte: violet #a34ee5, or #fec603, violet foncé #7828a8, noir #0a0a0a
+ */
 
 const HomePost = () => {
   const [homes, setHomes] = useState([]);
@@ -26,6 +22,7 @@ const HomePost = () => {
   const [showList, setShowList] = useState(true);
   const [editingId, setEditingId] = useState(null);
   const [selectedHome, setSelectedHome] = useState(null);
+  const [selectedCards, setSelectedCards] = useState([]);
   const [preview, setPreview] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -34,13 +31,21 @@ const HomePost = () => {
     image: null,
   });
 
-  // PAGINATION
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 12;
 
-  // -----------------------------
-  // FETCH HOMES
-  // -----------------------------
+  const NAVADMIN_HEIGHT = 80;
+  const SCROLL_OFFSET = 20;
+
+  const scrollToForm = () => {
+    setTimeout(() => {
+      window.scrollTo({ 
+        top: NAVADMIN_HEIGHT + SCROLL_OFFSET,
+        behavior: "smooth" 
+      });
+    }, 100);
+  };
+
   const fetchHomes = async () => {
     setLoading(true);
     try {
@@ -51,10 +56,10 @@ const HomePost = () => {
         setHomes(data);
         setError(null);
       } catch {
-        throw new Error("Réponse non JSON : probablement mauvais endpoint ou backend non lancé");
+        throw new Error("Réponse non JSON");
       }
     } catch (err) {
-      console.error("❌ fetchHomes error:", err);
+      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -66,12 +71,8 @@ const HomePost = () => {
     fetchHomes();
   }, []);
 
-  // -----------------------------
-  // CLOUDINARY UPLOAD
-  // -----------------------------
   const uploadToCloudinary = async (file) => {
     if (!file) return null;
-
     const formDataCloud = new FormData();
     formDataCloud.append("file", file);
     formDataCloud.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
@@ -89,9 +90,6 @@ const HomePost = () => {
     }
   };
 
-  // -----------------------------
-  // HANDLE CHANGE
-  // -----------------------------
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file" && files && files[0]) {
@@ -102,18 +100,12 @@ const HomePost = () => {
     }
   };
 
-  // -----------------------------
-  // RESET FORM
-  // -----------------------------
   const resetForm = () => {
     setFormData({ title: "", description: "", image: null });
     setPreview(null);
     setEditingId(null);
   };
 
-  // -----------------------------
-  // SUBMIT FORM
-  // -----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -122,7 +114,6 @@ const HomePost = () => {
 
     try {
       let imageUrl = null;
-
       if (formData.image && typeof formData.image !== "string") {
         imageUrl = await uploadToCloudinary(formData.image);
       } else if (typeof formData.image === "string") {
@@ -136,9 +127,7 @@ const HomePost = () => {
       };
 
       const method = editingId ? "PATCH" : "POST";
-      const url = editingId
-        ? CONFIG.API_HOME_UPDATE(editingId)
-        : CONFIG.API_HOME_CREATE;
+      const url = editingId ? CONFIG.API_HOME_UPDATE(editingId) : CONFIG.API_HOME_CREATE;
 
       const response = await fetch(url, {
         method,
@@ -148,12 +137,11 @@ const HomePost = () => {
 
       if (!response.ok) throw new Error("Erreur lors de l'enregistrement");
 
-      setSuccessMessage(editingId ? "Page mise à jour !" : "Page créée !");
+      setSuccessMessage("✨ Succès !");
       resetForm();
       await fetchHomes();
       setShowForm(false);
       setShowList(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error(err);
       setError("Erreur lors de la sauvegarde");
@@ -162,39 +150,53 @@ const HomePost = () => {
     }
   };
 
-  // -----------------------------
-  // DELETE HOME
-  // -----------------------------
   const handleDelete = async (id) => {
-    if (!window.confirm("Voulez-vous vraiment supprimer cette page ?")) return;
-
+    if (!window.confirm("Supprimer cette page ?")) return;
     try {
       const res = await fetch(CONFIG.API_HOME_DELETE(id), { method: "DELETE" });
       if (!res.ok) throw new Error("Erreur de suppression");
-      setSuccessMessage("Page supprimée avec succès !");
+      setSuccessMessage("✨ Supprimé !");
       await fetchHomes();
       setSelectedHome(null);
+      setSelectedCards([]);
     } catch (err) {
       console.error(err);
       setError("Erreur lors de la suppression");
     }
   };
 
-  // -----------------------------
-  // EDIT HOME
-  // -----------------------------
   const handleEdit = (home) => {
     setEditingId(home.id);
     setFormData({ title: home.title, description: home.description, image: home.image });
     setPreview(home.image);
     setShowForm(true);
     setShowList(false);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToForm();
   };
 
-  // -----------------------------
-  // PAGINATION LOGIC
-  // -----------------------------
+  const toggleCardSelection = (id) => {
+    setSelectedCards(prev => 
+      prev.includes(id) ? prev.filter(cardId => cardId !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedCards.length === 0) return;
+    if (!window.confirm(`Supprimer ${selectedCards.length} page(s) ?`)) return;
+
+    for (const id of selectedCards) {
+      try {
+        await fetch(CONFIG.API_HOME_DELETE(id), { method: "DELETE" });
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    
+    setSuccessMessage(`✨ ${selectedCards.length} page(s) supprimée(s) !`);
+    setSelectedCards([]);
+    await fetchHomes();
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = homes.slice(indexOfFirstItem, indexOfLastItem);
@@ -205,147 +207,287 @@ const HomePost = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // -----------------------------
-  // LOADING STATE
-  // -----------------------------
   if (fetchLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-[#F47920] animate-spin" />
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 border-4 border-[#a34ee5]/30 border-t-[#fec603] rounded-full animate-spin"></div>
+          <span className="text-gray-400 font-medium">Chargement...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-8">
-      <div className="max-w-7xl mx-auto">
-        {/* HEADER */}
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-black text-gray-900">Gestion Home</h1>
-          <div className="flex gap-3">
+    <div className="min-h-screen bg-[#0a0a0a] relative pb-32">
+      
+      {/* Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#a34ee5]/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#fec603]/5 rounded-full blur-3xl"></div>
+      </div>
+
+      <div className="relative max-w-[1800px] mx-auto px-6 py-8">
+        
+        {/* COMPACT HEADER */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#a34ee5] to-[#7828a8] rounded-2xl flex items-center justify-center shadow-lg">
+              <HomeIcon className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black text-white">Page d'Accueil</h1>
+              <p className="text-xs text-gray-500">{homes.length} page{homes.length > 1 ? 's' : ''}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
             <button
               onClick={fetchHomes}
-              className="px-4 py-2 bg-white border rounded-xl flex items-center gap-2 hover:shadow"
+              disabled={loading}
+              className="p-3 bg-[#41124f]/40 hover:bg-[#41124f]/60 border border-[#a34ee5]/30 rounded-xl transition-all disabled:opacity-50"
             >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-              Actualiser
+              <RefreshCw className={`w-5 h-5 text-[#a34ee5] ${loading ? 'animate-spin' : ''}`} />
             </button>
+
             <button
-              onClick={() => { setShowForm(!showForm); if(!showForm){resetForm(); setShowList(false);} else {setShowList(true);} }}
-              className="px-4 py-2 bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white rounded-xl flex items-center gap-2 hover:shadow-lg"
+              onClick={() => {
+                setShowForm(true);
+                setShowList(false);
+                resetForm();
+                scrollToForm();
+              }}
+              className="px-6 py-3 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] text-white rounded-xl font-bold transition-all shadow-lg flex items-center gap-2"
             >
-              {showForm ? <><X className="w-5 h-5" /> Fermer</> : <><PlusCircle className="w-5 h-5" /> Nouveau</>}
+              <PlusCircle className="w-5 h-5" />
+              <span className="hidden md:inline">Nouveau</span>
             </button>
           </div>
         </div>
 
-        {/* ERROR / SUCCESS */}
-        {error && <div className="bg-red-50 p-4 mb-4 rounded-xl flex justify-between items-center"><span>{error}</span><X onClick={() => setError(null)} className="cursor-pointer"/></div>}
-        {successMessage && <div className="bg-green-50 p-4 mb-4 rounded-xl flex justify-between items-center"><span>{successMessage}</span><X onClick={() => setSuccessMessage(null)} className="cursor-pointer"/></div>}
-
-        {/* FORM */}
-        {showForm && (
-          <div className="bg-white rounded-3xl shadow-xl border p-6 mb-8">
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="font-semibold">Titre</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Titre"
-                  className="w-full border px-4 py-2 rounded-xl"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="font-semibold">Description</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows={5}
-                  placeholder="Description"
-                  className="w-full border px-4 py-2 rounded-xl"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="font-semibold flex items-center gap-2"><ImageIcon className="w-4 h-4"/> Image</label>
-                <input
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleChange}
-                  className="w-full file:py-2 file:px-4 file:bg-gradient-to-r file:from-[#FDB71A] file:to-[#F47920] file:text-white rounded-xl border-2 border-dashed"
-                />
-                {preview && <img src={preview} alt="preview" className="w-full h-48 object-cover mt-2 rounded-xl"/>}
-              </div>
-              <button type="submit" disabled={loading} className="px-6 py-3 bg-gradient-to-r from-[#FDB71A] to-[#F47920] text-white rounded-xl flex items-center gap-2">
-                {loading ? <Loader2 className="animate-spin w-5 h-5"/> : <Save className="w-5 h-5"/>}
-                {editingId ? "Mettre à jour" : "Créer"}
-              </button>
-            </form>
+        {/* Messages */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-3">
+            <div className="flex-1 text-red-300 text-sm font-medium">{error}</div>
+            <button onClick={() => setError(null)} className="text-red-400"><X size={18} /></button>
           </div>
         )}
 
-        {/* LISTE */}
-        {showList && (
-          <div className="bg-white rounded-3xl shadow-xl border overflow-hidden">
-            {homes.length === 0 ? (
-              <div className="p-6 text-center text-gray-500">Aucune page</div>
-            ) : (
-              <div className="grid gap-6 p-6">
-                {currentItems.map(home => (
-                  <div key={home.id} className="flex gap-4 p-4 border rounded-xl shadow hover:shadow-lg">
-                    <div className="w-48 h-48 bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
-                      {home.image ? <img src={home.image} alt={home.title} className="w-full h-full object-cover"/> : <span className="text-gray-400">Aucune image</span>}
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="font-bold text-lg">{home.title}</h3>
-                        <p className="text-gray-600 line-clamp-2">{home.description}</p>
-                        <p className="text-xs text-gray-400 mt-1 flex items-center gap-1"><Calendar className="w-3 h-3"/>{new Date(home.created_at).toLocaleDateString('fr-FR')}</p>
-                      </div>
-                      <div className="flex gap-2 mt-2">
-                        <button onClick={() => setSelectedHome(home)} className="px-3 py-1 bg-blue-500 text-white rounded-xl flex items-center gap-1"><Eye size={14}/> Voir</button>
-                        <button onClick={() => handleEdit(home)} className="px-3 py-1 bg-orange-500 text-white rounded-xl flex items-center gap-1"><Edit2 size={14}/> Modifier</button>
-                        <button onClick={() => handleDelete(home.id)} className="px-3 py-1 bg-red-500 text-white rounded-xl flex items-center gap-1"><Trash2 size={14}/> Supprimer</button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-2 p-4">
-                <button onClick={() => handlePageChange(currentPage-1)} disabled={currentPage===1} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <button key={i} onClick={() => handlePageChange(i+1)} className={`px-3 py-1 rounded ${currentPage===i+1?'bg-orange-500 text-white':'border'}`}>{i+1}</button>
-                ))}
-                <button onClick={() => handlePageChange(currentPage+1)} disabled={currentPage===totalPages} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
-              </div>
-            )}
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-2xl flex items-center gap-3">
+            <div className="flex-1 text-green-300 text-sm font-medium">{successMessage}</div>
+            <button onClick={() => setSuccessMessage(null)} className="text-green-400"><X size={18} /></button>
           </div>
+        )}
+
+        {/* DRAWER FORM */}
+        {showForm && (
+          <>
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => { setShowForm(false); setShowList(true); resetForm(); }}></div>
+            <div className="fixed top-0 right-0 bottom-0 w-full md:w-[600px] bg-[#0a0a0a] border-l border-[#a34ee5]/20 z-50 overflow-y-auto animate-slide-in pt-20">
+              <form onSubmit={handleSubmit} className="p-8">
+                <div className="flex items-center justify-between mb-8 pb-6 border-b border-[#a34ee5]/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#a34ee5] to-[#fec603] rounded-xl flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-white" />
+                    </div>
+                    <h3 className="text-xl font-black text-white">{editingId ? "Modifier" : "Créer"}</h3>
+                  </div>
+                  <button type="button" onClick={() => { setShowForm(false); setShowList(true); resetForm(); }} className="p-2 bg-[#41124f]/40 hover:bg-[#41124f]/60 rounded-xl transition-all">
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Titre *</label>
+                  <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Titre de la page" className="w-full px-4 py-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5]/60 transition-all" required />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Description *</label>
+                  <textarea name="description" value={formData.description} onChange={handleChange} rows="5" placeholder="Décrivez la page..." className="w-full px-4 py-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5]/60 transition-all resize-none" required></textarea>
+                </div>
+
+                <div className="mb-8">
+                  <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Image</label>
+                  {preview ? (
+                    <div className="relative group rounded-xl overflow-hidden">
+                      <img src={preview} alt="Preview" className="w-full h-48 object-cover" />
+                      <button type="button" onClick={() => { setPreview(null); setFormData({ ...formData, image: null }); }} className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <X className="w-6 h-6 text-white" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="block h-48 border-2 border-dashed border-[#a34ee5]/30 rounded-xl hover:border-[#a34ee5]/60 cursor-pointer bg-[#41124f]/20 transition-all">
+                      <div className="h-full flex flex-col items-center justify-center gap-2">
+                        <ImageIcon className="w-10 h-10 text-[#a34ee5]" />
+                        <span className="text-sm text-gray-400">Cliquez pour ajouter</span>
+                      </div>
+                      <input type="file" name="image" accept="image/*" onChange={handleChange} className="hidden" />
+                    </label>
+                  )}
+                </div>
+
+                <div className="flex gap-3">
+                  <button type="submit" disabled={loading} className="flex-1 px-6 py-4 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] hover:from-[#7828a8] hover:to-[#a34ee5] text-white rounded-xl font-bold transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-2">
+                    {loading ? <><Loader2 className="w-5 h-5 animate-spin" /><span>Enregistrement...</span></> : <><Save className="w-5 h-5" /><span>{editingId ? "Mettre à jour" : "Créer"}</span></>}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </>
+        )}
+
+        {/* GRID */}
+        {showList && (
+          <>
+            {loading ? (
+              <div className="flex justify-center py-32">
+                <div className="w-16 h-16 border-4 border-[#a34ee5]/30 border-t-[#fec603] rounded-full animate-spin"></div>
+              </div>
+            ) : currentItems.length === 0 ? (
+              <div className="text-center py-32">
+                <div className="w-20 h-20 bg-[#41124f]/30 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                  <HomeIcon className="w-10 h-10 text-[#a34ee5]" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-2">Aucune page</h3>
+                <p className="text-gray-500">Créez votre première page</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {currentItems.map((home) => {
+                    const isSelected = selectedCards.includes(home.id);
+                    return (
+                      <div key={home.id}>
+                        <div className={`group relative bg-[#41124f]/20 border-2 rounded-2xl overflow-hidden transition-all duration-300 ${isSelected ? 'border-[#fec603] shadow-xl shadow-[#fec603]/20' : 'border-[#a34ee5]/20 hover:border-[#a34ee5]/60'}`} onClick={() => toggleCardSelection(home.id)}>
+                          <div className="relative h-64 bg-[#0a0a0a] overflow-hidden">
+                            {home.image ? (
+                              <img src={home.image} alt={home.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onError={(e) => { e.target.style.display = 'none'; }} />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <HomeIcon className="w-16 h-16 text-gray-700" />
+                              </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                            <div className="absolute top-3 left-3">
+                              <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-[#fec603] border-[#fec603]' : 'bg-white/20 border-white/40 backdrop-blur-sm'}`}>
+                                {isSelected && <Check className="w-4 h-4 text-[#0a0a0a]" />}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <h3 className="text-white font-bold mb-1 line-clamp-2">{home.title}</h3>
+                            {home.description && <p className="text-gray-400 text-sm line-clamp-2 mb-3">{home.description}</p>}
+                            {home.created_at && (
+                              <p className="text-xs text-gray-600 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(home.created_at).toLocaleDateString('fr-FR')}
+                              </p>
+                            )}
+                          </div>
+                          <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/90 to-transparent">
+                            <div className="flex gap-2">
+                              <button onClick={(e) => { e.stopPropagation(); setSelectedHome(home); }} className="flex-1 px-3 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white rounded-lg text-sm font-bold transition-all">
+                                <Eye size={14} className="mx-auto" />
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); handleEdit(home); }} className="flex-1 px-3 py-2 bg-[#a34ee5]/20 hover:bg-[#a34ee5]/30 backdrop-blur-sm border border-[#a34ee5]/40 text-white rounded-lg text-sm font-bold transition-all">
+                                <Edit2 size={14} className="mx-auto" />
+                              </button>
+                              <button onClick={(e) => { e.stopPropagation(); handleDelete(home.id); }} className="px-3 py-2 bg-red-500/20 hover:bg-red-500/30 backdrop-blur-sm border border-red-500/40 text-white rounded-lg transition-all">
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex justify-center gap-2 mt-12">
+                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="p-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-[#a34ee5] hover:bg-[#41124f]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    {[...Array(totalPages)].map((_, index) => {
+                      const pageNumber = index + 1;
+                      return (
+                        <button key={pageNumber} onClick={() => handlePageChange(pageNumber)} className={`px-4 py-3 rounded-xl font-bold transition-all ${currentPage === pageNumber ? "bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white" : "bg-[#41124f]/40 border border-[#a34ee5]/30 text-gray-400 hover:text-white"}`}>
+                          {pageNumber}
+                        </button>
+                      );
+                    })}
+                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} className="p-3 bg-[#41124f]/40 border border-[#a34ee5]/30 rounded-xl text-[#a34ee5] hover:bg-[#41124f]/60 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </>
         )}
       </div>
 
-      {/* MODAL */}
-      {selectedHome && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setSelectedHome(null)}>
-          <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6" onClick={e=>e.stopPropagation()}>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-bold text-xl">{selectedHome.title}</h2>
-              <button onClick={() => setSelectedHome(null)}><X/></button>
+      {/* FLOATING BAR */}
+      {selectedCards.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+          <div className="bg-[#0a0a0a] border-2 border-[#fec603] rounded-2xl shadow-2xl shadow-[#fec603]/20 p-4 backdrop-blur-xl">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-[#fec603]/20 border border-[#fec603]/40 rounded-xl">
+                <Check className="w-5 h-5 text-[#fec603]" />
+                <span className="font-bold text-white">{selectedCards.length} sélectionnée{selectedCards.length > 1 ? 's' : ''}</span>
+              </div>
+              <button onClick={handleBulkDelete} className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold transition-all flex items-center gap-2">
+                <Trash2 className="w-5 h-5" />
+                <span>Supprimer</span>
+              </button>
+              <button onClick={() => setSelectedCards([])} className="p-3 bg-[#41124f]/60 hover:bg-[#41124f] rounded-xl transition-all">
+                <X className="w-5 h-5 text-white" />
+              </button>
             </div>
-            {selectedHome.image && <img src={selectedHome.image} alt={selectedHome.title} className="w-full h-80 object-cover rounded-xl mb-4"/>}
-            <p>{selectedHome.description}</p>
           </div>
         </div>
       )}
+
+      {/* MODAL */}
+      {selectedHome && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center px-4 z-[9999]" onClick={() => setSelectedHome(null)}>
+          <div className="bg-[#0a0a0a] border border-[#a34ee5]/30 w-full max-w-4xl rounded-3xl overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+            <div className="p-6 border-b border-[#a34ee5]/20 flex items-center justify-between">
+              <h2 className="text-2xl font-black text-white">{selectedHome.title}</h2>
+              <button onClick={() => setSelectedHome(null)} className="p-2 bg-[#41124f]/40 hover:bg-[#41124f]/60 rounded-xl transition-all">
+                <X className="w-6 h-6 text-white" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1">
+              {selectedHome.image && (
+                <div className="mb-6 rounded-2xl overflow-hidden">
+                  <img src={selectedHome.image} className="w-full h-80 object-cover" alt={selectedHome.title} onError={(e) => { e.target.style.display = 'none'; }} />
+                </div>
+              )}
+              {selectedHome.description && (
+                <div className="mb-6 p-6 bg-[#41124f]/20 border border-[#a34ee5]/20 rounded-2xl">
+                  <p className="text-gray-300 leading-relaxed whitespace-pre-wrap">{selectedHome.description}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes slide-in {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        @keyframes slide-up {
+          from { transform: translate(-50%, 100%); opacity: 0; }
+          to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .animate-slide-in { animation: slide-in 0.3s ease-out; }
+        .animate-slide-up { animation: slide-up 0.3s ease-out; }
+      `}</style>
     </div>
   );
 };
