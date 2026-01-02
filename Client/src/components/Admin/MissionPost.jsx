@@ -21,7 +21,7 @@ const MissionPost = () => {
     photo: null,
   });
 
-  // Récupération des missions
+  // 🔹 Récupération des missions
   const fetchMissions = async () => {
     setFetchLoading(true);
     try {
@@ -41,7 +41,7 @@ const MissionPost = () => {
     fetchMissions();
   }, []);
 
-  // Upload Cloudinary
+  // 🔹 Upload Cloudinary
   const uploadToCloudinary = async (file) => {
     if (!file) return null;
     const formDataCloud = new FormData();
@@ -49,10 +49,10 @@ const MissionPost = () => {
     formDataCloud.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
 
     try {
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_NAME}/image/upload`, {
-        method: "POST",
-        body: formDataCloud,
-      });
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_NAME}/image/upload`,
+        { method: "POST", body: formDataCloud }
+      );
       const data = await res.json();
       return data.secure_url;
     } catch (err) {
@@ -61,7 +61,7 @@ const MissionPost = () => {
     }
   };
 
-  // Gestion du formulaire
+  // 🔹 Formulaire
   const handleChange = (e) => {
     const { name, value, files, type, checked } = e.target;
     if (files) {
@@ -94,14 +94,15 @@ const MissionPost = () => {
     setSuccessMessage(null);
 
     try {
-      let photoUrl = formData.photo && typeof formData.photo !== "string" 
-        ? await uploadToCloudinary(formData.photo) 
-        : formData.photo;
+      let photoUrl =
+        formData.photo && typeof formData.photo !== "string"
+          ? await uploadToCloudinary(formData.photo)
+          : formData.photo;
 
       const payload = { ...formData, photo: photoUrl };
       const method = editingId ? "PATCH" : "POST";
-      const url = editingId 
-        ? `${CONFIG.BASE_URL}/api/missions/${editingId}/` 
+      const url = editingId
+        ? `${CONFIG.BASE_URL}/api/missions/${editingId}/`
         : `${CONFIG.BASE_URL}/api/missions/`;
 
       const response = await fetch(url, {
@@ -132,9 +133,9 @@ const MissionPost = () => {
       valeur: mission.valeur || "",
       mission: mission.mission || "",
       is_active: mission.is_active,
-      photo: mission.photo,
+      photo: mission.photo_url || mission.photo,
     });
-    setPreview(mission.photo);
+    setPreview(mission.photo_url || mission.photo);
     setShowForm(true);
   };
 
@@ -217,9 +218,13 @@ const MissionPost = () => {
             </label>
             <label className="block mb-4">
               <span className="text-white mb-2 block">Photo</span>
-              {preview ? (
-                <img src={preview} alt="Preview" className="w-full h-48 object-contain mb-2" />
-              ) : null}
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  className="w-full h-48 object-contain mb-2"
+                />
+              )}
               <input type="file" name="photo" accept="image/*" onChange={handleChange} />
             </label>
             <button
@@ -237,11 +242,21 @@ const MissionPost = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {missions.map((m) => (
           <div key={m.id} className="bg-gray-800 rounded-xl p-4 relative">
-            {m.photo && (
-              <img src={m.photo} alt={m.titre} className="w-full h-48 object-contain mb-4" />
+            {m.photo_url ? (
+              <img
+                src={m.photo_url}
+                alt={m.titre}
+                className="w-full h-48 object-contain mb-4"
+              />
+            ) : (
+              <div className="w-full h-48 bg-gray-700 flex items-center justify-center mb-4">
+                <ImageIcon className="w-12 h-12 text-gray-400" />
+              </div>
             )}
+
             <h2 className="text-white font-bold">{m.titre}</h2>
             <p className="text-gray-300">{m.description}</p>
+
             <div className="flex gap-2 mt-2">
               <button onClick={() => handleEdit(m)} className="text-blue-500 flex items-center gap-1">
                 <Edit2 /> Edit

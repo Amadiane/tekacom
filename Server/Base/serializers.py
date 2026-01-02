@@ -128,6 +128,9 @@ from rest_framework import serializers
 from .models import Mission
 
 class MissionSerializer(serializers.ModelSerializer):
+    # Nouveau champ calculé
+    photo_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Mission
         fields = [
@@ -138,12 +141,16 @@ class MissionSerializer(serializers.ModelSerializer):
             'mission',
             'is_active',
             'photo',
+            'photo_url',  # ← ajouté
             'created_at',
             'updated_at'
         ]
 
-
-
+    def get_photo_url(self, obj):
+        # Si la photo existe, renvoie l'URL complète
+        if obj.photo and hasattr(obj.photo, 'url'):
+            return obj.photo.url
+        return None
 
 
 
