@@ -116,7 +116,7 @@ const Home = () => {
 
       {/* HERO SECTION */}
       {home && (
-        <section className="relative min-h-screen flex items-center justify-center px-6 pt-32 pb-20">
+        <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 pb-16">
           
           {/* Content */}
           <div className="relative z-10 max-w-7xl mx-auto text-center">
@@ -205,23 +205,16 @@ const Home = () => {
               })}
             </div>
           </div>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-            <div className="w-6 h-10 border-2 border-[#a34ee5]/50 rounded-full flex justify-center p-2">
-              <div className="w-1 h-3 bg-[#a34ee5] rounded-full animate-pulse"></div>
-            </div>
-          </div>
         </section>
       )}
 
       {/* SERVICES SECTION */}
       {services.length > 0 && (
-        <section className="relative py-24 px-6">
+        <section className="relative py-16 px-6">
           <div className="max-w-7xl mx-auto">
             
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#a34ee5]/10 border border-[#a34ee5]/30 rounded-full">
                 <Briefcase className="w-5 h-5 text-[#a34ee5]" />
                 <span className="text-sm font-bold text-[#a34ee5] uppercase">Nos Services</span>
@@ -304,11 +297,11 @@ const Home = () => {
 
       {/* PORTFOLIO SECTION */}
       {portfolios.length > 0 && (
-        <section className="relative py-24 px-6 bg-gradient-to-b from-transparent to-[#41124f]/10">
+        <section className="relative py-16 px-6 bg-gradient-to-b from-transparent to-[#41124f]/10">
           <div className="max-w-7xl mx-auto">
             
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#fec603]/10 border border-[#fec603]/30 rounded-full">
                 <Layers className="w-5 h-5 text-[#fec603]" />
                 <span className="text-sm font-bold text-[#fec603] uppercase">Portfolio</span>
@@ -384,11 +377,11 @@ const Home = () => {
 
       {/* TEAM SECTION */}
       {team.length > 0 && (
-        <section className="relative py-24 px-6">
+        <section className="relative py-16 px-6">
           <div className="max-w-7xl mx-auto">
             
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#a34ee5]/10 border border-[#a34ee5]/30 rounded-full">
                 <Users className="w-5 h-5 text-[#a34ee5]" />
                 <span className="text-sm font-bold text-[#a34ee5] uppercase">Notre Équipe</span>
@@ -463,11 +456,11 @@ const Home = () => {
 
       {/* PARTNERS SECTION */}
       {partners.length > 0 && (
-        <section className="relative py-24 px-6 bg-gradient-to-b from-[#41124f]/10 to-transparent">
+        <section className="relative py-16 px-6 bg-gradient-to-b from-[#41124f]/10 to-transparent">
           <div className="max-w-7xl mx-auto">
             
             {/* Section Header */}
-            <div className="text-center mb-16">
+            <div className="text-center mb-10">
               <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#fec603]/10 border border-[#fec603]/30 rounded-full">
                 <Handshake className="w-5 h-5 text-[#fec603]" />
                 <span className="text-sm font-bold text-[#fec603] uppercase">Partenaires</span>
@@ -522,7 +515,7 @@ const Home = () => {
       )}
 
       {/* CTA FINAL SECTION */}
-      <section className="relative py-32 px-6">
+      <section className="relative py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           
           {/* Glow effect */}
