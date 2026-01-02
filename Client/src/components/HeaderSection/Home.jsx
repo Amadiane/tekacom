@@ -412,7 +412,16 @@ const Home = () => {
 
             {/* Team Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
-              {team.map((member, idx) => (
+              {team
+                .sort((a, b) => {
+                  // Tri par date de création si disponible
+                  if (a.created_at && b.created_at) {
+                    return new Date(a.created_at) - new Date(b.created_at);
+                  }
+                  // Sinon tri par ID (plus petit ID = plus ancien)
+                  return a.id - b.id;
+                })
+                .map((member, idx) => (
                 <div
                   key={member.id}
                   className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 transition-all duration-500 hover:scale-105 cursor-pointer"
