@@ -471,7 +471,7 @@ const NosMissions = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { icon: Users, text: "Équipe passionnée", color: "from-[#a34ee5] to-[#7828a8]" },
-                { icon: TrendingUp, text: "+200 Projets", color: "from-[#fec603] to-[#a34ee5]" },
+                { icon: TrendingUp, text: "+500 Projets", color: "from-[#fec603] to-[#a34ee5]" },
                 { icon: CheckCircle, text: "Satisfaction garantie", color: "from-[#7828a8] to-[#a34ee5]" },
                 { icon: Zap, text: "Réponse 24h", color: "from-[#a34ee5] to-[#fec603]" },
               ].map((badge, idx) => {
