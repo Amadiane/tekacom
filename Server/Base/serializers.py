@@ -188,46 +188,46 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers
-from .models import Home, Partner, EquipeMember, Service, Portfolio, Activity
+# from rest_framework import serializers
+# from .models import Home, Partner, EquipeMember, Service, Portfolio, Activity
 
-# -------------------------------
-# Serializers pour les modèles principaux
-# -------------------------------
+# # -------------------------------
+# # Serializers pour les modèles principaux
+# # -------------------------------
 
-class HomeSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
+# class HomeSerializer(serializers.ModelSerializer):
+#     image_url = serializers.SerializerMethodField()
 
-    class Meta:
-        model = Home
-        fields = "__all__"
+#     class Meta:
+#         model = Home
+#         fields = "__all__"
 
-    def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
-
-
-class PartnerSerializer(serializers.ModelSerializer):
-    cover_image_url = serializers.SerializerMethodField()
-    display_name = serializers.ReadOnlyField()
-
-    class Meta:
-        model = Partner
-        fields = "__all__"
-
-    def get_cover_image_url(self, obj):
-        return obj.cover_image.url if obj.cover_image else None
+#     def get_image_url(self, obj):
+#         return obj.image.url if obj.image else None
 
 
-class EquipeMemberSerializer(serializers.ModelSerializer):
-    photo_url = serializers.SerializerMethodField()
-    display_position = serializers.ReadOnlyField()
+# class PartnerSerializer(serializers.ModelSerializer):
+#     cover_image_url = serializers.SerializerMethodField()
+#     display_name = serializers.ReadOnlyField()
 
-    class Meta:
-        model = EquipeMember
-        fields = "__all__"
+#     class Meta:
+#         model = Partner
+#         fields = "__all__"
 
-    def get_photo_url(self, obj):
-        return obj.photo.url if obj.photo else None
+#     def get_cover_image_url(self, obj):
+#         return obj.cover_image.url if obj.cover_image else None
+
+
+# class EquipeMemberSerializer(serializers.ModelSerializer):
+#     photo_url = serializers.SerializerMethodField()
+#     display_position = serializers.ReadOnlyField()
+
+#     class Meta:
+#         model = EquipeMember
+#         fields = "__all__"
+
+#     def get_photo_url(self, obj):
+#         return obj.photo.url if obj.photo else None
 
 
 # class ValeurMissionSerializer(serializers.ModelSerializer):
@@ -241,27 +241,50 @@ class EquipeMemberSerializer(serializers.ModelSerializer):
 #         return obj.display_photo
 
 
-class ServiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Service
-        fields = "__all__"
+# class ServiceSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Service
+#         fields = "__all__"
 
 
-class PortfolioSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Portfolio
-        fields = "__all__"
+# class PortfolioSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Portfolio
+#         fields = "__all__"
 
 
-class ActivitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Activity
-        fields = "__all__"
+# class ActivitySerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Activity
+#         fields = "__all__"
 
 
 # -------------------------------
 # Serializer complet pour la Home (Front-end)
 # -------------------------------
+
+from rest_framework import serializers
+from .models import Home
+
+class HomeSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Home
+        fields = [
+            "id",
+            "title",
+            "description",
+            "image",
+            "image_url",
+            "created_at",
+        ]
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
+
 
 class HomeFullSerializer(serializers.Serializer):
     home = HomeSerializer(read_only=True)
