@@ -202,29 +202,6 @@ class HomeViewSet(viewsets.ModelViewSet):
 
 
 
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import Home
-from .serializers import HomeFullSerializer
-
-class HomeFullView(APIView):
-    """
-    Vue pour récupérer toutes les données nécessaires à la page d'accueil
-    """
-    def get(self, request, *args, **kwargs):
-        # Récupère la première instance Home (la page d'accueil)
-        home_instance = Home.objects.first()
-
-        # Sérialisation complète
-        serializer = HomeFullSerializer(
-            {"home": home_instance}, 
-            context={"request": request}
-        )
-        return Response(serializer.data)
-
-
-
-
 
 
 
@@ -272,3 +249,66 @@ class LoginView(APIView):
 
 
 
+
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Home, Partner, EquipeMember, Mission, Service, Portfolio
+from .serializers import (
+    HomeSerializer,
+    PartnerSerializer,
+    TeamMemberSerializer,
+    ValeurMissionSerializer,
+    ServiceSerializer,
+    PortfolioSerializer
+)
+
+class HomeFullAPIView(APIView):
+    """
+    API Home Full:
+    Renvoie toutes les données nécessaires pour la page d'accueil
+    """
+
+    def get(self, request, format=None):
+        try:
+            # Dernière home
+            home = Home.objects.order_by('-created_at').first()
+            home_serialized = HomeSerializer(home).data if home else None
+
+            # Partenaires actifs
+            partners = Partner.objects.filter(is_active=True)
+            partners_serialized = PartnerSerializer(partners, many=True).data
+
+            # Derniers membres d'équipe actifs (limit 8 par exemple)
+            team_members = EquipeMember.objects.filter(is_active=True).order_by('full_name')[:8]
+            team_serialized = TeamMemberSerializer(team_members, many=True).data
+
+            # Dernières valeurs/missions actives
+            valeurs_missions = Mission.objects.filter(is_active=True).order_by('-created_at')[:6]
+            valeurs_serialized = ValeurMissionSerializer(valeurs_missions, many=True).data
+
+            # Services actifs
+            services = Service.objects.filter(is_active=True)
+            services_serialized = ServiceSerializer(services, many=True).data
+
+            # Portfolios actifs
+            portfolios = Portfolio.objects.filter(is_active=True)
+            portfolios_serialized = PortfolioSerializer(portfolios, many=True).data
+
+            # Construire réponse
+            data = {
+                "home": home_serialized,
+                "partners": partners_serialized,
+                "latest_team_members": team_serialized,
+                "latest_valeurs_missions": valeurs_serialized,
+                "services": services_serialized,
+                "portfolios": portfolios_serialized
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

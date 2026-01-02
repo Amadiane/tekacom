@@ -263,58 +263,62 @@ class PortfolioSerializer(serializers.ModelSerializer):
 # Serializer complet pour la Home (Front-end)
 # -------------------------------
 
+# from rest_framework import serializers
+# from .models import Home
+
+# class HomeSerializer(serializers.ModelSerializer):
+#     image_url = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Home
+#         fields = [
+#             "id",
+#             "title",
+#             "description",
+#             "image",
+#             "image_url",
+#             "created_at",
+#         ]
+
+#     def get_image_url(self, obj):
+#         if obj.image:
+#             return obj.image.url
+#         return None
+
 from rest_framework import serializers
-from .models import Home
+from .models import Home, Partner, EquipeMember, Mission, Service, Portfolio
 
 class HomeSerializer(serializers.ModelSerializer):
-    image_url = serializers.SerializerMethodField()
-
     class Meta:
         model = Home
+        fields = ['id', 'title', 'description', 'image']
+
+class PartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Partner
+        fields = ['id', 'name_fr', 'name_en', 'cover_image', 'website_url', 'is_active']
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipeMember
+        fields = ['id', 'full_name', 'position_fr', 'position_en', 'photo', 'email', 'linkedin', 'is_active']
+
+class ValeurMissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mission
+        fields = ['id', 'titre', 'description', 'valeur', 'mission', 'photo', 'is_active']
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['id', 'title', 'description', 'image', 'is_active']
+
+class PortfolioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Portfolio
         fields = [
-            "id",
-            "title",
-            "description",
-            "image",
-            "image_url",
-            "created_at",
+            'id', 'title', 'description', 'cover_photo',
+            'image_1', 'image_2', 'image_3', 'image_4',
+            'image_5', 'image_6', 'image_7', 'image_8',
+            'is_active'
         ]
-
-    def get_image_url(self, obj):
-        if obj.image:
-            return obj.image.url
-        return None
-
-
-class HomeFullSerializer(serializers.Serializer):
-    home = HomeSerializer(read_only=True)
-    partners = serializers.SerializerMethodField()
-    latest_team_members = serializers.SerializerMethodField()
-    latest_valeurs_missions = serializers.SerializerMethodField()
-    services = serializers.SerializerMethodField()
-    portfolios = serializers.SerializerMethodField()
-    recent_activities = serializers.SerializerMethodField()
-
-    def get_partners(self, obj):
-        partners = Partner.objects.filter(is_active=True).order_by('-created_at')[:5]
-        return PartnerSerializer(partners, many=True, context=self.context).data
-
-    def get_latest_team_members(self, obj):
-        members = EquipeMember.objects.filter(is_active=True).order_by('-created_at')[:5]
-        return EquipeMemberSerializer(members, many=True, context=self.context).data
-
-    def get_latest_valeurs_missions(self, obj):
-        valeurs = ValeurMission.objects.filter(is_active=True).order_by('-created_at')[:5]
-        return ValeurMissionSerializer(valeurs, many=True, context=self.context).data
-
-    def get_services(self, obj):
-        services = Service.objects.filter(is_active=True).order_by('-created_at')
-        return ServiceSerializer(services, many=True, context=self.context).data
-
-    def get_portfolios(self, obj):
-        portfolios = Portfolio.objects.filter(is_active=True).order_by('-created_at')
-        return PortfolioSerializer(portfolios, many=True, context=self.context).data
-
-    def get_recent_activities(self, obj):
-        activities = Activity.objects.all().order_by('-created_at')[:10]
-        return ActivitySerializer(activities, many=True, context=self.context).data

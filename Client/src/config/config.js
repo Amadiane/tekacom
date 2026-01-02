@@ -117,9 +117,7 @@ API_HOME_LATEST: `${BASE_URL}/api/home/latest/`,
 API_HOME_CREATE: `${BASE_URL}/api/home/`,
 API_HOME_UPDATE: (id) => `${BASE_URL}/api/home/${id}/`,
 API_HOME_DELETE: (id) => `${BASE_URL}/api/home/${id}/`,
-
-// 🏠 Home full API
-API_HOME_FULL: `${BASE_URL}/api/home-full/`,
+API_HOME_FULL: `${BASE_URL}/api/home-full/`, // 🏠 Home full
 
 
   // Ajoute à ton CONFIG

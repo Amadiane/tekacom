@@ -5,51 +5,37 @@ import { AlertCircle, Handshake, Camera, Target, Folder } from "lucide-react";
 
 const Home = () => {
   const { i18n, t } = useTranslation();
-  const [home, setHome] = useState(null);
-  const [partners, setPartners] = useState([]);
-  const [team, setTeam] = useState([]);
-  const [valeursMissions, setValeursMissions] = useState([]);
-  const [services, setServices] = useState([]);
-  const [portfolios, setPortfolios] = useState([]);
+  const [homeData, setHomeData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Helper : récupérer le champ selon la langue
+  const getLocalized = (obj, fieldBase) => {
+    if (!obj) return "";
+    const lang = i18n.language || "fr";
+    return obj[`${fieldBase}_${lang}`] || obj[`${fieldBase}_fr`] || obj[`${fieldBase}_en`] || "";
+  };
+
+  // Helper : obtenir URL de l'image
+  const getImageUrl = (obj, field) => {
+    if (!obj) return null;
+    const img = obj[field];
+    if (!img) return null;
+
+    // CloudinaryField ou URL directe
+    if (typeof img === "object" && img.url) return img.url;
+    if (typeof img === "string") return img;
+    return null;
+  };
+
+  // Fetch home-full
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    const fetchHomeData = async () => {
+    const fetchHomeFull = async () => {
       try {
-        // Home
-        const homeRes = await fetch(CONFIG.API_HOME_LATEST);
-        if (!homeRes.ok) throw new Error("Erreur API Home Latest");
-        const homeData = await homeRes.json();
-        setHome(homeData);
-
-
-        // Partners
-        const partnersRes = await fetch(CONFIG.API_PARTNER_LIST);
-        const partnersData = await partnersRes.json();
-        setPartners(partnersData);
-
-        // Team
-        const teamRes = await fetch(CONFIG.API_TEAM_LIST);
-        const teamData = await teamRes.json();
-        setTeam(teamData);
-
-        // Valeurs & Missions
-        const vmRes = await fetch(CONFIG.API_VALEUR_MISSION_LIST);
-        const vmData = await vmRes.json();
-        setValeursMissions(vmData);
-
-        // Services
-        const serviceRes = await fetch(CONFIG.API_SERVICE_LIST);
-        const serviceData = await serviceRes.json();
-        setServices(serviceData);
-
-        // Portfolio
-        const portfolioRes = await fetch(CONFIG.API_PORTFOLIO_LIST);
-        const portfolioData = await portfolioRes.json();
-        setPortfolios(portfolioData);
+        const res = await fetch(CONFIG.API_HOME_FULL);
+        if (!res.ok) throw new Error("Erreur API Home Full");
+        const data = await res.json();
+        setHomeData(data);
       } catch (err) {
         console.error(err);
         setError(err.message);
@@ -58,20 +44,9 @@ const Home = () => {
       }
     };
 
-    fetchHomeData();
+    fetchHomeFull();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
-  const getLocalized = (obj, field) => {
-    const lang = i18n.language || "fr";
-    return obj?.[`${field}_${lang}`] || obj?.[`${field}_fr`] || obj?.[`${field}_en`] || "";
-  };
-
-  const getImageUrl = (obj, field = "image") => {
-    if (!obj) return null;
-    const img = obj[field];
-    if (!img) return null;
-    return img.url || img; // si c’est un objet Cloudinary ou juste un lien
-  };
 
   if (loading)
     return (
@@ -87,6 +62,16 @@ const Home = () => {
       </div>
     );
 
+  // Destructuring sections
+  const {
+    home = {},
+    partners = [],
+    latest_team_members: team = [],
+    latest_valeurs_missions: valeursMissions = [],
+    services = [],
+    portfolios = [],
+  } = homeData || {};
+
   return (
     <div className="min-h-screen bg-[#0a0e27] text-white">
 
@@ -95,15 +80,15 @@ const Home = () => {
         <section className="text-center py-20 px-4 bg-[#0f1729]/80">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">{getLocalized(home, "title")}</h1>
           <p className="text-lg md:text-xl max-w-3xl mx-auto">{getLocalized(home, "description")}</p>
-          {getImageUrl(home) && (
+          {getImageUrl(home, "image") && (
             <div className="mt-8">
-              <img src={getImageUrl(home)} alt={getLocalized(home, "title")} className="mx-auto rounded-xl" />
+              <img src={getImageUrl(home, "image")} alt={getLocalized(home, "title")} className="mx-auto rounded-xl" />
             </div>
           )}
         </section>
       )}
 
-      {/* Partenaires */}
+      {/* Partners */}
       {partners.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
@@ -123,7 +108,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Équipe */}
+      {/* Team */}
       {team.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
@@ -172,8 +157,8 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((s) => (
               <div key={s.id} className="bg-[#0f1729]/80 p-4 rounded-xl">
-                {getImageUrl(s) && (
-                  <img src={getImageUrl(s)} alt={getLocalized(s, "title")} className="w-full h-48 object-cover rounded-lg mb-2" />
+                {getImageUrl(s, "image") && (
+                  <img src={getImageUrl(s, "image")} alt={getLocalized(s, "title")} className="w-full h-48 object-cover rounded-lg mb-2" />
                 )}
                 <h3 className="font-bold">{getLocalized(s, "title")}</h3>
                 <p className="text-gray-400">{getLocalized(s, "description")}</p>
@@ -192,8 +177,8 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {portfolios.map((p) => (
               <div key={p.id} className="bg-[#0f1729]/80 p-4 rounded-xl">
-                {getImageUrl(p) && (
-                  <img src={getImageUrl(p)} alt={getLocalized(p, "title")} className="w-full h-48 object-cover rounded-lg mb-2" />
+                {getImageUrl(p, "cover_photo") && (
+                  <img src={getImageUrl(p, "cover_photo")} alt={getLocalized(p, "title")} className="w-full h-48 object-cover rounded-lg mb-2" />
                 )}
                 <h3 className="font-bold">{getLocalized(p, "title")}</h3>
                 <p className="text-gray-400">{getLocalized(p, "description")}</p>
