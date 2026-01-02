@@ -133,7 +133,7 @@ const Home = () => {
       )}
 
       {/* Valeurs & Missions Section */}
-      {valeursMissions.length > 0 && (
+      {/* {valeursMissions.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
             <Target className="w-6 h-6" /> {t("home.values_missions")}
@@ -150,7 +150,7 @@ const Home = () => {
             ))}
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Services Section */}
       {services.length > 0 && (
