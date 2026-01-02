@@ -95,24 +95,6 @@ class ContactSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at"]
 
 
-# from rest_framework import serializers
-# from .models import ValeurMission
-
-# from rest_framework import serializers
-# from .models import ValeurMission
-
-# class ValeurMissionSerializer(serializers.ModelSerializer):
-#     photo = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = ValeurMission
-#         fields = ['id', 'titre', 'description', 'valeur', 'mission', 'is_active', 'photo', 'created_at']
-
-#     def get_photo(self, obj):
-#         # Priorité : photo uploadée Cloudinary > URL
-#         if hasattr(obj, 'photo') and obj.photo:
-#             return obj.photo.url if hasattr(obj.photo, 'url') else obj.photo
-#         return getattr(obj, 'photo_url', None)
 
 
 # Base/serializers.py
@@ -166,152 +148,66 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 
 
-
-# from rest_framework import serializers
-# from .models import Home
-
-# class HomeSerializer(serializers.ModelSerializer):
-#     image = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Home
-#         fields = ['id', 'title', 'description', 'image', 'created_at', 'updated_at']
-
-#     def get_image(self, obj):
-#         if obj.image:
-#             return obj.image.url  # <-- renvoie l'URL complète de Cloudinary
-#         return None
-
-
-
-
-
-
-
-# from rest_framework import serializers
-# from .models import Home, Partner, EquipeMember, Service, Portfolio, Activity
-
-# # -------------------------------
-# # Serializers pour les modèles principaux
-# # -------------------------------
-
-# class HomeSerializer(serializers.ModelSerializer):
-#     image_url = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Home
-#         fields = "__all__"
-
-#     def get_image_url(self, obj):
-#         return obj.image.url if obj.image else None
-
-
-# class PartnerSerializer(serializers.ModelSerializer):
-#     cover_image_url = serializers.SerializerMethodField()
-#     display_name = serializers.ReadOnlyField()
-
-#     class Meta:
-#         model = Partner
-#         fields = "__all__"
-
-#     def get_cover_image_url(self, obj):
-#         return obj.cover_image.url if obj.cover_image else None
-
-
-# class EquipeMemberSerializer(serializers.ModelSerializer):
-#     photo_url = serializers.SerializerMethodField()
-#     display_position = serializers.ReadOnlyField()
-
-#     class Meta:
-#         model = EquipeMember
-#         fields = "__all__"
-
-#     def get_photo_url(self, obj):
-#         return obj.photo.url if obj.photo else None
-
-
-# class ValeurMissionSerializer(serializers.ModelSerializer):
-#     photo_url = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = ValeurMission
-#         fields = "__all__"
-
-#     def get_photo_url(self, obj):
-#         return obj.display_photo
-
-
-# class ServiceSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Service
-#         fields = "__all__"
-
-
-# class PortfolioSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Portfolio
-#         fields = "__all__"
-
-
-# class ActivitySerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Activity
-#         fields = "__all__"
-
-
-# -------------------------------
-# Serializer complet pour la Home (Front-end)
-# -------------------------------
-
-# from rest_framework import serializers
-# from .models import Home
-
-# class HomeSerializer(serializers.ModelSerializer):
-#     image_url = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Home
-#         fields = [
-#             "id",
-#             "title",
-#             "description",
-#             "image",
-#             "image_url",
-#             "created_at",
-#         ]
-
-#     def get_image_url(self, obj):
-#         if obj.image:
-#             return obj.image.url
-#         return None
-
 from rest_framework import serializers
 from .models import Home, Partner, EquipeMember, Mission, Service, Portfolio
 
 class HomeSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Home
-        fields = ['id', 'title', 'description', 'image']
+        fields = ['id', 'title', 'description', 'image', 'image_url']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            return obj.image.url
+        return None
+
 
 class PartnerSerializer(serializers.ModelSerializer):
+    cover_image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Partner
-        fields = ['id', 'name_fr', 'name_en', 'cover_image', 'website_url', 'is_active']
+        fields = ['id', 'name_fr', 'name_en', 'cover_image', 'cover_image_url', 'website_url', 'is_active']
+
+    def get_cover_image_url(self, obj):
+        if obj.cover_image:
+            return obj.cover_image.url
+        return None
+
 
 class TeamMemberSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+
     class Meta:
         model = EquipeMember
-        fields = ['id', 'full_name', 'position_fr', 'position_en', 'photo', 'email', 'linkedin', 'is_active']
+        fields = ['id', 'full_name', 'position_fr', 'position_en', 'photo', 'photo_url', 'email', 'linkedin', 'is_active']
+
+    def get_photo_url(self, obj):
+        if obj.photo:
+            return obj.photo.url
+        return None
+
 
 class ValeurMissionSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Mission
-        fields = ['id', 'titre', 'description', 'valeur', 'mission', 'photo', 'is_active']
+        fields = ['id', 'titre', 'description', 'valeur', 'mission', 'photo', 'photo_url', 'is_active']
+
+    def get_photo_url(self, obj):
+        if obj.photo:
+            return obj.photo.url
+        return None
+
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['id', 'title', 'description', 'image', 'is_active']
+
 
 class PortfolioSerializer(serializers.ModelSerializer):
     class Meta:

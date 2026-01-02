@@ -9,22 +9,26 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper : récupérer le champ selon la langue
-  const getLocalized = (obj, fieldBase) => {
+  // Helper pour récupérer le champ selon la langue
+  const getLocalized = (obj, field) => {
     if (!obj) return "";
     const lang = i18n.language || "fr";
-    return obj[`${fieldBase}_${lang}`] || obj[`${fieldBase}_fr`] || obj[`${fieldBase}_en`] || "";
+    return obj[`${field}_${lang}`] || obj[`${field}_fr`] || obj[`${field}_en`] || "";
   };
 
-  // Helper : obtenir URL de l'image
+  // Helper pour obtenir l'URL de l'image (gère _url ou Cloudinary)
   const getImageUrl = (obj, field) => {
     if (!obj) return null;
+
+    // Priorité au champ xxx_url si présent (Partner, Team, Mission)
+    if (obj[`${field}_url`]) return obj[`${field}_url`];
+
     const img = obj[field];
     if (!img) return null;
 
-    // CloudinaryField ou URL directe
     if (typeof img === "object" && img.url) return img.url;
     if (typeof img === "string") return img;
+
     return null;
   };
 
@@ -62,7 +66,7 @@ const Home = () => {
       </div>
     );
 
-  // Destructuring sections
+  // Destructuring des sections (avec fallback vide)
   const {
     home = {},
     partners = [],
@@ -75,7 +79,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-[#0a0e27] text-white">
 
-      {/* Home */}
+      {/* Home Section */}
       {home && (
         <section className="text-center py-20 px-4 bg-[#0f1729]/80">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">{getLocalized(home, "title")}</h1>
@@ -88,7 +92,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Partners */}
+      {/* Partners Section */}
       {partners.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
@@ -108,7 +112,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Team */}
+      {/* Team Section */}
       {team.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
@@ -128,7 +132,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Valeurs & Missions */}
+      {/* Valeurs & Missions Section */}
       {valeursMissions.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
@@ -148,7 +152,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Services */}
+      {/* Services Section */}
       {services.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
@@ -168,7 +172,7 @@ const Home = () => {
         </section>
       )}
 
-      {/* Portfolio */}
+      {/* Portfolio Section */}
       {portfolios.length > 0 && (
         <section className="py-12 px-4 max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-6 flex items-center gap-2">
