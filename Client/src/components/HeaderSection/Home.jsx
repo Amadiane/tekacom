@@ -166,6 +166,40 @@ const Home = () => {
             {home?.description_fr || "Transformons vos idées en réalités visuelles exceptionnelles"}
           </p>
 
+          {/* Hero Image - NEW */}
+          {getImageUrl(home, "image") && (
+            <div 
+              className="relative max-w-5xl mx-auto mb-12"
+              style={{ animation: 'fadeInUp 0.8s ease-out 0.5s both' }}
+            >
+              <div className="relative group">
+                {/* Glow effect background */}
+                <div className="absolute -inset-4 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] rounded-3xl opacity-30 blur-2xl group-hover:opacity-50 transition-opacity duration-500"></div>
+                
+                {/* Image container */}
+                <div className="relative rounded-3xl overflow-hidden border-2 border-[#a34ee5]/40 shadow-2xl shadow-[#a34ee5]/30 group-hover:border-[#fec603]/60 transition-all duration-500">
+                  {/* Scan effect */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#a34ee5]/20 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-2000 pointer-events-none z-10"></div>
+                  
+                  {/* Image */}
+                  <img
+                    src={getImageUrl(home, "image")}
+                    alt={home?.title_fr || "TEKACOM"}
+                    className="w-full h-auto object-cover rounded-3xl transition-transform duration-700 group-hover:scale-105"
+                    style={{ maxHeight: '600px' }}
+                  />
+                  
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/60 via-transparent to-transparent pointer-events-none"></div>
+                  
+                  {/* Corner decorations */}
+                  <div className="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-[#fec603]/60 rounded-tr-3xl"></div>
+                  <div className="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-[#a34ee5]/60 rounded-bl-3xl"></div>
+                </div>
+              </div>
+            </div>
+          )}
+
             {/* CTA Buttons */}
             <div 
               className="flex flex-wrap justify-center gap-4 mb-16"
@@ -492,7 +526,7 @@ const Home = () => {
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Des partenariats solides avec les leaders de l'industrie
+                Ils font confiance à notre créativité
               </p>
             </div>
 
