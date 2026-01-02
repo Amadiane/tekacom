@@ -95,24 +95,24 @@ class ContactSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "created_at"]
 
 
-from rest_framework import serializers
-from .models import ValeurMission
+# from rest_framework import serializers
+# from .models import ValeurMission
 
-from rest_framework import serializers
-from .models import ValeurMission
+# from rest_framework import serializers
+# from .models import ValeurMission
 
-class ValeurMissionSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
+# class ValeurMissionSerializer(serializers.ModelSerializer):
+#     photo = serializers.SerializerMethodField()
 
-    class Meta:
-        model = ValeurMission
-        fields = ['id', 'titre', 'description', 'valeur', 'mission', 'is_active', 'photo', 'created_at']
+#     class Meta:
+#         model = ValeurMission
+#         fields = ['id', 'titre', 'description', 'valeur', 'mission', 'is_active', 'photo', 'created_at']
 
-    def get_photo(self, obj):
-        # Priorité : photo uploadée Cloudinary > URL
-        if hasattr(obj, 'photo') and obj.photo:
-            return obj.photo.url if hasattr(obj.photo, 'url') else obj.photo
-        return getattr(obj, 'photo_url', None)
+#     def get_photo(self, obj):
+#         # Priorité : photo uploadée Cloudinary > URL
+#         if hasattr(obj, 'photo') and obj.photo:
+#             return obj.photo.url if hasattr(obj.photo, 'url') else obj.photo
+#         return getattr(obj, 'photo_url', None)
 
 
 # Base/serializers.py
@@ -123,6 +123,27 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = "__all__"
+
+from rest_framework import serializers
+from .models import Mission
+
+class MissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Mission
+        fields = [
+            'id',
+            'titre',
+            'description',
+            'valeur',
+            'mission',
+            'is_active',
+            'photo',
+            'created_at',
+            'updated_at'
+        ]
+
+
+
 
 
 
@@ -161,7 +182,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 
 from rest_framework import serializers
-from .models import Home, Partner, EquipeMember, ValeurMission, Service, Portfolio, Activity
+from .models import Home, Partner, EquipeMember, Service, Portfolio, Activity
 
 # -------------------------------
 # Serializers pour les modèles principaux
@@ -202,15 +223,15 @@ class EquipeMemberSerializer(serializers.ModelSerializer):
         return obj.photo.url if obj.photo else None
 
 
-class ValeurMissionSerializer(serializers.ModelSerializer):
-    photo_url = serializers.SerializerMethodField()
+# class ValeurMissionSerializer(serializers.ModelSerializer):
+#     photo_url = serializers.SerializerMethodField()
 
-    class Meta:
-        model = ValeurMission
-        fields = "__all__"
+#     class Meta:
+#         model = ValeurMission
+#         fields = "__all__"
 
-    def get_photo_url(self, obj):
-        return obj.display_photo
+#     def get_photo_url(self, obj):
+#         return obj.display_photo
 
 
 class ServiceSerializer(serializers.ModelSerializer):

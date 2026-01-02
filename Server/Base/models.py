@@ -126,28 +126,31 @@ class Contact(models.Model):
     def __str__(self):
         return f"{self.name} - {self.subject}"
 
-class ValeurMission(models.Model):
-    titre = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    valeur = models.TextField()
-    mission = models.TextField()
-    is_active = models.BooleanField(default=True)
-    photo = CloudinaryField('Photo', folder='valeurs_missions', blank=True, null=True)
-    photo_url = models.URLField("URL Photo", blank=True, null=True)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+# models.py
+from django.db import models
+from django.utils import timezone
+from cloudinary.models import CloudinaryField
 
-    @property
-    def display_photo(self):
-        """
-        Retourne l'URL de la photo à afficher dans le frontend :
-        priorité : photo uploadée > photo_url
-        """
-        if self.photo:
-            return self.photo.url
-        elif self.photo_url:
-            return self.photo_url
-        return None
+class Mission(models.Model):
+    titre = models.CharField(max_length=255, verbose_name="Titre")
+    description = models.TextField(verbose_name="Description")
+    valeur = models.CharField(max_length=255, verbose_name="Valeur")
+    mission = models.TextField(verbose_name="Mission")
+    is_active = models.BooleanField(default=True, verbose_name="Active")
+    photo = CloudinaryField('Photo', folder='missions', blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now, verbose_name="Date de création")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Dernière mise à jour")
+
+    class Meta:
+        verbose_name = "Mission"
+        verbose_name_plural = "Missions"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.titre
+
+
+
 
 
 

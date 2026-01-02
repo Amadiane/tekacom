@@ -119,106 +119,31 @@ class ContactViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]  # Ou IsAuthenticated si tu veux sécuriser l'accès
 
 
-# views.py
-from rest_framework.viewsets import ModelViewSet
-from .models import ValeurMission
-from .serializers import ValeurMissionSerializer
-
-# views.py
 from rest_framework import viewsets
-from .models import ValeurMission
-from .serializers import ValeurMissionSerializer
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from .models import ValeurMission
-from .serializers import ValeurMissionSerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .models import Mission
+from .serializers import MissionSerializer
 
-class ValeurMissionViewSet(viewsets.ModelViewSet):
-    queryset = ValeurMission.objects.all()
-    serializer_class = ValeurMissionSerializer
-    parser_classes = [MultiPartParser, FormParser, JSONParser]  # Support fichiers + JSON
-    
-    def create(self, request, *args, **kwargs):
-        print("📥 POST - Données reçues:", request.data)
-        print("📥 Fichiers:", request.FILES)
-        
-        serializer = self.get_serializer(data=request.data)
-        
-        if not serializer.is_valid():
-            print("❌ Erreurs validation:", serializer.errors)
-            return Response(
-                serializer.errors, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        self.perform_create(serializer)
-        print("✅ Valeur/Mission créée:", serializer.data)
-        
-        return Response(
-            serializer.data, 
-            status=status.HTTP_201_CREATED
-        )
-    
-    def update(self, request, *args, **kwargs):
-        print("📝 PATCH/PUT - Données reçues:", request.data)
-        print("📥 Fichiers:", request.FILES)
-        
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, 
-            data=request.data, 
-            partial=partial
-        )
-        
-        if not serializer.is_valid():
-            print("❌ Erreurs validation:", serializer.errors)
-            return Response(
-                serializer.errors, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        self.perform_update(serializer)
-        print("✅ Valeur/Mission mise à jour:", serializer.data)
-        
-        return Response(serializer.data)
+class MissionViewSet(viewsets.ModelViewSet):
+    """
+    API pour gérer les missions
+    """
+    queryset = Mission.objects.all().order_by('-created_at')
+    serializer_class = MissionSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
-
-
-from rest_framework import generics
-from rest_framework.parsers import MultiPartParser, FormParser
-from .models import ValeurMission
-from .serializers import ValeurMissionSerializer
-
-# List & Create
-class ValeurMissionListCreateView(generics.ListCreateAPIView):
-    queryset = ValeurMission.objects.all()
-    serializer_class = ValeurMissionSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
-    def perform_create(self, serializer):
-        # Priorité : photo uploadée > photo_url
-        photo_url = self.request.data.get('photo_url', None)
-        serializer.save(photo_url=photo_url)
-
-# Retrieve & Update
-class ValeurMissionRetrieveUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = ValeurMission.objects.all()
-    serializer_class = ValeurMissionSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
-    def perform_update(self, serializer):
-        photo_url = self.request.data.get('photo_url', None)
-        serializer.save(photo_url=photo_url)
-
-# Delete
-class ValeurMissionDeleteView(generics.DestroyAPIView):
-    queryset = ValeurMission.objects.all()
-    serializer_class = ValeurMissionSerializer
-
-
-
+    def get_queryset(self):
+        """
+        Filtre pour ne renvoyer que les missions actives si paramètre ?active=true
+        """
+        queryset = super().get_queryset()
+        active = self.request.query_params.get('active')
+        if active is not None:
+            if active.lower() in ['true', '1']:
+                queryset = queryset.filter(is_active=True)
+            elif active.lower() in ['false', '0']:
+                queryset = queryset.filter(is_active=False)
+        return queryset
 
 
 # Base/views.py
