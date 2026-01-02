@@ -128,44 +128,43 @@ const Home = () => {
       </div>
 
       {/* HERO SECTION */}
-      {home && (
-        <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 pb-16">
+      <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 pb-16">
+        
+        {/* Content */}
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
           
-          {/* Content */}
-          <div className="relative z-10 max-w-7xl mx-auto text-center">
-            
-            {/* Badge */}
-            <div 
-              className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-gradient-to-r from-[#41124f]/80 to-[#0a0a0a]/80 backdrop-blur-xl border border-[#a34ee5]/50 rounded-full shadow-2xl shadow-[#a34ee5]/20"
-              style={{ animation: 'fadeInUp 0.8s ease-out' }}
-            >
-              <Sparkles className="w-5 h-5 text-[#fec603] animate-pulse" />
-              <span className="text-sm font-bold text-[#a34ee5] uppercase tracking-wider">
-                Bienvenue chez TEKACOM
-              </span>
-              <div className="w-2 h-2 bg-[#fec603] rounded-full animate-pulse"></div>
-            </div>
+          {/* Badge */}
+          <div 
+            className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-gradient-to-r from-[#41124f]/80 to-[#0a0a0a]/80 backdrop-blur-xl border border-[#a34ee5]/50 rounded-full shadow-2xl shadow-[#a34ee5]/20"
+            style={{ animation: 'fadeInUp 0.8s ease-out' }}
+          >
+            <Sparkles className="w-5 h-5 text-[#fec603] animate-pulse" />
+            <span className="text-sm font-bold text-[#a34ee5] uppercase tracking-wider">
+              Bienvenue chez TEKACOM
+            </span>
+            <div className="w-2 h-2 bg-[#fec603] rounded-full animate-pulse"></div>
+          </div>
 
-            {/* Title */}
-            <h1 
-              className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-8 leading-none"
-              style={{ animation: 'fadeInUp 0.8s ease-out 0.2s both' }}
-            >
-              <span className="block text-white mb-4">
-                {home.title_fr || "Votre Vision"}
-              </span>
-              <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient-slow">
-                NOTRE EXPERTISE
-              </span>
-            </h1>
+          {/* Title */}
+          <h1 
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-8 leading-none"
+            style={{ animation: 'fadeInUp 0.8s ease-out 0.2s both' }}
+          >
+            <span className="block text-white mb-4">
+              {home?.title_fr || "Votre Vision"}
+            </span>
+            <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient-slow">
+              NOTRE EXPERTISE
+            </span>
+          </h1>
 
-            {/* Subtitle */}
-            <p 
-              className="text-xl md:text-2xl lg:text-3xl text-gray-400 font-light max-w-4xl mx-auto leading-relaxed mb-12"
-              style={{ animation: 'fadeInUp 0.8s ease-out 0.4s both' }}
-            >
-              {home.description_fr || "Transformons vos idées en réalités visuelles exceptionnelles"}
-            </p>
+          {/* Subtitle */}
+          <p 
+            className="text-xl md:text-2xl lg:text-3xl text-gray-400 font-light max-w-4xl mx-auto leading-relaxed mb-12"
+            style={{ animation: 'fadeInUp 0.8s ease-out 0.4s both' }}
+          >
+            {home?.description_fr || "Transformons vos idées en réalités visuelles exceptionnelles"}
+          </p>
 
             {/* CTA Buttons */}
             <div 
@@ -219,7 +218,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-      )}
 
       {/* SERVICES SECTION */}
       {services.length > 0 && (
