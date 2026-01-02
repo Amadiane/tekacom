@@ -51,6 +51,19 @@ const Home = () => {
         const res = await fetch(CONFIG.API_HOME_FULL);
         if (!res.ok) throw new Error("Erreur de chargement");
         const data = await res.json();
+        
+        // ✨ TRI DES MEMBRES DU PLUS ANCIEN AU PLUS RÉCENT
+        if (data.latest_team_members && Array.isArray(data.latest_team_members)) {
+          data.latest_team_members = data.latest_team_members.sort((a, b) => {
+            // Tri par date de création si disponible
+            if (a.created_at && b.created_at) {
+              return new Date(a.created_at) - new Date(b.created_at);
+            }
+            // Sinon tri par ID (plus petit ID = plus ancien)
+            return a.id - b.id;
+          });
+        }
+        
         setHomeData(data);
       } catch (err) {
         console.error(err);
