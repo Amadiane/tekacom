@@ -8,9 +8,11 @@ import React from "react";
 import { trackAction } from "./utils/tracker";
 
 /**
- * 🎨 APP - TEKACOM FIXED
+ * 🎨 APP - TEKACOM FIXED SCROLL
+ * ✅ Scroll naturel sur body (pas overflow-hidden)
+ * ✅ Backgrounds en absolute (pas fixed pour mobile)
+ * ✅ Mobile-friendly avec -webkit-overflow-scrolling
  * Harmonisé avec charte: violet #a34ee5, or #fec603, violet foncé #7828a8, noir #0a0a0a
- * Fixed: NavAdmin ne masque plus le contenu + Contenu centré
  */
 
 const App = () => {
@@ -19,6 +21,14 @@ const App = () => {
 
   // 🎨 Custom Scrollbar Styles - TEKACOM Brand
   const scrollbarStyles = `
+    /* ===== Mobile Scroll Fix ===== */
+    html, body {
+      height: auto;
+      overflow-x: hidden;
+      overscroll-behavior: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     /* ===== Scrollbar Firefox ===== */
     * {
       scrollbar-width: thin;
@@ -153,10 +163,10 @@ const App = () => {
       
       {isAdminPage ? (
         // 🎨 ADMIN LAYOUT - Dark theme harmonized with TEKACOM
-        // FIXED: Contenu centré + padding-top pour NavAdmin
-        <div className="admin-layout flex h-screen w-screen overflow-hidden bg-[#0a0a0a] relative">
-          {/* Admin background effects */}
-          <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        // ✅ FIXED: Scroll naturel + min-h-screen (pas h-screen) + absolute backgrounds
+        <div className="admin-layout flex min-h-screen w-full bg-[#0a0a0a] relative">
+          {/* Admin background effects - ABSOLUTE (pas fixed) pour mobile */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#a34ee5]/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#fec603]/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#7828a8]/5 rounded-full blur-3xl"></div>
@@ -171,9 +181,9 @@ const App = () => {
           
           <NavAdmin />
           
-          {/* MAIN CONTENT - CENTRÉ avec max-width et margin auto */}
-          <main className="flex-1 overflow-y-auto overflow-x-hidden transition-all duration-500 ease-out bg-transparent relative">
-            {/* Container centré avec padding-top pour éviter le masquage */}
+          {/* MAIN CONTENT - Scroll naturel avec overflow-y-auto */}
+          <main className="flex-1 overflow-y-auto transition-all duration-500 ease-out bg-transparent relative">
+            {/* Container centré avec padding-top pour éviter le masquage par NavAdmin */}
             <div className="min-h-screen w-full max-w-[1800px] mx-auto px-4 md:px-6 lg:px-12 py-6 mt-20">
               <Outlet />
             </div>
@@ -181,30 +191,31 @@ const App = () => {
         </div>
       ) : (
         // 🎨 PUBLIC LAYOUT - Dark theme with TEKACOM brand colors
-        <div className="flex flex-col min-h-screen w-full bg-[#0a0a0a] text-gray-100 overflow-x-hidden relative">
-          {/* Gradient background effect */}
-          <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        // ✅ FIXED: PAS de overflow-hidden, backgrounds en absolute
+        <div className="flex flex-col min-h-screen w-full bg-[#0a0a0a] text-gray-100 relative">
+          {/* Gradient background effect - ABSOLUTE pour mobile */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-gradient-to-br from-[#a34ee5]/20 via-[#7828a8]/10 to-transparent rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDuration: '8s' }}></div>
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-[#41124f]/30 via-[#7828a8]/10 to-transparent rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDuration: '10s' }}></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#fec603]/5 rounded-full blur-3xl opacity-20"></div>
           </div>
 
-          {/* Dot grid texture overlay for depth */}
-          <div className="fixed inset-0 pointer-events-none opacity-[0.015]" 
+          {/* Dot grid texture overlay for depth - ABSOLUTE */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.015]" 
                style={{
                  backgroundImage: 'radial-gradient(circle, #a34ee5 1px, transparent 1px)',
                  backgroundSize: '40px 40px'
                }}
           ></div>
 
-          {/* Header - Fixed at top */}
+          {/* Header - FIXED (OK car nécessaire) */}
           {!isLoginPage && (
-            <div className="fixed top-0 left-0 right-0 z-[100] isolate">
+            <div className="fixed top-0 left-0 right-0 z-[100]">
               <Header logoColor="#a34ee5" />
             </div>
           )}
 
-          {/* Main content */}
+          {/* Main content - Scroll naturel sur body */}
           <main className="flex-1 w-full relative pt-32" style={{ zIndex: 1 }}>
             <div className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-12">
               <Outlet />
@@ -218,7 +229,7 @@ const App = () => {
             </div>
           )}
 
-          {/* Accent line at bottom - TEKACOM gradient */}
+          {/* Accent line at bottom - TEKACOM gradient - FIXED (decoratif) */}
           <div className="fixed bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#a34ee5] to-transparent opacity-50 pointer-events-none"></div>
           <div className="fixed bottom-1 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#fec603] to-transparent opacity-30 pointer-events-none"></div>
         </div>
