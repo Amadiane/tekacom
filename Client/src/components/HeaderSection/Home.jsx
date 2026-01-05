@@ -230,7 +230,8 @@ const Home = () => {
               >
                 {[
                   { icon: Users, value: team.length + '+', label: 'Experts' },
-                  { icon: Briefcase, value: portfolios.length + '+', label: 'Projets' },
+                  // { icon: Briefcase, value: portfolios.length + '+', label: 'Projets' },
+                  { icon: Briefcase, value: '500+', label: 'Projets' },
                   { icon: Handshake, value: partners.length + '+', label: 'Partenaires' },
                 ].map((stat, idx) => {
                   const Icon = stat.icon;
