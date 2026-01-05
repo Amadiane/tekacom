@@ -538,7 +538,7 @@ const Home = () => {
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Des partenariats solides avec les leaders de l'industrie
+                Découvrez les marques visionnaires qui ont choisi TEKACOM
               </p>
             </div>
 
