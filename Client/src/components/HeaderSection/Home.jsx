@@ -112,10 +112,10 @@ const Home = () => {
   } = homeData || {};
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white relative">
       
-      {/* Animated Background */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* Animated Background - ABSOLUTE pas fixed */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#a34ee5]/10 rounded-full blur-[150px] animate-float" style={{ animationDuration: '8s' }}></div>
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#fec603]/10 rounded-full blur-[120px] animate-float" style={{ animationDuration: '10s', animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#7828a8]/10 rounded-full blur-[100px] animate-float" style={{ animationDuration: '12s', animationDelay: '4s' }}></div>
@@ -127,131 +127,143 @@ const Home = () => {
         }}></div>
       </div>
 
-      {/* HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 pt-20 pb-16">
+      {/* HERO SECTION - Full Width Background Image */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
         
-        {/* Content */}
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          
-          {/* Badge */}
-          <div 
-            className="inline-flex items-center gap-3 px-6 py-3 mb-8 bg-gradient-to-r from-[#41124f]/80 to-[#0a0a0a]/80 backdrop-blur-xl border border-[#a34ee5]/50 rounded-full shadow-2xl shadow-[#a34ee5]/20"
-            style={{ animation: 'fadeInUp 0.8s ease-out' }}
-          >
-            <Sparkles className="w-5 h-5 text-[#fec603] animate-pulse" />
-            <span className="text-sm font-bold text-[#a34ee5] uppercase tracking-wider">
-              Bienvenue chez TEKACOM
-            </span>
-            <div className="w-2 h-2 bg-[#fec603] rounded-full animate-pulse"></div>
-          </div>
+        {/* Background Image with Overlay */}
+        {getImageUrl(home, "image") ? (
+          <>
+            {/* Image Background */}
+            <div className="absolute inset-0 overflow-hidden">
+              <img
+                src={getImageUrl(home, "image")}
+                alt={home?.title_fr || "TEKACOM"}
+                className="w-full h-full object-cover"
+              />
+              {/* Dark overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/95 via-[#0a0a0a]/80 to-transparent"></div>
+              {/* Additional gradient for depth */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/60 via-transparent to-[#0a0a0a]/80"></div>
+            </div>
+          </>
+        ) : (
+          /* Fallback gradient background if no image */
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a0a2e] via-[#0a0a0a] to-[#0a0a0a] overflow-hidden"></div>
+        )}
 
-          {/* Title */}
-          <h1 
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black mb-8 leading-none"
-            style={{ animation: 'fadeInUp 0.8s ease-out 0.2s both' }}
-          >
-            <span className="block text-white mb-4">
-              {home?.title_fr || "Votre Vision"}
-            </span>
-            <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient-slow">
-              NOTRE EXPERTISE
-            </span>
-          </h1>
+        {/* Content Container */}
+        <div className="relative z-10 w-full px-6 lg:px-12 py-20">
+          <div className="max-w-7xl mx-auto">
+            
+            {/* Left Side - Text Content Overlay */}
+            <div className="max-w-3xl space-y-8">
+              
+              {/* Badge */}
+              <div 
+                className="inline-flex items-center gap-3 px-6 py-3 bg-[#41124f]/80 backdrop-blur-xl border border-[#a34ee5]/50 rounded-full shadow-2xl shadow-[#a34ee5]/30"
+                style={{ animation: 'fadeInUp 0.8s ease-out' }}
+              >
+                <Sparkles className="w-5 h-5 text-[#fec603] animate-pulse" />
+                <span className="text-sm font-bold text-[#a34ee5] uppercase tracking-wider">
+                  Bienvenue chez TEKACOM
+                </span>
+                <div className="w-2 h-2 bg-[#fec603] rounded-full animate-pulse"></div>
+              </div>
 
-          {/* Subtitle */}
-          <p 
-            className="text-xl md:text-2xl lg:text-3xl text-gray-400 font-light max-w-4xl mx-auto leading-relaxed mb-12"
-            style={{ animation: 'fadeInUp 0.8s ease-out 0.4s both' }}
-          >
-            {home?.description_fr || "Transformons vos idées en réalités visuelles exceptionnelles"}
-          </p>
+              {/* Title */}
+              <h1 
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-none"
+                style={{ animation: 'fadeInUp 0.8s ease-out 0.2s both' }}
+              >
+                <span className="block text-white mb-4 drop-shadow-2xl">
+                  {home?.title_fr || "Votre Vision"}
+                </span>
+                <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient-slow drop-shadow-2xl">
+                  NOTRE EXPERTISE
+                </span>
+              </h1>
 
-          {/* Hero Image - NEW */}
-          {getImageUrl(home, "image") && (
-            <div 
-              className="relative max-w-5xl mx-auto mb-12"
-              style={{ animation: 'fadeInUp 0.8s ease-out 0.5s both' }}
-            >
-              <div className="relative group">
-                {/* Glow effect background */}
-                <div className="absolute -inset-4 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] rounded-3xl opacity-30 blur-2xl group-hover:opacity-50 transition-opacity duration-500"></div>
-                
-                {/* Image container */}
-                <div className="relative rounded-3xl overflow-hidden border-2 border-[#a34ee5]/40 shadow-2xl shadow-[#a34ee5]/30 group-hover:border-[#fec603]/60 transition-all duration-500">
-                  {/* Scan effect */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#a34ee5]/20 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-2000 pointer-events-none z-10"></div>
-                  
-                  {/* Image */}
-                  <img
-                    src={getImageUrl(home, "image")}
-                    alt={home?.title_fr || "TEKACOM"}
-                    className="w-full h-auto object-cover rounded-3xl transition-transform duration-700 group-hover:scale-105"
-                    style={{ maxHeight: '600px' }}
-                  />
-                  
-                  {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/60 via-transparent to-transparent pointer-events-none"></div>
-                  
-                  {/* Corner decorations */}
-                  <div className="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-[#fec603]/60 rounded-tr-3xl"></div>
-                  <div className="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-[#a34ee5]/60 rounded-bl-3xl"></div>
-                </div>
+              {/* Divider Line */}
+              <div 
+                className="w-32 h-1 bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-transparent rounded-full"
+                style={{ animation: 'fadeInUp 0.8s ease-out 0.3s both' }}
+              ></div>
+
+              {/* Subtitle */}
+              <p 
+                className="text-xl md:text-2xl lg:text-3xl text-gray-200 font-light leading-relaxed drop-shadow-lg"
+                style={{ animation: 'fadeInUp 0.8s ease-out 0.4s both' }}
+              >
+                {home?.description_fr || "Transformons vos idées en réalités visuelles exceptionnelles"}
+              </p>
+
+              {/* CTA Buttons */}
+              <div 
+                className="flex flex-wrap gap-4 pt-4"
+                style={{ animation: 'fadeInUp 0.8s ease-out 0.6s both' }}
+              >
+                <button
+                  onClick={() => navigate('/services')}
+                  className="group relative px-10 py-5 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#a34ee5]/50 hover:shadow-[#a34ee5]/80 transition-all duration-500 hover:scale-110"
+                >
+                  <span className="relative z-10 flex items-center gap-3">
+                    <Rocket className="w-6 h-6" />
+                    Découvrir nos services
+                    <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#fec603] to-[#a34ee5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </button>
+
+                <button
+                  onClick={() => navigate('/portfolio')}
+                  className="px-10 py-5 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold text-lg rounded-2xl hover:bg-white/20 hover:border-white/50 transition-all duration-300 flex items-center gap-3"
+                >
+                  <Eye className="w-6 h-6" />
+                  Voir nos réalisations
+                </button>
+              </div>
+
+              {/* Mini Stats Inline */}
+              <div 
+                className="flex flex-wrap gap-8 pt-4"
+                style={{ animation: 'fadeInUp 0.8s ease-out 0.8s both' }}
+              >
+                {[
+                  { icon: Users, value: team.length + '+', label: 'Experts' },
+                  { icon: Briefcase, value: portfolios.length + '+', label: 'Projets' },
+                  { icon: Handshake, value: partners.length + '+', label: 'Partenaires' },
+                ].map((stat, idx) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#a34ee5] to-[#7828a8] flex items-center justify-center shadow-lg">
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-3xl font-black text-white">{stat.value}</p>
+                        <p className="text-xs text-gray-300 uppercase tracking-wide">{stat.label}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          )}
+          </div>
+        </div>
 
-            {/* CTA Buttons */}
-            <div 
-              className="flex flex-wrap justify-center gap-4 mb-16"
-              style={{ animation: 'fadeInUp 0.8s ease-out 0.6s both' }}
-            >
-              <button
-                onClick={() => navigate('/services')}
-                className="group relative px-10 py-5 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#a34ee5]/50 hover:shadow-[#a34ee5]/80 transition-all duration-500 hover:scale-110"
-              >
-                <span className="relative z-10 flex items-center gap-3">
-                  <Rocket className="w-6 h-6" />
-                  Découvrir nos services
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[#fec603] to-[#a34ee5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </button>
-
-              <button
-                onClick={() => navigate('/portfolio')}
-                className="px-10 py-5 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-lg rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all duration-300 flex items-center gap-3"
-              >
-                <Eye className="w-6 h-6" />
-                Voir nos réalisations
-              </button>
-            </div>
-
-            {/* Stats */}
-            <div 
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto"
-              style={{ animation: 'fadeInUp 0.8s ease-out 0.8s both' }}
-            >
-              {[
-                { icon: Users, value: team.length + '+', label: 'Experts' },
-                { icon: Briefcase, value: portfolios.length + '+', label: 'Projets' },
-                { icon: Handshake, value: partners.length + '+', label: 'Partenaires' },
-                { icon: Award, value: '100%', label: 'Satisfaction' },
-              ].map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={idx} className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-2xl p-6 border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 transition-all hover:scale-105">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-[#a34ee5] to-[#fec603] rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity"></div>
-                    <div className="relative">
-                      <Icon className="w-8 h-8 text-[#fec603] mx-auto mb-3" />
-                      <p className="text-3xl font-black text-white mb-1">{stat.value}</p>
-                      <p className="text-sm text-gray-400">{stat.label}</p>
-                    </div>
-                  </div>
-                );
-              })}
+        {/* Decorative Elements */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none"></div>
+        
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs text-gray-400 uppercase tracking-wider">Défiler</span>
+            <div className="w-6 h-10 border-2 border-[#a34ee5]/50 rounded-full flex justify-center p-2">
+              <div className="w-1 h-3 bg-[#a34ee5] rounded-full animate-pulse"></div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
       {/* SERVICES SECTION */}
       {services.length > 0 && (
@@ -526,7 +538,7 @@ const Home = () => {
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Ils font confiance à notre créativité
+                Des partenariats solides avec les leaders de l'industrie
               </p>
             </div>
 
