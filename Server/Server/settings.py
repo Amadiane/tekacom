@@ -18,12 +18,12 @@ SECRET_KEY = 'django-insecure-1e@5sy$q^!xm1$vwi4h_2j@k^r)qj71qzedgs%g2rt0if*t=qh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# ALLOWED_HOSTS = ['*']
-ALLOWED_HOSTS = [
-    "tekacom.onrender.com",
-    "tekacom.gn",
-    "www.tekacom.gn",
-]
+ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = [
+#     "tekacom.onrender.com",
+#     "tekacom.gn",
+#     "www.tekacom.gn",
+# ]
 
 
 
