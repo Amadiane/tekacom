@@ -76,7 +76,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://tekacom.gn", 
     "https://tekacom.onrender.com",
     "https://tekacom.vercel.app" # Frontend de dev
-    # "https://viali-gn.com"      # Frontend prod si nécessaire
+    "https://www.tekacom.gn",
 
 ]
 
@@ -86,7 +86,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://tekacom.gn",
     "https://tekacom.onrender.com",
     "https://tekacom.vercel.app"
-    # "https://viali-gn.com"
+    "https://www.tekacom.gn",
 ]
 
 CORS_ALLOW_HEADERS = [
