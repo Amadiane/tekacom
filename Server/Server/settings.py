@@ -18,7 +18,13 @@ SECRET_KEY = 'django-insecure-1e@5sy$q^!xm1$vwi4h_2j@k^r)qj71qzedgs%g2rt0if*t=qh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "tekacom.onrender.com",
+    "tekacom.gn",
+    "www.tekacom.gn",
+]
+
 
 
 # Application definition
@@ -74,8 +80,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://tekacom.gn", 
-    "https://tekacom.onrender.com",
-    "https://tekacom.vercel.app" # Frontend de dev
+    # "https://tekacom.onrender.com",
+    "https://tekacom.vercel.app", # Frontend de dev
     "https://www.tekacom.gn",
 
 ]
@@ -84,8 +90,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://tekacom.gn",
-    "https://tekacom.onrender.com",
-    "https://tekacom.vercel.app"
+    # "https://tekacom.onrender.com",
+    "https://tekacom.vercel.app",
     "https://www.tekacom.gn",
 ]
 
