@@ -213,14 +213,13 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # ==========================
 # EMAIL CONFIGURATION
 # ==========================
-
+# --- Email configuration cPanel ---
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-
-EMAIL_HOST = "mail.tekacom.gn"
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-
-EMAIL_HOST_USER = "contact@tekacom.gn"
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")  # recommandé
-
-DEFAULT_FROM_EMAIL = "Tekacom <contact@tekacom.gn>"
+EMAIL_HOST = "mail.tekacom.gn"          # Serveur SMTP
+EMAIL_PORT = 465                         # Port SSL sécurisé
+EMAIL_USE_SSL = True                      # SSL activé
+EMAIL_USE_TLS = False                     # Ne pas activer TLS en SSL
+EMAIL_HOST_USER = "contact@tekacom.gn"  # Ton email créé dans cPanel
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")  # Mot de passe stocké en secret
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER     # Pour les envois par défaut
+CONTACT_ADMIN_EMAIL = EMAIL_HOST_USER    # Email admin pour réception des messages

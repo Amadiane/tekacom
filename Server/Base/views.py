@@ -109,14 +109,63 @@ class EquipeMemberViewSet(viewsets.ModelViewSet):
 
 
 
+# from rest_framework import viewsets, permissions
+# from .models import Contact
+# from .serializers import ContactSerializer
+
+# class ContactViewSet(viewsets.ModelViewSet):
+#     queryset = Contact.objects.all().order_by("-created_at")
+#     serializer_class = ContactSerializer
+#     permission_classes = [permissions.AllowAny]  # Ou IsAuthenticated si tu veux sécuriser l'accès
+
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import Contact
 from .serializers import ContactSerializer
 
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all().order_by("-created_at")
     serializer_class = ContactSerializer
-    permission_classes = [permissions.AllowAny]  # Ou IsAuthenticated si tu veux sécuriser l'accès
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        contact = serializer.save()
+
+        # --- Email vers l'admin ---
+        send_mail(
+            subject=f"Nouveau message de {contact.name}",
+            message=f"""
+Nom: {contact.name}
+Email: {contact.email}
+Catégorie: {contact.category}
+Sujet: {contact.subject}
+
+Message:
+{contact.message}
+""",
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[settings.CONTACT_ADMIN_EMAIL],
+            fail_silently=False,
+        )
+
+        # --- Email de confirmation au client ---
+        if contact.email:
+            send_mail(
+                subject="Merci de nous avoir contactés",
+                message=f"Bonjour {contact.name},\n\n"
+                        "Nous avons bien reçu votre message et nous vous répondrons rapidement.\n\n"
+                        "Merci !",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[contact.email],
+                fail_silently=False,
+            )
+
+        return Response(serializer.data)
+
 
 
 from rest_framework import viewsets
@@ -324,49 +373,3 @@ class HomeFullAPIView(APIView):
 
 
 
-
-
-
-
-
-
-from django.core.mail import send_mail
-from django.conf import settings
-from django.http import JsonResponse
-
-def contact_view(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
-
-        subject = f"Nouveau message de {name}"
-        body = f"""
-Nom : {name}
-Email : {email}
-
-Message :
-{message}
-        """
-
-        # 📩 Email vers l’admin
-        send_mail(
-            subject,
-            body,
-            settings.DEFAULT_FROM_EMAIL,
-            ["contact@tekacom.gn"],
-            fail_silently=False,
-        )
-
-        # 📬 Réponse automatique à l’utilisateur
-        send_mail(
-            "Merci de nous avoir contactés",
-            "Nous avons bien reçu votre message. Nous vous répondrons rapidement.",
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=True,
-        )
-
-        return JsonResponse({"success": True})
-
-    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
