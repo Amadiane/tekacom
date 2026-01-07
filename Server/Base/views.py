@@ -312,3 +312,50 @@ class HomeFullAPIView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from django.core.mail import send_mail
+from django.conf import settings
+
+def contact_view(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+
+        subject = f"Nouveau message de {name}"
+        body = f"""
+Nom : {name}
+Email : {email}
+
+Message :
+{message}
+        """
+
+        send_mail(
+            subject,
+            body,
+            settings.DEFAULT_FROM_EMAIL,
+            ["contact@tekacom.gn"],
+            fail_silently=False,
+        )
+
+        return JsonResponse({"success": True})
