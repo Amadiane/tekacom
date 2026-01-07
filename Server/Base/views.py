@@ -330,10 +330,9 @@ class HomeFullAPIView(APIView):
 
 
 
-
-
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import JsonResponse
 
 def contact_view(request):
     if request.method == "POST":
@@ -350,6 +349,7 @@ Message :
 {message}
         """
 
+        # 📩 Email vers l’admin
         send_mail(
             subject,
             body,
@@ -358,14 +358,15 @@ Message :
             fail_silently=False,
         )
 
+        # 📬 Réponse automatique à l’utilisateur
+        send_mail(
+            "Merci de nous avoir contactés",
+            "Nous avons bien reçu votre message. Nous vous répondrons rapidement.",
+            settings.DEFAULT_FROM_EMAIL,
+            [email],
+            fail_silently=True,
+        )
+
         return JsonResponse({"success": True})
 
-
-
-send_mail(
-    "Merci de nous avoir contactés",
-    "Nous avons bien reçu votre message. Nous vous répondrons rapidement.",
-    settings.DEFAULT_FROM_EMAIL,
-    [email],
-    fail_silently=True,
-)
+    return JsonResponse({"error": "Méthode non autorisée"}, status=405)
