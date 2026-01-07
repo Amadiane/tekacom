@@ -136,9 +136,9 @@ const Partner = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mt-12">
             {[
               { icon: Handshake, label: "Partenaires actifs", value: partners.length || "0", color: "from-[#a34ee5] to-[#7828a8]" },
-              { icon: TrendingUp, label: "Projets réalisés", value: "150+", color: "from-[#fec603] to-[#a34ee5]" },
-              { icon: Globe, label: "Pays couverts", value: "12+", color: "from-[#7828a8] to-[#a34ee5]" },
-              { icon: Award, label: "Années d'expérience", value: "8+", color: "from-[#a34ee5] to-[#fec603]" },
+              { icon: TrendingUp, label: "Projets réalisés", value: "500+", color: "from-[#fec603] to-[#a34ee5]" },
+              { icon: Globe, label: "Pays couverts", value: "3+", color: "from-[#7828a8] to-[#a34ee5]" },
+              { icon: Award, label: "Années d'expérience", value: "10+", color: "from-[#a34ee5] to-[#fec603]" },
             ].map((stat, idx) => {
               const Icon = stat.icon;
               return (
@@ -385,7 +385,7 @@ const Partner = () => {
           {/* Trust Badges */}
           <div className="mt-16 flex flex-wrap justify-center gap-8 md:gap-12">
             {[
-              { icon: Sparkles, text: "+50 Collaborations", color: "text-[#fec603]" },
+              { icon: Sparkles, text: "+200 Collaborations", color: "text-[#fec603]" },
               { icon: Heart, text: "Satisfaction garantie", color: "text-red-400" },
               { icon: Zap, text: "Projets innovants", color: "text-[#a34ee5]" },
               { icon: Award, text: "Expertise reconnue", color: "text-[#fec603]" },

@@ -8,15 +8,45 @@ import React from "react";
 import { trackAction } from "./utils/tracker";
 
 /**
- * 🎨 APP TEKACOM - UN SEUL SCROLL PROPRE
+ * 🎨 APP TEKACOM - COMPLET ET OPTIMISÉ
  * ✅ Scroll unique et stylé
  * ✅ Pas de débordement
  * ✅ Mobile-friendly
+ * ✅ Scroll to top automatique à chaque navigation
  */
 
 const App = () => {
   const location = useLocation();
   const token = localStorage.getItem("access");
+
+  /* =============================
+     🎯 SCROLL TO TOP ON ROUTE CHANGE
+     CRUCIAL: Scroll #root car c'est lui qui a overflow-y: auto
+  ============================== */
+  React.useEffect(() => {
+    // Trouve l'élément #root qui a le scroll
+    const rootElement = document.getElementById('root');
+    
+    if (rootElement) {
+      // Scroll #root (pas window !)
+      rootElement.scrollTop = 0;
+    }
+    
+    // Fallback pour window (au cas où)
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    
+    // Double vérification après render
+    const timer = setTimeout(() => {
+      if (rootElement) {
+        rootElement.scrollTop = 0;
+      }
+      window.scrollTo(0, 0);
+    }, 0);
+    
+    return () => clearTimeout(timer);
+  }, [location.pathname]); // ← CRUCIAL: écoute les changements d'URL
 
   /* =============================
      TRACKING
@@ -65,7 +95,7 @@ const App = () => {
   }
 
   /* =============================
-     🎨 UN SEUL SCROLL - PROPRE
+     🎨 GLOBAL STYLES - SCROLL UNIQUE
   ============================== */
   const globalStyles = `
     /* === STRUCTURE DE BASE === */

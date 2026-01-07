@@ -229,9 +229,10 @@ const Home = () => {
                 style={{ animation: 'fadeInUp 0.8s ease-out 0.8s both' }}
               >
                 {[
-                  { icon: Users, value: '15+', label: 'Experts' },
+                  { icon: Users, value: team.length + '+', label: 'Experts' },
+                  // { icon: Briefcase, value: portfolios.length + '+', label: 'Projets' },
                   { icon: Briefcase, value: '500+', label: 'Projets' },
-                  { icon: Handshake, value: '100+', label: 'Partenaires' },
+                  { icon: Handshake, value: partners.length + '+', label: 'Partenaires' },
                 ].map((stat, idx) => {
                   const Icon = stat.icon;
                   return (
@@ -312,25 +313,25 @@ const Home = () => {
                         <Briefcase className="w-16 h-16 text-[#a34ee5]/40" />
                       </div>
                     )}
-                    {/* Gradient overlay léger */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
                     
-                    {/* Badge numéro */}
+                    {/* Badge */}
                     <div className="absolute top-4 right-4 px-3 py-1 bg-[#fec603]/90 backdrop-blur-sm text-[#0a0a0a] rounded-full text-xs font-bold">
                       #{idx + 1}
                     </div>
                   </div>
 
-                  {/* Content - Titre TRÈS visible en bas */}
-                  <div className="relative p-6 bg-[#0a0a0a] border-t-2 border-[#a34ee5]/20">
-                    {/* Titre du service - GROS et VISIBLE */}
-                    <h3 className="text-2xl font-black text-white mb-4 line-clamp-2 group-hover:text-[#fec603] transition-colors">
+                  {/* Content */}
+                  <div className="relative p-6">
+                    <h3 className="text-2xl font-black text-white mb-3 group-hover:text-[#fec603] transition-colors">
                       {service.title_fr || service.title_en}
                     </h3>
+                    <p className="text-gray-400 mb-4 line-clamp-3">
+                      {service.description_fr || service.description_en}
+                    </p>
                     
-                    {/* Bouton "En savoir plus" */}
                     <div className="flex items-center gap-2 text-[#a34ee5] font-bold group-hover:gap-4 transition-all">
-                      <span className="text-base">En savoir plus</span>
+                      <span>En savoir plus</span>
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
@@ -538,7 +539,7 @@ const Home = () => {
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Des partenariats solides avec les leaders de l'industrie
+                Découvrez les marques visionnaires qui ont choisi TEKACOM
               </p>
             </div>
 
