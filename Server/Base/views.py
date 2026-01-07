@@ -359,3 +359,13 @@ Message :
         )
 
         return JsonResponse({"success": True})
+
+
+
+send_mail(
+    "Merci de nous avoir contactés",
+    "Nous avons bien reçu votre message. Nous vous répondrons rapidement.",
+    settings.DEFAULT_FROM_EMAIL,
+    [email],
+    fail_silently=True,
+)
