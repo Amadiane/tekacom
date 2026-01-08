@@ -228,7 +228,7 @@ const Portfolio = () => {
                         className="inline-flex items-center gap-2 px-8 py-4 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold rounded-xl hover:border-[#a34ee5]/80 transition-all"
                       >
                         <Phone className="w-5 h-5" />
-                        <span>+224 626 74 14 78</span>
+                        <span>+224 611 92 98 92</span>
                       </a>
                     </div>
                   </div>
