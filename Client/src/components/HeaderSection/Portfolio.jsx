@@ -190,8 +190,8 @@ const Portfolio = () => {
                 <p className="text-gray-400 text-lg">Cliquez pour découvrir les détails et la galerie complète</p>
               </div>
 
-              {/* Masonry Grid */}
-              <div className="columns-1 md:columns-2 lg:columns-3 gap-6 md:gap-8 space-y-6 md:space-y-8">
+              {/* Grid Uniforme - Toutes les cartes ont la même taille */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {projects.map((project, index) => (
                   <ProjectCard 
                     key={project.id} 
@@ -318,7 +318,7 @@ const Portfolio = () => {
   );
 };
 
-// Project Card Component (Masonry)
+// Project Card Component (Uniform Height)
 const ProjectCard = ({ project, onClick, index }) => {
   const projectImage = project.cover_photo;
   
@@ -326,9 +326,8 @@ const ProjectCard = ({ project, onClick, index }) => {
     (num) => project[`image_${num}`]
   ).length;
 
-  // Variation de hauteur pour effet masonry
-  const heights = ['aspect-[3/4]', 'aspect-square', 'aspect-[4/5]'];
-  const heightClass = heights[index % 3];
+  // ✅ Hauteur uniforme pour toutes les cartes
+  const uniformHeight = 'aspect-[4/5]'; // Ratio constant pour toutes
 
   return (
     <div
@@ -341,8 +340,8 @@ const ProjectCard = ({ project, onClick, index }) => {
         {/* Glow */}
         <div className="absolute -inset-1 bg-gradient-to-r from-[#a34ee5] to-[#fec603] rounded-3xl opacity-0 group-hover:opacity-20 blur-lg transition-opacity duration-500"></div>
         
-        {/* Image - Avec padding pour éviter que l'image touche les bords */}
-        <div className={`relative ${heightClass} overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-6 md:p-8 flex items-center justify-center`}>
+        {/* Image - Hauteur uniforme pour toutes les cartes */}
+        <div className={`relative ${uniformHeight} overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-6 md:p-8 flex items-center justify-center`}>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#a34ee5]/10 to-transparent translate-y-[-100%] group-hover:translate-y-[100%] transition-transform duration-1000"></div>
           
           {projectImage ? (
@@ -428,44 +427,43 @@ const ProjectModal = ({ project, onClose, currentImageIndex, setCurrentImageInde
     <div
       className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-[9999] animate-in fade-in duration-300"
       onClick={onClose}
-      style={{ paddingTop: '100px', paddingBottom: '20px' }}
     >
       <div
-        className="relative bg-[#0a0a0a] border border-[#a34ee5]/30 w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden max-h-[calc(100vh-120px)] flex flex-col animate-in zoom-in slide-in-from-bottom-4 duration-500"
+        className="relative bg-[#0a0a0a] border border-[#a34ee5]/30 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col animate-in zoom-in slide-in-from-bottom-4 duration-500"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header - Plus compact */}
-        <div className="relative bg-gradient-to-r from-[#a34ee5] to-[#7828a8] p-6">
+        {/* Header - Ultra compact */}
+        <div className="relative bg-gradient-to-r from-[#a34ee5] to-[#7828a8] px-4 py-3 md:px-6 md:py-4">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#fec603]/20 rounded-full blur-3xl"></div>
           
           <button
-            className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-90 z-10"
+            className="absolute top-2 right-2 md:top-3 md:right-3 w-9 h-9 md:w-10 md:h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-90 z-10"
             onClick={onClose}
           >
-            <X className="w-5 h-5 text-white" />
+            <X className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </button>
 
-          <h2 className="relative text-2xl md:text-3xl font-black text-white pr-16 mb-2">
+          <h2 className="relative text-lg md:text-xl lg:text-2xl font-black text-white pr-12 md:pr-16 mb-1.5">
             {project.title}
           </h2>
           
-          <div className="relative inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full">
-            <CheckCircle className="w-3.5 h-3.5 text-white" />
-            <span className="text-xs text-white font-semibold">Projet réalisé par TEKACOM</span>
+          <div className="relative inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
+            <CheckCircle className="w-3 h-3 text-white" />
+            <span className="text-[10px] md:text-xs text-white font-semibold">Projet réalisé par TEKACOM</span>
           </div>
         </div>
 
-        {/* Content - Scrollable */}
-        <div className="p-6 md:p-8 overflow-y-auto flex-1 bg-gradient-to-br from-[#0a0a0a] via-[#41124f]/10 to-[#0a0a0a]">
+        {/* Content - Scrollable avec meilleure gestion d'espace */}
+        <div className="px-4 pt-4 pb-3 md:px-6 md:pt-6 md:pb-4 overflow-y-auto flex-1 bg-gradient-to-br from-[#0a0a0a] via-[#41124f]/10 to-[#0a0a0a]">
           
-          {/* Image viewer - Hauteur optimisée pour voir l'image complète */}
+          {/* Image viewer - Hauteur augmentée pour voir le haut de l'image */}
           {allImages.length > 0 && (
-            <div className="mb-6">
-              <div className="relative w-full rounded-2xl overflow-hidden bg-[#0a0a0a] border border-[#a34ee5]/20 flex items-center justify-center" style={{ height: '500px' }}>
+            <div className="mb-4 md:mb-6">
+              <div className="relative w-full rounded-2xl overflow-hidden bg-[#0a0a0a] border border-[#a34ee5]/20 flex items-center justify-center" style={{ minHeight: '400px', maxHeight: '60vh' }}>
                 <img
                   src={allImages[currentImageIndex]}
                   alt={`${project.title} - Image ${currentImageIndex + 1}`}
-                  className="max-w-full max-h-full object-contain p-4"
+                  className="max-w-full max-h-full object-contain p-6 md:p-8"
                 />
                 
                 {/* Navigation arrows */}
@@ -473,20 +471,20 @@ const ProjectModal = ({ project, onClose, currentImageIndex, setCurrentImageInde
                   <>
                     <button
                       onClick={prevImage}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/70 hover:bg-black/90 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-lg"
                     >
-                      <ChevronLeft className="w-5 h-5 text-white" />
+                      <ChevronLeft className="w-6 h-6 text-white" />
                     </button>
                     <button
                       onClick={nextImage}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/60 hover:bg-black/80 backdrop-blur-sm border border-white/20 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-black/70 hover:bg-black/90 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-lg"
                     >
-                      <ChevronRightIcon className="w-5 h-5 text-white" />
+                      <ChevronRightIcon className="w-6 h-6 text-white" />
                     </button>
                     
                     {/* Counter */}
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 bg-black/70 backdrop-blur-md rounded-full border border-white/20">
-                      <span className="text-white font-bold text-xs">
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/80 backdrop-blur-md rounded-full border border-white/30">
+                      <span className="text-white font-bold text-sm">
                         {currentImageIndex + 1} / {allImages.length}
                       </span>
                     </div>
@@ -503,7 +501,7 @@ const ProjectModal = ({ project, onClose, currentImageIndex, setCurrentImageInde
                       onClick={() => setCurrentImageIndex(idx)}
                       className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
                         idx === currentImageIndex 
-                          ? 'border-[#a34ee5] ring-2 ring-[#a34ee5]/50' 
+                          ? 'border-[#a34ee5] ring-2 ring-[#a34ee5]/50 scale-105' 
                           : 'border-[#a34ee5]/20 hover:border-[#a34ee5]/60'
                       }`}
                     >
@@ -518,14 +516,14 @@ const ProjectModal = ({ project, onClose, currentImageIndex, setCurrentImageInde
             </div>
           )}
 
-          {/* Description - Plus compacte */}
+          {/* Description - Version ultra compacte */}
           {project.description && (
-            <div className="bg-[#41124f]/20 backdrop-blur-sm p-5 rounded-2xl border border-[#a34ee5]/20 mb-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#a34ee5] to-[#7828a8] rounded-lg flex items-center justify-center">
-                  <Briefcase className="w-4 h-4 text-white" />
+            <div className="bg-[#41124f]/20 backdrop-blur-sm p-4 rounded-xl border border-[#a34ee5]/20 mb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 bg-gradient-to-br from-[#a34ee5] to-[#7828a8] rounded-lg flex items-center justify-center">
+                  <Briefcase className="w-3.5 h-3.5 text-white" />
                 </div>
-                <h3 className="font-black text-white text-lg">Description</h3>
+                <h3 className="font-black text-white text-base">Description</h3>
               </div>
               <p className="text-gray-300 whitespace-pre-wrap leading-relaxed text-sm">
                 {project.description}
@@ -533,20 +531,20 @@ const ProjectModal = ({ project, onClose, currentImageIndex, setCurrentImageInde
             </div>
           )}
 
-          {/* CTA Box - Plus compact */}
-          <div className="bg-gradient-to-r from-[#a34ee5]/10 to-[#fec603]/10 p-5 rounded-2xl border border-[#a34ee5]/30">
+          {/* CTA Box - Version ultra compacte */}
+          <div className="bg-gradient-to-r from-[#a34ee5]/10 to-[#fec603]/10 p-4 rounded-xl border border-[#a34ee5]/30">
             <div className="flex items-start gap-3">
-              <Zap className="w-6 h-6 text-[#fec603] flex-shrink-0 mt-1" />
+              <Zap className="w-5 h-5 text-[#fec603] flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h4 className="font-bold text-white mb-1 text-base">Projet similaire en tête ?</h4>
-                <p className="text-gray-300 text-xs mb-3">
+                <h4 className="font-bold text-white mb-1 text-sm">Projet similaire en tête ?</h4>
+                <p className="text-gray-300 text-xs mb-2">
                   Discutons de votre vision et créons ensemble
                 </p>
                 <a
                   href="/contacternous"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-bold text-sm rounded-lg hover:scale-105 transition-all shadow-lg"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-bold text-xs rounded-lg hover:scale-105 transition-all shadow-lg"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="w-3.5 h-3.5" />
                   <span>Démarrer mon projet</span>
                 </a>
               </div>
@@ -554,21 +552,21 @@ const ProjectModal = ({ project, onClose, currentImageIndex, setCurrentImageInde
           </div>
         </div>
 
-        {/* Footer - Plus compact */}
-        <div className="bg-gradient-to-r from-[#41124f]/40 to-[#0a0a0a]/40 p-5 border-t-2 border-[#a34ee5]/20">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Footer - Ultra compact */}
+        <div className="bg-gradient-to-r from-[#41124f]/40 to-[#0a0a0a]/40 px-4 py-2.5 md:px-6 md:py-3 border-t-2 border-[#a34ee5]/20">
+          <div className="flex flex-wrap items-center justify-between gap-2 md:gap-3">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-[#fec603] rounded-full animate-pulse"></div>
-              <span className="text-xs text-gray-400 font-medium">Réalisation TEKACOM</span>
+              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-[#fec603] rounded-full animate-pulse"></div>
+              <span className="text-[10px] md:text-xs text-gray-400 font-medium">Réalisation TEKACOM</span>
             </div>
 
             <a
               href="/contacternous"
-              className="px-6 py-3 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-bold text-sm rounded-lg hover:scale-105 transition-all shadow-xl inline-flex items-center gap-2"
+              className="px-4 py-2 md:px-5 md:py-2.5 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-bold text-[10px] md:text-xs rounded-lg hover:scale-105 transition-all shadow-xl inline-flex items-center gap-1.5 md:gap-2"
             >
-              <Briefcase className="w-4 h-4" />
+              <Briefcase className="w-3 h-3 md:w-3.5 md:h-3.5" />
               <span>Lancer un projet</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-3 h-3 md:w-3.5 md:h-3.5" />
             </a>
           </div>
         </div>
