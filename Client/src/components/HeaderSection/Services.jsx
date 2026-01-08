@@ -450,37 +450,37 @@ const ServiceCard = ({ service, onClick, featured, index }) => {
 const ServiceModal = ({ service, onClose }) => {
   return (
     <div
-      className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 z-[9999] animate-in fade-in duration-300"
+      className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 z-[9999] animate-in fade-in duration-300"
       onClick={onClose}
-      style={{ paddingTop: '80px' }}
+      style={{ paddingTop: '100px', paddingBottom: '10px' }}
     >
       <div
-        className="relative bg-[#0a0a0a] border border-[#a34ee5]/30 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden max-h-[calc(100vh-100px)] flex flex-col animate-in zoom-in slide-in-from-bottom-4 duration-500"
+        className="relative bg-[#0a0a0a] border border-[#a34ee5]/30 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden max-h-[calc(100vh-110px)] flex flex-col animate-in zoom-in slide-in-from-bottom-4 duration-500"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="relative bg-gradient-to-r from-[#a34ee5] to-[#7828a8] p-8 md:p-10">
+        {/* Header - Plus compact */}
+        <div className="relative bg-gradient-to-r from-[#a34ee5] to-[#7828a8] px-8 py-5">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#fec603]/20 rounded-full blur-3xl"></div>
           
           <button
-            className="absolute top-6 right-6 w-12 h-12 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-90 z-10"
+            className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:rotate-90 z-10"
             onClick={onClose}
           >
-            <X className="w-6 h-6 text-white" />
+            <X className="w-5 h-5 text-white" />
           </button>
 
-          <h2 className="relative text-3xl md:text-4xl lg:text-5xl font-black text-white pr-16 mb-2">
+          <h2 className="relative text-2xl md:text-3xl font-black text-white pr-16 mb-1.5">
             {service.title}
           </h2>
           
-          <div className="relative inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full">
-            <CheckCircle className="w-4 h-4 text-white" />
-            <span className="text-sm text-white font-semibold">Service professionnel</span>
+          <div className="relative inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full">
+            <CheckCircle className="w-3.5 h-3.5 text-white" />
+            <span className="text-xs text-white font-semibold">Service professionnel</span>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="p-8 md:p-10 overflow-y-auto flex-1 bg-gradient-to-br from-[#0a0a0a] via-[#41124f]/10 to-[#0a0a0a]">
+        {/* Content - Padding réduit */}
+        <div className="p-6 md:p-8 overflow-y-auto flex-1 bg-gradient-to-br from-[#0a0a0a] via-[#41124f]/10 to-[#0a0a0a]">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Left - Image */}
@@ -568,22 +568,22 @@ const ServiceModal = ({ service, onClose }) => {
           </div>
         </div>
 
-        {/* Footer avec CTA final */}
-        <div className="bg-gradient-to-r from-[#41124f]/40 to-[#0a0a0a]/40 p-6 md:p-8 border-t-2 border-[#a34ee5]/20">
+        {/* Footer - Plus compact */}
+        <div className="bg-gradient-to-r from-[#41124f]/40 to-[#0a0a0a]/40 p-4 md:p-6 border-t-2 border-[#a34ee5]/20">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-[#fec603] rounded-full animate-pulse"></div>
-              <span className="text-sm text-gray-400 font-medium">Réponse garantie sous 24h</span>
+              <span className="text-xs md:text-sm text-gray-400 font-medium">Réponse garantie sous 24h</span>
             </div>
 
             <div className="flex gap-3">
               <a
                 href="/contacternous"
-                className="px-8 py-4 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black rounded-xl hover:scale-105 transition-all shadow-xl hover:shadow-2xl inline-flex items-center gap-2"
+                className="px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black text-sm md:text-base rounded-xl hover:scale-105 transition-all shadow-xl hover:shadow-2xl inline-flex items-center gap-2"
               >
-                <MessageCircle className="w-5 h-5" />
+                <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
                 <span>Je veux ce service</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
               </a>
             </div>
           </div>
