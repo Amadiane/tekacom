@@ -75,24 +75,18 @@ class EquipeMemberSerializer(serializers.ModelSerializer):
 
 
 
-
-
 from rest_framework import serializers
 from .models import Contact
 
 class ContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = [
-            "id",
-            "name",
-            "email",
-            "subject",
-            "message",
-            "category",
-            "created_at",
-        ]
-        read_only_fields = ["id", "created_at"]
+        fields = ["id", "name", "email", "subject", "category", "message", "created_at"]
+
+
+
+
+
 
 
 

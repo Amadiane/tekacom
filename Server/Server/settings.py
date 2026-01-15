@@ -58,10 +58,11 @@ ROOT_URLCONF = 'Server.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -69,6 +70,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'Server.wsgi.application'
 
@@ -214,12 +216,36 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # EMAIL CONFIGURATION
 # ==========================
 # --- Email configuration cPanel ---
+# ==========================
+# EMAIL CONFIGURATION
+# ==========================
+
+from django.core.mail import send_mail
+from django.conf import settings
+# ✅ Configuration Mailtrap pour test
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "sandbox.smtp.mailtrap.io"
+# EMAIL_PORT = 587             # TLS port recommandé
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False        # Ne pas utiliser SSL en même temps que TLS
+# EMAIL_HOST_USER = "e0ff04df60d0cc"
+# EMAIL_HOST_PASSWORD = "613e993f17c7b7"
+# DEFAULT_FROM_EMAIL = "amadoudianee2@gmail.com"
+# Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mail.tekacom.gn"          # Serveur SMTP
-EMAIL_PORT = 465                         # Port SSL sécurisé
-EMAIL_USE_SSL = True                      # SSL activé
-EMAIL_USE_TLS = False                     # Ne pas activer TLS en SSL
-EMAIL_HOST_USER = "contact@tekacom.gn"  # Ton email créé dans cPanel
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")  # Mot de passe stocké en secret
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER     # Pour les envois par défaut
-CONTACT_ADMIN_EMAIL = EMAIL_HOST_USER    # Email admin pour réception des messages
+EMAIL_HOST = "sandbox.smtp.mailtrap.io"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = "e0ff04df60d0cc"
+EMAIL_HOST_PASSWORD = "613e993f17c7b7"
+DEFAULT_FROM_EMAIL = "amadoudianee2@gmail.com"
+
+# Email de réception des contacts côté admin
+CONTACT_ADMIN_EMAIL = "contact@tekacom.gn"
+
+
+# Envoi du mail
+
+
+

@@ -68,7 +68,7 @@ API_THON_PRODUCT_CREATE: `${BASE_URL}/api/thon-products/`,
 API_THON_PRODUCT_UPDATE: (id) => `${BASE_URL}/api/thon-products/${id}/`,
 API_THON_PRODUCT_DELETE: (id) => `${BASE_URL}/api/thon-products/${id}/`,
 
-  // 📨 CONTACT
+ // CONTACT
   API_CONTACT_LIST: `${BASE_URL}/api/contacts/`,
   API_CONTACT_CREATE: `${BASE_URL}/api/contacts/`,
   API_CONTACT_UPDATE: (id) => `${BASE_URL}/api/contacts/${id}/`,
