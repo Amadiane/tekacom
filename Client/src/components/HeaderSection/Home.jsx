@@ -21,9 +21,14 @@ import {
 } from "lucide-react";
 
 /**
- * 🎨 HOME PAGE V5 - ULTRA MODERNE
+ * 🎨 HOME PAGE V5 - ULTRA MODERNE TEKACOM
  * Design: Hero animé + Cards interactives + Navigation fluide
- * Charte: violet #a34ee5, or #fec603, noir #0a0a0a
+ * Charte graphique TEKACOM:
+ * - Violet principal: #a34ee5
+ * - Violet foncé: #41124f, #7828a8
+ * - Or/Jaune: #fec603
+ * - Noir: #0a0a0a
+ * - Typographie: Poppins
  */
 
 const Home = () => {
@@ -112,15 +117,23 @@ const Home = () => {
   } = homeData || {};
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white relative">
+    <div className="min-h-screen bg-[#0a0a0a] text-white relative" style={{ fontFamily: 'Poppins, sans-serif' }}>
       
-      {/* Animated Background - ABSOLUTE pas fixed */}
+      {/* Google Fonts - Poppins */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+      `}</style>
+      
+      {/* Animated Background - ABSOLUTE pas fixed - Couleurs TEKACOM */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Violet principal #a34ee5 */}
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#a34ee5]/10 rounded-full blur-[150px] animate-float" style={{ animationDuration: '8s' }}></div>
+        {/* Or #fec603 */}
         <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#fec603]/10 rounded-full blur-[120px] animate-float" style={{ animationDuration: '10s', animationDelay: '2s' }}></div>
+        {/* Violet secondaire #7828a8 */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#7828a8]/10 rounded-full blur-[100px] animate-float" style={{ animationDuration: '12s', animationDelay: '4s' }}></div>
         
-        {/* Grid pattern */}
+        {/* Grid pattern - Violet principal */}
         <div className="absolute inset-0 opacity-[0.02]" style={{ 
           backgroundImage: 'radial-gradient(circle, #a34ee5 1px, transparent 1px)', 
           backgroundSize: '50px 50px' 
@@ -178,6 +191,7 @@ const Home = () => {
                 <span className="block text-white mb-4 drop-shadow-2xl">
                   {home?.title_fr || "Votre Vision"}
                 </span>
+                {/* Gradient TEKACOM: #a34ee5 → #fec603 → #7828a8 */}
                 <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient-slow drop-shadow-2xl">
                   NOTRE EXPERTISE
                 </span>
@@ -202,6 +216,7 @@ const Home = () => {
                 className="flex flex-wrap gap-4 pt-4"
                 style={{ animation: 'fadeInUp 0.8s ease-out 0.6s both' }}
               >
+                {/* CTA Principal - Gradient violet TEKACOM */}
                 <button
                   onClick={() => navigate('/services')}
                   className="group relative px-10 py-5 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#a34ee5]/50 hover:shadow-[#a34ee5]/80 transition-all duration-500 hover:scale-110"
@@ -211,9 +226,11 @@ const Home = () => {
                     Découvrir nos services
                     <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                   </span>
+                  {/* Hover gradient or TEKACOM */}
                   <div className="absolute inset-0 bg-gradient-to-r from-[#fec603] to-[#a34ee5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </button>
 
+                {/* CTA Secondaire - Transparent avec bordure */}
                 <button
                   onClick={() => navigate('/portfolio')}
                   className="px-10 py-5 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold text-lg rounded-2xl hover:bg-white/20 hover:border-white/50 transition-all duration-300 flex items-center gap-3"
@@ -223,20 +240,20 @@ const Home = () => {
                 </button>
               </div>
 
-              {/* Mini Stats Inline */}
+              {/* Mini Stats - Gradient violet TEKACOM */}
               <div 
                 className="flex flex-wrap gap-8 pt-4"
                 style={{ animation: 'fadeInUp 0.8s ease-out 0.8s both' }}
               >
                 {[
                   { icon: Users, value: team.length + '+', label: 'Experts' },
-                  // { icon: Briefcase, value: portfolios.length + '+', label: 'Projets' },
                   { icon: Briefcase, value: '500+', label: 'Projets' },
                   { icon: Handshake, value: partners.length + '+', label: 'Partenaires' },
                 ].map((stat, idx) => {
                   const Icon = stat.icon;
                   return (
                     <div key={idx} className="flex items-center gap-3">
+                      {/* Icône avec gradient violet TEKACOM */}
                       <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#a34ee5] to-[#7828a8] flex items-center justify-center shadow-lg">
                         <Icon className="w-6 h-6 text-white" />
                       </div>
@@ -255,8 +272,8 @@ const Home = () => {
         {/* Decorative Elements */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#0a0a0a] to-transparent pointer-events-none"></div>
         
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        {/* Scroll Indicator - Non cliquable, ne fait pas scroller */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce pointer-events-none">
           <div className="flex flex-col items-center gap-2">
             <span className="text-xs text-gray-400 uppercase tracking-wider">Défiler</span>
             <div className="w-6 h-10 border-2 border-[#a34ee5]/50 rounded-full flex justify-center p-2">
@@ -273,80 +290,73 @@ const Home = () => {
             
             {/* Section Header */}
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#a34ee5]/10 border border-[#a34ee5]/30 rounded-full">
-                <Briefcase className="w-5 h-5 text-[#a34ee5]" />
-                <span className="text-sm font-bold text-[#a34ee5] uppercase">Nos Services</span>
+              <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#fec603]/10 border border-[#fec603]/30 rounded-full">
+                <Briefcase className="w-5 h-5 text-[#fec603]" />
+                <span className="text-sm font-bold text-[#fec603] uppercase">Nos Services</span>
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6">
-                <span className="text-white">Des Solutions </span>
-                <span className="bg-gradient-to-r from-[#a34ee5] to-[#fec603] bg-clip-text text-transparent">
-                  Sur-Mesure
+                <span className="text-white">Notre </span>
+                <span className="bg-gradient-to-r from-[#fec603] to-[#a34ee5] bg-clip-text text-transparent">
+                  Expertise
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Expertise complète en design graphique, développement web et stratégie digitale
+                Des solutions créatives sur mesure pour propulser votre marque
               </p>
             </div>
 
             {/* Services Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {services.slice(0, 6).map((service, idx) => (
                 <div
                   key={service.id}
-                  className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 transition-all duration-500 hover:scale-105 cursor-pointer"
+                  className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border border-[#fec603]/20 hover:border-[#fec603]/60 transition-all duration-500 hover:scale-105 cursor-pointer"
                   onClick={() => navigate('/services')}
                   style={{ animation: `fadeInUp 0.6s ease-out ${idx * 0.1}s both` }}
                 >
-                  {/* Glow effect */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-[#a34ee5] to-[#fec603] rounded-3xl opacity-0 group-hover:opacity-30 blur-2xl transition-all duration-500"></div>
-                  
                   {/* Image */}
-                  <div className="relative h-64 overflow-hidden">
-                    {getImageUrl(service, "image") ? (
+                  <div className="relative h-64 overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-6 flex items-center justify-center">
+                    {service.image_url || service.image ? (
                       <img
-                        src={getImageUrl(service, "image")}
-                        alt={service.title_fr}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        src={service.image_url || service.image}
+                        alt={service.title}
+                        className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#a34ee5]/20 to-[#fec603]/20 flex items-center justify-center">
-                        <Briefcase className="w-16 h-16 text-[#a34ee5]/40" />
-                      </div>
+                      <Briefcase className="w-16 h-16 text-[#fec603]/40" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                    
-                    {/* Badge */}
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-[#fec603]/90 backdrop-blur-sm text-[#0a0a0a] rounded-full text-xs font-bold">
-                      #{idx + 1}
-                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
                   </div>
 
-                  {/* Content */}
-                  <div className="relative p-6">
-                    <h3 className="text-2xl font-black text-white mb-3 group-hover:text-[#fec603] transition-colors">
-                      {service.title_fr || service.title_en}
+                  {/* Info */}
+                  <div className="relative p-6 bg-[#0a0a0a]/40 border-t border-[#fec603]/20">
+                    <h3 className="text-lg font-black text-white mb-2 group-hover:text-[#fec603] transition-colors">
+                      {service.title}
                     </h3>
-                    <p className="text-gray-400 mb-4 line-clamp-3">
-                      {service.description_fr || service.description_en}
-                    </p>
-                    
-                    <div className="flex items-center gap-2 text-[#a34ee5] font-bold group-hover:gap-4 transition-all">
-                      <span>En savoir plus</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                    {service.description && (
+                      <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                        {service.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[#fec603] font-bold uppercase tracking-wide">
+                        En savoir plus
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-[#fec603] group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* View All Button */}
+            {/* Bouton CTA - Gradient or TEKACOM */}
             <div className="text-center">
               <button
                 onClick={() => navigate('/services')}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-bold text-lg rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#a34ee5]/30"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#fec603] to-[#d4a000] text-[#0a0a0a] font-black text-lg rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#fec603]/30 hover:shadow-[#fec603]/50"
               >
-                <span>Voir tous nos services</span>
-                <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                <span>Découvrir tous nos services</span>
+                <Briefcase className="w-6 h-6 group-hover:rotate-12 transition-transform" />
               </button>
             </div>
           </div>
@@ -355,23 +365,23 @@ const Home = () => {
 
       {/* PORTFOLIO SECTION */}
       {portfolios.length > 0 && (
-        <section className="relative py-16 px-6 bg-gradient-to-b from-transparent to-[#41124f]/10">
+        <section className="relative py-16 px-6 bg-gradient-to-b from-[#41124f]/10 to-transparent">
           <div className="max-w-7xl mx-auto">
             
             {/* Section Header */}
             <div className="text-center mb-10">
-              <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#fec603]/10 border border-[#fec603]/30 rounded-full">
-                <Layers className="w-5 h-5 text-[#fec603]" />
-                <span className="text-sm font-bold text-[#fec603] uppercase">Portfolio</span>
+              <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 bg-[#a34ee5]/10 border border-[#a34ee5]/30 rounded-full">
+                <Target className="w-5 h-5 text-[#a34ee5]" />
+                <span className="text-sm font-bold text-[#a34ee5] uppercase">Nos Réalisations</span>
               </div>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6">
-                <span className="text-white">Nos Créations </span>
-                <span className="bg-gradient-to-r from-[#fec603] to-[#a34ee5] bg-clip-text text-transparent">
-                  Exceptionnelles
+                <span className="text-white">Notre </span>
+                <span className="bg-gradient-to-r from-[#a34ee5] to-[#fec603] bg-clip-text text-transparent">
+                  Portfolio
                 </span>
               </h2>
               <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                Découvrez nos projets les plus remarquables et laissez-vous inspirer
+                Découvrez nos créations exceptionnelles et projets réussis
               </p>
             </div>
 
@@ -380,50 +390,59 @@ const Home = () => {
               {portfolios.slice(0, 6).map((project, idx) => (
                 <div
                   key={project.id}
-                  className="group relative rounded-3xl overflow-hidden border-2 border-[#a34ee5]/20 hover:border-[#fec603]/60 transition-all duration-500 cursor-pointer"
+                  className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 transition-all duration-500 hover:scale-105 cursor-pointer"
                   onClick={() => navigate('/portfolio')}
                   style={{ animation: `fadeInUp 0.6s ease-out ${idx * 0.1}s both` }}
                 >
                   {/* Image */}
-                  <div className="relative h-80 overflow-hidden">
-                    {getImageUrl(project, "cover_photo") ? (
+                  <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-6 flex items-center justify-center">
+                    {project.cover_photo ? (
                       <img
-                        src={getImageUrl(project, "cover_photo")}
-                        alt={project.title_fr}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        src={project.cover_photo}
+                        alt={project.title}
+                        className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#fec603]/20 to-[#a34ee5]/20 flex items-center justify-center">
-                        <Layers className="w-16 h-16 text-[#fec603]/40" />
-                      </div>
+                      <Briefcase className="w-16 h-16 text-[#a34ee5]/40" />
                     )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
                     
-                    {/* Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
-                    {/* Content on hover */}
-                    <div className="absolute inset-0 flex flex-col justify-end p-6 translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <h3 className="text-2xl font-black text-white mb-2">
-                        {project.title_fr || project.title_en}
-                      </h3>
-                      <p className="text-gray-300 mb-4 line-clamp-2">
-                        {project.description_fr || project.description_en}
-                      </p>
-                      <div className="flex items-center gap-2 text-[#fec603] font-bold">
-                        <span>Voir le projet</span>
-                        <ArrowRight className="w-5 h-5" />
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/95 via-[#a34ee5]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-end p-6">
+                      <div className="bg-white/20 backdrop-blur-md border-2 border-white/50 rounded-full p-4 mb-4">
+                        <Eye className="w-8 h-8 text-white" />
                       </div>
+                      <span className="text-white font-bold text-sm uppercase tracking-wide">Voir le projet</span>
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="relative p-6 bg-[#0a0a0a]/40 border-t border-[#a34ee5]/20">
+                    <h3 className="text-lg font-black text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#a34ee5] group-hover:to-[#fec603] group-hover:bg-clip-text transition-all">
+                      {project.title}
+                    </h3>
+                    {project.description && (
+                      <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                        {project.description}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[#a34ee5] font-bold uppercase tracking-wide flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
+                        Découvrir
+                      </span>
+                      <ArrowRight className="w-5 h-5 text-[#a34ee5] group-hover:translate-x-2 transition-transform" />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* View All Button */}
+            {/* Bouton CTA - Bordure violet TEKACOM */}
             <div className="text-center">
               <button
                 onClick={() => navigate('/portfolio')}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#fec603] to-[#a34ee5] text-[#0a0a0a] font-black text-lg rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#fec603]/30"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-lg rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all duration-300"
               >
                 <span>Voir tout le portfolio</span>
                 <Eye className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -432,7 +451,7 @@ const Home = () => {
           </div>
         </section>
       )}
-
+      
       {/* TEAM SECTION */}
       {team.length > 0 && (
         <section className="relative py-16 px-6">
@@ -507,11 +526,11 @@ const Home = () => {
               ))}
             </div>
 
-            {/* View All Button */}
+            {/* Bouton CTA - Bordure violet TEKACOM */}
             <div className="text-center">
               <button
                 onClick={() => navigate('/notreEquipe')}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-lg rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-lg rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all duration-300"
               >
                 <span>Rencontrer l'équipe</span>
                 <Users className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -567,11 +586,11 @@ const Home = () => {
               ))}
             </div>
 
-            {/* View All Button */}
+            {/* Bouton CTA - Gradient or TEKACOM */}
             <div className="text-center">
               <button
                 onClick={() => navigate('/partner')}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#fec603] to-[#d4a000] text-[#0a0a0a] font-black text-lg rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#fec603]/30"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#fec603] to-[#d4a000] text-[#0a0a0a] font-black text-lg rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#fec603]/30 hover:shadow-[#fec603]/50"
               >
                 <span>Découvrir tous nos partenaires</span>
                 <Handshake className="w-6 h-6 group-hover:rotate-12 transition-transform" />
@@ -581,21 +600,23 @@ const Home = () => {
         </section>
       )}
 
-      {/* CTA FINAL SECTION */}
+      {/* CTA FINAL SECTION - Couleurs TEKACOM */}
       <section className="relative py-20 px-6">
         <div className="max-w-5xl mx-auto text-center">
           
-          {/* Glow effect */}
+          {/* Glow effect - Gradient TEKACOM */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#a34ee5]/20 via-[#fec603]/20 to-[#a34ee5]/20 blur-3xl"></div>
           
           {/* Content */}
           <div className="relative">
+            {/* Icône animée - Gradient violet TEKACOM */}
             <div className="inline-flex items-center justify-center w-24 h-24 mb-10 bg-gradient-to-br from-[#a34ee5] to-[#7828a8] rounded-3xl shadow-2xl shadow-[#a34ee5]/50 animate-bounce" style={{ animationDuration: '3s' }}>
               <Zap className="w-12 h-12 text-white" />
             </div>
             
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-8">
               <span className="block text-white mb-4">Prêt à Créer</span>
+              {/* Gradient complet TEKACOM */}
               <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient-slow">
                 QUELQUE CHOSE D'INCROYABLE ?
               </span>
@@ -606,18 +627,21 @@ const Home = () => {
             </p>
 
             <div className="flex flex-wrap justify-center gap-4">
+              {/* Bouton principal - Gradient violet TEKACOM */}
               <button
                 onClick={() => navigate('/contacternous')}
                 className="group relative inline-flex items-center gap-4 px-12 py-6 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black text-xl rounded-2xl shadow-2xl shadow-[#a34ee5]/50 hover:shadow-[#a34ee5]/80 transition-all duration-500 hover:scale-110 overflow-hidden"
               >
+                {/* Hover gradient or TEKACOM */}
                 <div className="absolute inset-0 bg-gradient-to-r from-[#fec603] to-[#a34ee5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <span className="relative">DÉMARRER UN PROJET</span>
                 <Rocket className="relative w-7 h-7 group-hover:translate-x-2 transition-transform" />
               </button>
 
+              {/* Bouton secondaire - Bordure violet TEKACOM */}
               <button
                 onClick={() => navigate('/services')}
-                className="inline-flex items-center gap-3 px-10 py-6 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-xl rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all"
+                className="inline-flex items-center gap-3 px-10 py-6 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-xl rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all duration-300"
               >
                 <Briefcase className="w-6 h-6" />
                 <span>Nos Services</span>
