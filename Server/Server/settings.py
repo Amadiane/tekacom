@@ -232,18 +232,17 @@ from django.conf import settings
 # EMAIL_HOST_PASSWORD = "613e993f17c7b7"
 # DEFAULT_FROM_EMAIL = "amadoudianee2@gmail.com"
 # Email
+# --- Email configuration Tekacom (sécurisé et compatible Django) ---
+# --- Email configuration Tekacom (Django sécurisé) ---
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "sandbox.smtp.mailtrap.io"
+EMAIL_HOST = "mail.tekacom.gn"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = "e0ff04df60d0cc"
-EMAIL_HOST_PASSWORD = "613e993f17c7b7"
-DEFAULT_FROM_EMAIL = "amadoudianee2@gmail.com"
-
-# Email de réception des contacts côté admin
-CONTACT_ADMIN_EMAIL = "contact@tekacom.gn"
-
+EMAIL_HOST_USER = "contact@tekacom.gn"
+EMAIL_HOST_PASSWORD = "TekacomTest123!"  # ton mot de passe
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+CONTACT_ADMIN_EMAIL = EMAIL_HOST_USER
 
 # Envoi du mail
 

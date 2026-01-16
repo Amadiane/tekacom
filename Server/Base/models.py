@@ -105,20 +105,21 @@ class EquipeMember(models.Model):
 
 
 
+# Base/models.py
 from django.db import models
 
-class Contact(models.Model):
-    CATEGORY_CHOICES = [
-        ("general", "Question générale"),
-        ("support", "Support technique"),
-        ("partenariat", "Partenariat"),
-        ("commentaire", "Commentaires et suggestions"),
-    ]
+CATEGORY_CHOICES = [
+    ("question", "Questions générales"),
+    ("support", "Support technique"),
+    ("partenariat", "Partenariat"),
+    ("commentaire", "Commentaires et suggestions"),
+]
 
+class Contact(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField()
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default="question")
     subject = models.CharField(max_length=255)
-    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default="general")
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

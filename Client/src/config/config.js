@@ -75,6 +75,11 @@ API_THON_PRODUCT_DELETE: (id) => `${BASE_URL}/api/thon-products/${id}/`,
   API_CONTACT_DELETE: (id) => `${BASE_URL}/api/contacts/${id}/`,
 
 
+  API_CONTACT_LIST: "http://127.0.0.1:8000/api/contact/",
+  API_CONTACT_REPLY: (id) => `http://127.0.0.1:8000/api/contact/${id}/reply/`, // ✅ maintenant c'est une fonction
+  API_CONTACT_DELETE: (id) => `http://127.0.0.1:8000/api/contact/${id}/`,
+
+
 // Community
 API_COMMUNITY_LIST: `${BASE_URL}/api/community/`,
 API_COMMUNITY_CREATE: `${BASE_URL}/api/community/`,

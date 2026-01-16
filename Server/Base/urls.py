@@ -19,7 +19,7 @@ urlpatterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("track/", TrackEventView.as_view(), name="api-track"),
     path("track/stats/", TrackStatsView.as_view(), name="api-track-stats"),
-    path("contacts/", ContactListCreateView.as_view(), name="contact-create"),
+    path("contacts/", ContactListCreateView.as_view(), name="contact-list-create"),
 
     # path('contacts/', ContactListCreateView.as_view(), name='contact-list-create'),
     # path('contacts/<int:pk>/', ContactDetailView.as_view(), name='contact-detail'),

@@ -1,289 +1,216 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Loader2, 
-  CheckCircle2, 
-  AlertCircle, 
-  Send, 
-  Mail, 
-  User, 
-  MessageSquare, 
-  Tag, 
-  Sparkles,
-  Phone,
-  MapPin,
-  Clock,
-  ArrowRight,
-  Zap
-} from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Send, Mail, User, MessageSquare, Tag, CheckCircle, AlertCircle, Loader } from "lucide-react";
+import ChatBotNew from "../ChatBot/ChatbotNew";
 import CONFIG from "../../config/config.js";
-import { trackAction } from "../../utils/tracker";
 
 const Contacternous = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
-    category: "question",
+    category: "general",
     message: "",
   });
+  const [responseMessage, setResponseMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Scroll vers le haut au chargement
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const categories = [
-    { value: "question", label: "Questions générales", icon: "💬" },
-    { value: "support", label: "Support technique", icon: "🔧" },
-    { value: "partenariat", label: "Partenariat", icon: "🤝" },
-    { value: "commentaire", label: "Commentaires et suggestions", icon: "💡" },
-  ];
-
-  const contactInfo = [
-    { 
-      icon: Phone, 
-      label: "Téléphone", 
-      value: "+224 626 74 14 78",
-      link: "tel:+224626741478",
-      color: "from-[#a34ee5] to-[#7828a8]"
-    },
-    { 
-      icon: Mail, 
-      label: "Email", 
-      value: "contact@tekacom.gn",
-      link: "mailto:contact@tekacom.gn",
-      color: "from-[#fec603] to-[#a34ee5]"
-    },
-    { 
-      icon: MapPin, 
-      label: "Adresse", 
-      value: "Conakry, Guinée",
-      link: "https://maps.app.goo.gl/2gya1yBW9QCu4Lt36",
-      color: "from-[#7828a8] to-[#a34ee5]"
-    },
-    { 
-      icon: Clock, 
-      label: "Horaires", 
-      value: "Lun - Ven : 8h - 18h",
-      color: "from-[#a34ee5] to-[#fec603]"
-    },
-  ];
+  const apiUrl = CONFIG.API_CONTACT_CREATE; // point vers Django API Tekacom
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError(null);
-    setSuccessMessage(null);
+    setResponseMessage("");
 
     try {
-      const res = await fetch(CONFIG.API_CONTACT_CREATE, {
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data?.error || "Erreur lors de l'envoi du message");
-
-      setSuccessMessage("🎉 Message envoyé avec succès ! Un email de confirmation vous a été envoyé.");
-
-      trackAction({
-        action_type: "contact_submit",
-        page: "/contact",
-        label: formData.subject || "Contact Form",
-      });
-
-      trackAction({
-        action_type: "mail_sent",
-        page: "/contact",
-        label: formData.email,
-        meta: { subject: formData.subject },
-      });
-
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        category: "question",
-        message: "",
-      });
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-    } catch (err) {
-      console.error(err);
-      setError("⚠️ " + err.message);
+      if (res.ok) {
+        setResponseMessage(
+          t("✅ Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.")
+        );
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          category: "general",
+          message: "",
+        });
+      } else {
+        const errorData = await res.json();
+        setResponseMessage(
+          errorData?.detail || t("❌ Une erreur est survenue lors de l'envoi du message.")
+        );
+      }
+    } catch (error) {
+      console.error("Erreur envoi :", error);
+      setResponseMessage(
+        t("⚠️ Erreur de connexion au serveur, veuillez réessayer plus tard.")
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const isSuccess = responseMessage.includes("✅");
+  const isError = responseMessage.includes("❌") || responseMessage.includes("⚠️");
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
-      
-      {/* Background Effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#a34ee5]/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }}></div>
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#fec603]/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#7828a8]/10 rounded-full blur-3xl"></div>
+    <div className="min-h-screen bg-[#0a0e27] w-full relative overflow-hidden">
+      {/* Effets de fond lumineux */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 px-6 lg:px-12">
-        <div className="max-w-[1400px] mx-auto">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 tracking-tight leading-none">
-            <span className="block text-white mb-2">Contactez</span>
-            <span className="block bg-gradient-to-r from-[#a34ee5] via-[#fec603] to-[#7828a8] bg-clip-text text-transparent animate-gradient">
-              TEKACOM
-            </span>
+      {/* Contenu principal */}
+      <div className="relative">
+        <div className="h-20 md:h-24"></div>
+        <div className="pt-12 md:pt-20 pb-8 md:pb-12 px-4 text-center">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-orange-400 to-white mb-3 tracking-tight">
+            {t("Contactez-nous")}
           </h1>
-          <p className="text-xl md:text-2xl lg:text-3xl text-gray-400 font-light max-w-3xl leading-relaxed">
-            Transformons ensemble vos <span className="text-[#fec603] font-bold">idées créatives</span> en <span className="text-[#a34ee5] font-bold">réalité visuelle</span>
+          <p className="text-base md:text-lg lg:text-xl text-gray-400 mt-6 max-w-2xl mx-auto leading-relaxed px-4">
+            {t("Nous sommes à votre écoute et vous répondrons dans les meilleurs délais. N'hésitez pas à nous faire part de vos questions ou commentaires.")}
           </p>
         </div>
-      </section>
 
-      {/* Main Content */}
-      <section className="relative px-6 lg:px-12 pb-20 md:pb-28">
-        <div className="max-w-[1400px] mx-auto">
-
-          {/* Toast Messages */}
-          {error && (
-            <div className="fixed top-24 right-6 z-[9999] animate-in slide-in-from-right duration-500 max-w-md">
-              <div className="relative bg-gradient-to-r from-red-500/90 to-rose-600/90 backdrop-blur-xl rounded-2xl p-5 border border-red-400/50 shadow-2xl">
-                <div className="absolute -inset-1 bg-red-400/30 rounded-2xl blur-xl -z-10"></div>
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-6 h-6 text-white flex-shrink-0" />
-                  <p className="text-white font-semibold text-sm">{error}</p>
-                  <button onClick={() => setError(null)} className="ml-auto text-white/80 hover:text-white">✕</button>
+        {/* Formulaire */}
+        <div className="px-4 pb-16 md:pb-24">
+          <div className="max-w-4xl mx-auto">
+            {responseMessage && (
+              <div className="mb-8">
+                <div className={`p-4 rounded-xl ${isSuccess ? 'bg-green-500/20 border border-green-400' : 'bg-red-500/20 border border-red-400'}`}>
+                  <div className="flex items-center gap-2">
+                    {isSuccess ? <CheckCircle className="text-green-400" /> : <AlertCircle className="text-red-400" />}
+                    <span className={`${isSuccess ? 'text-green-100' : 'text-red-100'}`}>{responseMessage}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {successMessage && (
-            <div className="fixed top-24 right-6 z-[9999] animate-in slide-in-from-right duration-500 max-w-md">
-              <div className="relative bg-gradient-to-r from-green-500/90 to-emerald-600/90 backdrop-blur-xl rounded-2xl p-5 border border-green-400/50 shadow-2xl">
-                <div className="absolute -inset-1 bg-green-400/30 rounded-2xl blur-xl -z-10"></div>
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-6 h-6 text-white flex-shrink-0" />
-                  <p className="text-white font-semibold text-sm">{successMessage}</p>
-                  <button onClick={() => setSuccessMessage(null)} className="ml-auto text-white/80 hover:text-white">✕</button>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Nom & Email */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-gray-300 mb-2 text-sm font-semibold flex items-center gap-2">
+                    <User className="w-4 h-4 text-orange-400" /> {t("Nom complet")} <span className="text-orange-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="px-4 py-3 w-full rounded-xl border-2 border-white/10 bg-white/5 text-white placeholder-gray-500"
+                    placeholder={t("Votre nom et prénom")}
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 mb-2 text-sm font-semibold flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-blue-400" /> {t("Email")} <span className="text-orange-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="px-4 py-3 w-full rounded-xl border-2 border-white/10 bg-white/5 text-white placeholder-gray-500"
+                    placeholder={t("votre.email@exemple.com")}
+                  />
                 </div>
               </div>
-            </div>
-          )}
 
-          <div className="grid lg:grid-cols-5 gap-8 lg:gap-12">
-            
-            {/* Left Side - Contact Info */}
-            <div className="lg:col-span-2 space-y-8">
-              {contactInfo.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <a key={idx} href={item.link || "#"} target={item.link?.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer">
-                    <div className={`group relative bg-[#41124f]/20 backdrop-blur-sm border border-[#a34ee5]/20 hover:border-[#a34ee5]/50 rounded-2xl p-6 transition-all duration-500 hover:scale-105 hover:shadow-lg hover:shadow-[#a34ee5]/20`}>
-                      <div className={`absolute -inset-0.5 bg-gradient-to-r ${item.color} rounded-2xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500`}></div>
-                      <div className="relative flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg flex-shrink-0`}>
-                          <Icon className="w-6 h-6 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-xs text-gray-500 font-semibold uppercase tracking-wide mb-1">{item.label}</p>
-                          <p className="text-white font-bold group-hover:text-[#fec603] transition-colors">{item.value}</p>
-                        </div>
-                        {item.link && <ArrowRight className="w-5 h-5 text-[#a34ee5] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />}
-                      </div>
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
-
-            {/* Right Side - Form */}
-            <div className="lg:col-span-3">
-              <div className="relative bg-[#41124f]/20 backdrop-blur-sm border border-[#a34ee5]/30 rounded-3xl p-8 md:p-10 overflow-hidden">
-                <form onSubmit={handleSubmit} className="relative space-y-6">
-                  <div className="mb-8">
-                    <h2 className="text-3xl font-black text-white mb-2">
-                      Envoyez-nous un <span className="bg-gradient-to-r from-[#a34ee5] to-[#fec603] bg-clip-text text-transparent">message</span>
-                    </h2>
-                    <p className="text-gray-400">Tous les champs sont requis</p>
-                  </div>
-
-                  {/* Name & Email */}
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div className="group">
-                      <label className="block text-sm font-bold text-gray-300 mb-2 flex items-center gap-2"><User className="w-4 h-4 text-[#a34ee5]" /> Nom complet</label>
-                      <input type="text" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} required
-                        className="w-full px-5 py-4 bg-[#0a0a0a]/60 border-2 border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5] focus:shadow-[0_0_20px_rgba(163,78,229,0.3)] transition-all duration-300"/>
-                    </div>
-                    <div className="group">
-                      <label className="block text-sm font-bold text-gray-300 mb-2 flex items-center gap-2"><Mail className="w-4 h-4 text-[#a34ee5]" /> Adresse email</label>
-                      <input type="email" name="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} required
-                        className="w-full px-5 py-4 bg-[#0a0a0a]/60 border-2 border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5] focus:shadow-[0_0_20px_rgba(163,78,229,0.3)] transition-all duration-300"/>
-                    </div>
-                  </div>
-
-                  {/* Category */}
-                  <div className="group">
-                    <label className="block text-sm font-bold text-gray-300 mb-2 flex items-center gap-2"><Tag className="w-4 h-4 text-[#a34ee5]" /> Catégorie</label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {categories.map(cat => (
-                        <button key={cat.value} type="button" onClick={() => setFormData(prev => ({ ...prev, category: cat.value }))}
-                          className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
-                            formData.category === cat.value
-                              ? 'bg-gradient-to-br from-[#a34ee5] to-[#7828a8] border-[#fec603] shadow-lg shadow-[#a34ee5]/50'
-                              : 'bg-[#0a0a0a]/40 border-[#a34ee5]/30 hover:border-[#a34ee5]/60'
-                          }`}>
-                          <div className="text-2xl mb-2">{cat.icon}</div>
-                          <div className={`text-xs font-bold ${formData.category === cat.value ? 'text-white' : 'text-gray-400'}`}>{cat.label}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Subject */}
-                  <div className="group">
-                    <label className="block text-sm font-bold text-gray-300 mb-2 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#a34ee5]" /> Sujet</label>
-                    <input type="text" name="subject" placeholder="De quoi souhaitez-vous parler ?" value={formData.subject} onChange={handleChange} required
-                      className="w-full px-5 py-4 bg-[#0a0a0a]/60 border-2 border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5] focus:shadow-[0_0_20px_rgba(163,78,229,0.3)] transition-all duration-300"/>
-                  </div>
-
-                  {/* Message */}
-                  <div className="group">
-                    <label className="block text-sm font-bold text-gray-300 mb-2 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#a34ee5]" /> Votre message</label>
-                    <textarea name="message" placeholder="Décrivez votre projet en détail..." value={formData.message} onChange={handleChange} rows="6" required
-                      className="w-full px-5 py-4 bg-[#0a0a0a]/60 border-2 border-[#a34ee5]/30 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#a34ee5] focus:shadow-[0_0_20px_rgba(163,78,229,0.3)] transition-all duration-300 resize-none"/>
-                  </div>
-
-                  {/* Submit Button */}
-                  <button type="submit" disabled={isSubmitting}
-                    className="group relative w-full px-8 py-5 bg-gradient-to-r from-[#a34ee5] to-[#7828a8] text-white font-black text-lg rounded-xl shadow-2xl shadow-[#a34ee5]/50 hover:shadow-[#a34ee5]/80 transition-all duration-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#fec603] to-[#a34ee5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <span className="relative flex items-center justify-center gap-3">
-                      {isSubmitting ? (<><Loader2 className="w-6 h-6 animate-spin" /><span>Envoi en cours...</span></>) : (<><Send className="w-6 h-6" /><span>ENVOYER LE MESSAGE</span><Sparkles className="w-5 h-5 animate-pulse" /></>)}
-                    </span>
-                  </button>
-
-                  <p className="text-xs text-gray-500 text-center">
-                    En envoyant ce formulaire, vous acceptez notre politique de confidentialité.
-                  </p>
-                </form>
+              {/* Sujet */}
+              <div>
+                <label className="block text-gray-300 mb-2 text-sm font-semibold flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-purple-400" /> {t("Sujet")} <span className="text-orange-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  className="px-4 py-3 w-full rounded-xl border-2 border-white/10 bg-white/5 text-white placeholder-gray-500"
+                  placeholder={t("Objet de votre message")}
+                />
               </div>
-            </div>
+
+              {/* Catégorie */}
+              <div>
+                <label className="block text-gray-300 mb-2 text-sm font-semibold flex items-center gap-2">
+                  <Tag className="w-4 h-4 text-orange-400" /> {t("Catégorie")}
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="px-4 py-3 w-full rounded-xl border-2 border-white/10 bg-white/5 text-white"
+                >
+                  <option value="general">{t("Question générale")}</option>
+                  <option value="support">{t("Support technique")}</option>
+                  <option value="partenariat">{t("Partenariat")}</option>
+                  <option value="commentaire">{t("Commentaires et suggestions")}</option>
+                </select>
+              </div>
+
+              {/* Message */}
+              <div>
+                <label className="block text-gray-300 mb-2 text-sm font-semibold flex items-center gap-2">
+                  <MessageSquare className="w-4 h-4 text-blue-400" /> {t("Message")} <span className="text-orange-500">*</span>
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows="6"
+                  required
+                  className="px-4 py-3 w-full rounded-xl border-2 border-white/10 bg-white/5 text-white placeholder-gray-500 resize-none"
+                  placeholder={t("Détaillez votre demande ici...")}
+                />
+              </div>
+
+              {/* Bouton d'envoi */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`w-full py-4 px-6 rounded-xl font-bold text-lg text-white ${
+                  isSubmitting ? "bg-gray-500 cursor-not-allowed" : "bg-gradient-to-r from-orange-500 to-blue-500 hover:from-orange-600 hover:to-blue-600"
+                }`}
+              >
+                {isSubmitting ? <Loader className="w-5 h-5 animate-spin inline-block mr-2" /> : <Send className="w-5 h-5 inline-block mr-2" />}
+                {isSubmitting ? t("Envoi en cours...") : t("Envoyer le message")}
+              </button>
+            </form>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* ChatBot */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <ChatBotNew />
+      </div>
     </div>
   );
 };
