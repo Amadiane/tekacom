@@ -305,9 +305,9 @@ const Home = () => {
               </p>
             </div>
 
-            {/* Services Grid */}
+            {/* Services Grid - Affichage de 3 services */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {services.slice(0, 6).map((service, idx) => (
+              {services.slice(0, 3).map((service, idx) => (
                 <div
                   key={service.id}
                   className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border border-[#fec603]/20 hover:border-[#fec603]/60 transition-all duration-500 hover:scale-105 cursor-pointer"
@@ -385,9 +385,9 @@ const Home = () => {
               </p>
             </div>
 
-            {/* Portfolio Grid */}
+            {/* Portfolio Grid - Affichage de 3 projets */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              {portfolios.slice(0, 6).map((project, idx) => (
+              {portfolios.slice(0, 3).map((project, idx) => (
                 <div
                   key={project.id}
                   className="group relative bg-[#41124f]/20 backdrop-blur-sm rounded-3xl overflow-hidden border border-[#a34ee5]/20 hover:border-[#a34ee5]/60 transition-all duration-500 hover:scale-105 cursor-pointer"
