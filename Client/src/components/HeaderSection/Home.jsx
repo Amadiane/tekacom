@@ -305,8 +305,8 @@ const Home = () => {
               </p>
             </div>
 
-            {/* Services Grid - Affichage de 3 services */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {/* Services Grid - Layout optimisé pour 3 services */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12 max-w-6xl mx-auto">
               {services.slice(0, 3).map((service, idx) => (
                 <div
                   key={service.id}
@@ -314,8 +314,8 @@ const Home = () => {
                   onClick={() => navigate('/services')}
                   style={{ animation: `fadeInUp 0.6s ease-out ${idx * 0.1}s both` }}
                 >
-                  {/* Image */}
-                  <div className="relative h-64 overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-6 flex items-center justify-center">
+                  {/* Image - Hauteur augmentée */}
+                  <div className="relative h-80 overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-8 flex items-center justify-center">
                     {service.image_url || service.image ? (
                       <img
                         src={service.image_url || service.image}
@@ -323,23 +323,29 @@ const Home = () => {
                         className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
-                      <Briefcase className="w-16 h-16 text-[#fec603]/40" />
+                      <Briefcase className="w-20 h-20 text-[#fec603]/40" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
+                    
+                    {/* Badge numéro */}
+                    <div className="absolute top-6 right-6 w-12 h-12 bg-gradient-to-br from-[#fec603] to-[#d4a000] rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-[#0a0a0a] font-black text-xl">{idx + 1}</span>
+                    </div>
                   </div>
 
-                  {/* Info */}
-                  <div className="relative p-6 bg-[#0a0a0a]/40 border-t border-[#fec603]/20">
-                    <h3 className="text-lg font-black text-white mb-2 group-hover:text-[#fec603] transition-colors">
+                  {/* Info - Contenu augmenté */}
+                  <div className="relative p-8 bg-[#0a0a0a]/40 border-t border-[#fec603]/20">
+                    <h3 className="text-xl font-black text-white mb-3 group-hover:text-[#fec603] transition-colors leading-tight">
                       {service.title}
                     </h3>
                     {service.description && (
-                      <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                      <p className="text-sm text-gray-400 line-clamp-3 mb-6 leading-relaxed">
                         {service.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#fec603] font-bold uppercase tracking-wide">
+                    <div className="flex items-center justify-between pt-4 border-t border-[#fec603]/10">
+                      <span className="text-xs text-[#fec603] font-bold uppercase tracking-wide flex items-center gap-2">
+                        <Sparkles className="w-4 h-4" />
                         En savoir plus
                       </span>
                       <ArrowRight className="w-5 h-5 text-[#fec603] group-hover:translate-x-2 transition-transform" />
@@ -349,11 +355,34 @@ const Home = () => {
               ))}
             </div>
 
-            {/* Bouton CTA - Gradient or TEKACOM */}
-            <div className="text-center">
+            {/* CTA avec stats */}
+            <div className="text-center space-y-8">
+              {/* Stats inline */}
+              <div className="flex flex-wrap justify-center gap-8 mb-8">
+                {[
+                  { icon: Zap, value: services.length + '+', label: 'Services disponibles' },
+                  { icon: Award, value: '100%', label: 'Satisfaction client' },
+                  { icon: Target, value: '24/7', label: 'Support dédié' },
+                ].map((stat, idx) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#fec603] to-[#d4a000] flex items-center justify-center shadow-lg">
+                        <Icon className="w-6 h-6 text-[#0a0a0a]" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-black text-white">{stat.value}</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wide">{stat.label}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Bouton CTA - Gradient or TEKACOM */}
               <button
                 onClick={() => navigate('/services')}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[#fec603] to-[#d4a000] text-[#0a0a0a] font-black text-lg rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[#fec603]/30 hover:shadow-[#fec603]/50"
+                className="group inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#fec603] to-[#d4a000] text-[#0a0a0a] font-black text-lg rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-[#fec603]/30 hover:shadow-[#fec603]/50"
               >
                 <span>Découvrir tous nos services</span>
                 <Briefcase className="w-6 h-6 group-hover:rotate-12 transition-transform" />
@@ -385,8 +414,8 @@ const Home = () => {
               </p>
             </div>
 
-            {/* Portfolio Grid - Affichage de 3 projets */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {/* Portfolio Grid - Layout optimisé pour 3 projets */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12 max-w-6xl mx-auto">
               {portfolios.slice(0, 3).map((project, idx) => (
                 <div
                   key={project.id}
@@ -394,8 +423,8 @@ const Home = () => {
                   onClick={() => navigate('/portfolio')}
                   style={{ animation: `fadeInUp 0.6s ease-out ${idx * 0.1}s both` }}
                 >
-                  {/* Image */}
-                  <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-6 flex items-center justify-center">
+                  {/* Image - Ratio optimisé */}
+                  <div className="relative aspect-[4/5] overflow-hidden bg-gradient-to-br from-[#0a0a0a]/40 to-[#41124f]/20 p-8 flex items-center justify-center">
                     {project.cover_photo ? (
                       <img
                         src={project.cover_photo}
@@ -403,12 +432,17 @@ const Home = () => {
                         className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
-                      <Briefcase className="w-16 h-16 text-[#a34ee5]/40" />
+                      <Briefcase className="w-20 h-20 text-[#a34ee5]/40" />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent"></div>
                     
+                    {/* Badge numéro */}
+                    <div className="absolute top-6 right-6 w-12 h-12 bg-gradient-to-br from-[#a34ee5] to-[#7828a8] rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white font-black text-xl">{idx + 1}</span>
+                    </div>
+                    
                     {/* Hover overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/95 via-[#a34ee5]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-end p-6">
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#a34ee5]/95 via-[#a34ee5]/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-end p-8">
                       <div className="bg-white/20 backdrop-blur-md border-2 border-white/50 rounded-full p-4 mb-4">
                         <Eye className="w-8 h-8 text-white" />
                       </div>
@@ -416,17 +450,17 @@ const Home = () => {
                     </div>
                   </div>
 
-                  {/* Info */}
-                  <div className="relative p-6 bg-[#0a0a0a]/40 border-t border-[#a34ee5]/20">
-                    <h3 className="text-lg font-black text-white mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#a34ee5] group-hover:to-[#fec603] group-hover:bg-clip-text transition-all">
+                  {/* Info - Contenu augmenté */}
+                  <div className="relative p-8 bg-[#0a0a0a]/40 border-t border-[#a34ee5]/20">
+                    <h3 className="text-xl font-black text-white mb-3 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-[#a34ee5] group-hover:to-[#fec603] group-hover:bg-clip-text transition-all leading-tight">
                       {project.title}
                     </h3>
                     {project.description && (
-                      <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                      <p className="text-sm text-gray-400 line-clamp-3 mb-6 leading-relaxed">
                         {project.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between pt-4 border-t border-[#a34ee5]/10">
                       <span className="text-xs text-[#a34ee5] font-bold uppercase tracking-wide flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
                         Découvrir
@@ -438,11 +472,34 @@ const Home = () => {
               ))}
             </div>
 
-            {/* Bouton CTA - Bordure violet TEKACOM */}
-            <div className="text-center">
+            {/* CTA avec stats */}
+            <div className="text-center space-y-8">
+              {/* Stats inline */}
+              <div className="flex flex-wrap justify-center gap-8 mb-8">
+                {[
+                  { icon: Briefcase, value: portfolios.length + '+', label: 'Projets réalisés' },
+                  { icon: Award, value: '98%', label: 'Clients satisfaits' },
+                  { icon: TrendingUp, value: '5+', label: "Années d'expérience" },
+                ].map((stat, idx) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#a34ee5] to-[#7828a8] flex items-center justify-center shadow-lg">
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-black text-white">{stat.value}</p>
+                        <p className="text-xs text-gray-400 uppercase tracking-wide">{stat.label}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Bouton CTA - Bordure violet TEKACOM */}
               <button
                 onClick={() => navigate('/portfolio')}
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-lg rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all duration-300"
+                className="group inline-flex items-center gap-3 px-10 py-5 bg-[#41124f]/60 border-2 border-[#a34ee5]/40 text-white font-bold text-lg rounded-2xl hover:border-[#a34ee5]/80 hover:bg-[#41124f]/80 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#a34ee5]/30"
               >
                 <span>Voir tout le portfolio</span>
                 <Eye className="w-6 h-6 group-hover:scale-110 transition-transform" />
@@ -474,8 +531,8 @@ const Home = () => {
               </p>
             </div>
 
-            {/* Team Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            {/* Team Grid - Affichage de 3 membres */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {team
                 .sort((a, b) => {
                   // Tri par date de création si disponible
@@ -485,6 +542,7 @@ const Home = () => {
                   // Sinon tri par ID (plus petit ID = plus ancien)
                   return a.id - b.id;
                 })
+                .slice(0, 3)
                 .map((member, idx) => (
                 <div
                   key={member.id}
