@@ -181,7 +181,7 @@ const Footer = () => {
     },
     { 
       icon: Phone, 
-      text: "+224 626 74 14 78", 
+      text: "+224 611 92 98 92", 
       color: "text-[#a34ee5]",
       bgColor: "bg-[#a34ee5]/10",
       link: "tel:+224626741478"
